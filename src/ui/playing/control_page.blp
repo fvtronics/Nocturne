@@ -14,6 +14,7 @@ template $NocturnePlayingControlPage: Adw.NavigationPage {
       show-title: false;
       show-start-title-buttons: false;
       show-end-title-buttons: false;
+      height-request: 325;
     }
 
     content: Gtk.ScrolledWindow {
@@ -170,6 +171,46 @@ template $NocturnePlayingControlPage: Adw.NavigationPage {
             "toolbar"
           ]
 
+          Gtk.MenuButton mode_button_el {
+            icon-name: "media-playlist-consecutive-symbolic";
+            tooltip-text: _("Consecutive");
+            popover: Gtk.Popover {
+              child: Gtk.Box {
+                orientation: horizontal;
+
+                Gtk.Button {
+                  styles [
+                    "flat"
+                  ]
+                  icon-name: "media-playlist-consecutive-symbolic";
+                  tooltip-text: _("Consecutive");
+                  name: "consecutive";
+                  clicked => $mode_changed();
+                }
+
+                Gtk.Button {
+                  styles [
+                    "flat"
+                  ]
+                  icon-name: "media-playlist-repeat-symbolic";
+                  tooltip-text: _("Repeat All");
+                  name: "repeat-all";
+                  clicked => $mode_changed();
+                }
+
+                Gtk.Button {
+                  styles [
+                    "flat"
+                  ]
+                  icon-name: "media-playlist-repeat-song-symbolic";
+                  tooltip-text: _("Repeat One");
+                  name: "repeat-one";
+                  clicked => $mode_changed();
+                }
+              };
+            };
+          }
+
           Gtk.MenuButton volume_button_el {
             icon-name: "speaker-2-symbolic";
             popover: Gtk.Popover {
@@ -206,7 +247,7 @@ template $NocturnePlayingControlPage: Adw.NavigationPage {
           }
 
           Gtk.Button {
-            icon-name: "view-list-bullet-symbolic";
+            icon-name: "music-queue-symbolic";
             tooltip-text: _("View Queue");
             clicked => $view_queue();
           }

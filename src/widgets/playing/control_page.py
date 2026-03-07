@@ -20,6 +20,7 @@ class PlayingControlPage(Adw.NavigationPage):
     volume_button_el = Gtk.Template.Child()
     volume_el = Gtk.Template.Child()
     state_stack_el = Gtk.Template.Child()
+    mode_button_el = Gtk.Template.Child()
 
     def __init__(self):
         # Used to disconnect star_el when song changes
@@ -97,6 +98,14 @@ class PlayingControlPage(Adw.NavigationPage):
         else:
             self.volume_button_el.set_icon_name("speaker-3-symbolic")
 
+    @Gtk.Template.Callback()
+    def mode_changed(self, button):
+        integration = get_current_integration()
+        self.mode_button_el.set_icon_name(button.get_icon_name())
+        self.mode_button_el.set_tooltip_text(button.get_tooltip_text())
+        self.mode_button_el.get_popover().popdown()
+        integration.loaded_models['currentSong'].playbackMode = button.get_name()
+
     def handle_new_state(self, state):
         if not self.is_seeking:
             stack_page_name = 'play' if state in (Gst.State.NULL, Gst.State.READY, Gst.State.PAUSED) else 'pause'
@@ -108,7 +117,7 @@ class PlayingControlPage(Adw.NavigationPage):
         integration = get_current_integration()
         current_song_id = integration.loaded_models.get('currentSong').songId
 
-        mode = 'repeat-one' # modes = normal, repeat-one, repeat-all, random
+        mode = integration.loaded_models['currentSong'].playbackMode
 
         if action != "end" and mode == "repeat-one":
             mode = "normal"
@@ -133,12 +142,8 @@ class PlayingControlPage(Adw.NavigationPage):
                     ''
                     ##NOTE
                     # Here's where I could handle automatically adding more songs with radio
-
             elif mode == 'repeat-one':
                 integration.loaded_models['currentSong'].songId = current_song_id
-
-            elif mode == 'random':
-                integration.loaded_models['currentSong'].songId = random.choice(id_list)
 
     def on_player_message(self, bus, message):
         if message.type == Gst.MessageType.STATE_CHANGED:
@@ -202,12 +207,12 @@ class PlayingControlPage(Adw.NavigationPage):
 
     def update_starred(self, starred:str):
         if starred:
-            self.star_el.add_css_class('suggested-action')
+            self.star_el.add_css_class('accent')
             self.star_el.set_icon_name('starred-symbolic')
             local_dt = datetime.fromisoformat(starred).astimezone()
             self.star_el.set_tooltip_text(local_dt.strftime("%Y-%m-%d %H:%M:%S"))
         else:
-            self.star_el.remove_css_class('suggested-action')
+            self.star_el.remove_css_class('accent')
             self.star_el.set_icon_name('non-starred-symbolic')
             self.star_el.set_tooltip_text(_('Star'))
 

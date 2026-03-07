@@ -25,6 +25,10 @@
     <file alias="icons/scalable/status/speaker-1-symbolic.svg">icons/speaker-1-symbolic.svg</file>
     <file alias="icons/scalable/status/speaker-2-symbolic.svg">icons/speaker-2-symbolic.svg</file>
     <file alias="icons/scalable/status/speaker-3-symbolic.svg">icons/speaker-3-symbolic.svg</file>
+    <file alias="icons/scalable/status/music-queue-symbolic.svg">icons/music-queue-symbolic.svg</file>
+    <file alias="icons/scalable/status/media-playlist-consecutive-symbolic.svg">icons/media-playlist-consecutive-symbolic.svg</file>
+    <file alias="icons/scalable/status/media-playlist-repeat-song-symbolic.svg">icons/media-playlist-repeat-song-symbolic.svg</file>
+    <file alias="icons/scalable/status/media-playlist-repeat-symbolic.svg">icons/media-playlist-repeat-symbolic.svg</file>
 
     <file alias="window.ui">ui/window.ui</file>
 
