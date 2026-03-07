@@ -122,7 +122,7 @@ class PlayingControlPage(Adw.NavigationPage):
         mode = integration.loaded_models['currentSong'].playbackMode
 
         if action != "end" and mode == "repeat-one":
-            mode = "normal"
+            mode = "consecutive"
 
         if action == "previous" and integration.loaded_models.get('currentSong').positionSeconds > 5:
             integration.loaded_models['currentSong'].songId = current_song_id
@@ -134,7 +134,7 @@ class PlayingControlPage(Adw.NavigationPage):
             if not current_song_id: # fallback in case nothing was playing
                 integration.loaded_models['currentSong'].songId = id_list[0]
 
-            elif mode in ('normal', 'repeat-all'):
+            elif mode in ('consecutive', 'repeat-all'):
                 next_index = id_list.index(current_song_id) + (1 if action in ("next", "end") else -1)
                 if next_index < len(id_list) and next_index >= 0:
                     integration.loaded_models['currentSong'].songId = id_list[next_index]
