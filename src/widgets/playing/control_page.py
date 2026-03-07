@@ -136,14 +136,22 @@ class PlayingControlPage(Adw.NavigationPage):
 
             elif mode in ('consecutive', 'repeat-all'):
                 next_index = id_list.index(current_song_id) + (1 if action in ("next", "end") else -1)
-                if next_index < len(id_list) and next_index >= 0:
-                    integration.loaded_models['currentSong'].songId = id_list[next_index]
+
+                if mode == 'consecutive':
+                    if next_index < 0:
+                        integration.loaded_models['currentSong'].songId = id_list[0]
+                    elif next_index < len(id_list):
+                        integration.loaded_models['currentSong'].songId = id_list[next_index]
+                    else:
+                        print("TODO: implement auto-radio mode")
+                        ##NOTE
+                        # Here's where I could handle automatically adding more songs with radio
                 elif mode == 'repeat-all':
-                    integration.loaded_models['currentSong'].songId = id_list[0]
-                else:
-                    ''
-                    ##NOTE
-                    # Here's where I could handle automatically adding more songs with radio
+                    if next_index < len(id_list) and next_index >= 0:
+                        integration.loaded_models['currentSong'].songId = id_list[next_index]
+                    else:
+                        integration.loaded_models['currentSong'].songId = id_list[0]
+
             elif mode == 'repeat-one':
                 integration.loaded_models['currentSong'].songId = current_song_id
 
