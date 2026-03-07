@@ -69,6 +69,11 @@ class NocturneWindow(Adw.ApplicationWindow):
         else:
             queue_page.replace_queue([model_id])
 
+    def play_song_next(self, action, model_id:GLib.Variant):
+        model_id = model_id.unpack()
+        queue_page = self.playing_navigationview.find_page('queue')
+        queue_page.play_next([model_id])
+
     def play_album(self, action, model_id:GLib.Variant):
         model_id = model_id.unpack()
         integration = navidrome.get_current_integration()
@@ -81,6 +86,18 @@ class NocturneWindow(Adw.ApplicationWindow):
         if album:
             integration.verifyAlbum(album.id, force_update=True, update_callback=on_update_finish)
 
+    def play_album_next(self, action, model_id:GLib.Variant):
+        model_id = model_id.unpack()
+        integration = navidrome.get_current_integration()
+        album = integration.loaded_models.get(model_id)
+
+        def on_update_finish():
+            queue_page = self.playing_navigationview.find_page('queue')
+            queue_page.play_next([s.get('id') for s in album.song])
+
+        if album:
+            integration.verifyAlbum(album.id, force_update=True, update_callback=on_update_finish)
+
     def play_playlist(self, action, model_id:GLib.Variant):
         model_id = model_id.unpack()
         integration = navidrome.get_current_integration()
@@ -89,6 +106,18 @@ class NocturneWindow(Adw.ApplicationWindow):
         def on_update_finish():
             queue_page = self.playing_navigationview.find_page('queue')
             queue_page.replace_queue([s.get('id') for s in playlist.entry])
+
+        if playlist:
+            integration.verifyPlaylist(playlist.id, force_update=True, update_callback=on_update_finish)
+
+    def play_playlist_next(self, action, model_id:GLib.Variant):
+        model_id = model_id.unpack()
+        integration = navidrome.get_current_integration()
+        playlist = integration.loaded_models.get(model_id)
+
+        def on_update_finish():
+            queue_page = self.playing_navigationview.find_page('queue')
+            queue_page.play_next([s.get('id') for s in playlist.entry])
 
         if playlist:
             integration.verifyPlaylist(playlist.id, force_update=True, update_callback=on_update_finish)
@@ -117,14 +146,32 @@ class NocturneWindow(Adw.ApplicationWindow):
         )
 
         self.get_application().create_action(
+            name="play_song_next",
+            callback=self.play_song_next,
+            parameter_type=GLib.VariantType.new('s')
+        )
+
+        self.get_application().create_action(
             name="play_album",
             callback=self.play_album,
             parameter_type=GLib.VariantType.new('s')
         )
 
         self.get_application().create_action(
+            name="play_album_next",
+            callback=self.play_album_next,
+            parameter_type=GLib.VariantType.new('s')
+        )
+
+        self.get_application().create_action(
             name="play_playlist",
             callback=self.play_playlist,
+            parameter_type=GLib.VariantType.new('s')
+        )
+
+        self.get_application().create_action(
+            name="play_playlist_next",
+            callback=self.play_playlist_next,
             parameter_type=GLib.VariantType.new('s')
         )
 

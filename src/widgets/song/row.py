@@ -32,6 +32,7 @@ class SongRow(Adw.ActionRow):
         )
 
         self.star_el.set_action_target_value(GLib.Variant.new_string(self.id))
+        self.play_next_el.set_action_target_value(GLib.Variant.new_string(self.id))
 
         integration.connect_to_model(self.id, 'title', self.update_title)
         integration.connect_to_model(self.id, 'artists', self.update_artists)
@@ -152,10 +153,6 @@ class SongRow(Adw.ActionRow):
                 queue.set_selected_mode()
 
     @Gtk.Template.Callback()
-    def play_next_clicked(self, button):
-        ''
-
-    @Gtk.Template.Callback()
     def play_later_clicked(self, button):
         ''
 
@@ -167,4 +164,7 @@ class SongRow(Adw.ActionRow):
     def remove_clicked(self, button):
         ''
 
+    @Gtk.Template.Callback()
+    def option_selected(self, button):
+        button.get_ancestor(Gtk.MenuButton).popdown()
 

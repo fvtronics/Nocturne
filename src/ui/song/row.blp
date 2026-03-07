@@ -128,7 +128,8 @@ template $NocturneSongRow: Adw.ActionRow {
                     halign: start;
                   };
 
-                  clicked => $play_next_clicked();
+                  action-name: "app.play_song_next";
+                  clicked => $option_selected();
                 }
 
                 Gtk.Button play_later_el {
