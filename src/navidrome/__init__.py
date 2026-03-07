@@ -242,6 +242,31 @@ class Navidrome(GObject.Object):
         response = self.make_request('unstar', {'id': id})
         return response.get('status') == 'ok'
 
+    def getPlayQueue(self) -> tuple:
+        # used to retrieve sessions from other clients *at launch*
+        # returns currentId and list for queue
+        response = self.make_request('getPlayQueue')
+        play_queue = response.get('playQueue', {})
+        song_list = play_queue.get('entry', [])
+        for song_dict in song_list:
+            if song_dict.get('id') not in self.loaded_models:
+                self.loaded_models[id] = models.Song(**song_dict)
+            else:
+                self.verifySong(self, force_update=True)
+
+        return play_queue.get('current'), [s.get('id') for s in song_list]
+
+    def savePlayQueue(self, id_list:list, current:str, position:int) -> bool:
+        # used to save session *on close* so that other clients can retrieve it
+        # position is in ms
+        # return true if ok
+        response = self.make_request('savePlayQueue', {
+            'id': id_list,
+            'current': current,
+            'position': position
+        })
+        return response.get('status') == 'ok'
+
 integration = Navidrome('http://127.0.0.1:4533', 'tentri')
 current_song = None
 

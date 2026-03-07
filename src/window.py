@@ -17,7 +17,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Gtk, Adw, GLib
+from gi.repository import Gtk, Adw, GLib, Gst
 
 from . import widgets as Widgets
 from . import navidrome
@@ -38,6 +38,13 @@ class NocturneWindow(Adw.ApplicationWindow):
     def on_bottomsheet_open(self, bottomsheet, state):
         if not self.main_bottom_sheet.get_open():
             GLib.timeout_add(1000, self.playing_navigationview.replace_with_tags, ['playing'])
+
+    @Gtk.Template.Callback()
+    def close_request(self, window):
+        integration = navidrome.get_current_integration()
+        id_list = self.playing_navigationview.find_page('queue').song_list_el.get_all_ids()
+        current_song = integration.loaded_models.get('currentSong')
+        integration.savePlayQueue(id_list, current_song.songId, current_song.positionSeconds * 1000)
 
     def show_album(self, action, model_id:GLib.Variant):
         self.main_navigationview.push(Widgets.AlbumPage(model_id.unpack()))
@@ -190,4 +197,12 @@ class NocturneWindow(Adw.ApplicationWindow):
             callback=self.toggle_star,
             parameter_type=GLib.VariantType.new('s')
         )
+
+        integration = navidrome.get_current_integration()
+        current_id, song_list = integration.getPlayQueue()
+        if len(song_list) > 0:
+            queue_page = self.playing_navigationview.find_page('queue')
+            GLib.idle_add(queue_page.replace_queue, song_list, current_id)
+            playing_page = self.playing_navigationview.find_page('playing')
+            GLib.idle_add(lambda: playing_page.player.set_state(Gst.State.PAUSED) and False)
 
