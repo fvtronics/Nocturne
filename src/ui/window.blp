@@ -8,7 +8,7 @@ template $NocturneWindow: Adw.ApplicationWindow {
   width-request: 340;
   height-request: 560;
   close-request => $close_request();
-  Adw.Breakpoint {
+  Adw.Breakpoint breakpoint_el {
     condition ("max-width: 480sp")
     setters {
       main_split_view.collapsed: true;

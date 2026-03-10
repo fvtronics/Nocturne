@@ -172,7 +172,7 @@ class PlayingLyricsPage(Gtk.Stack):
     def lrc_bind(self, factory, list_item):
         item_data = list_item.get_item()
         label = list_item.get_child()
-        label.set_label(item_data.content)
+        label.set_label(item_data.content or "🎶")
 
     @Gtk.Template.Callback()
     def on_lrc_selection(self, selection_model, position, n_items):

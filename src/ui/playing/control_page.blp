@@ -258,6 +258,12 @@ template $NocturnePlayingControlPage: Adw.NavigationPage {
             action-name: "app.toggle_star";
             tooltip-text: _("Star");
           }
+
+          Gtk.Button show_sidebar_el {
+            icon-name: "sidebar-show-right-symbolic";
+            tooltip-text: _("Show Sidebar");
+            clicked => $show_content_clicked();
+          }
         }
       };
     };

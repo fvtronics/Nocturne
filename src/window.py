@@ -25,6 +25,7 @@ from . import navidrome, actions
 class NocturneWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'NocturneWindow'
 
+    breakpoint_el = Gtk.Template.Child()
     main_navigationview = Gtk.Template.Child()
     home_page = Gtk.Template.Child()
     main_bottom_sheet = Gtk.Template.Child()

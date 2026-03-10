@@ -19,6 +19,7 @@ class PlayingControlPage(Adw.NavigationPage):
     album_el = Gtk.Template.Child()
     progress_el = Gtk.Template.Child()
     star_el = Gtk.Template.Child()
+    show_sidebar_el = Gtk.Template.Child()
     volume_button_el = Gtk.Template.Child()
     volume_el = Gtk.Template.Child()
     state_stack_el = Gtk.Template.Child()
@@ -49,6 +50,14 @@ class PlayingControlPage(Adw.NavigationPage):
         bus.connect("message", self.on_player_message)
         self.volume_el.set_value(0.25) ##TODO save volume within sessions
         self.player.set_property("volume", 0.25)
+        GLib.idle_add(self.setup_sidebar_button_connection)
+
+    def setup_sidebar_button_connection(self):
+        self.get_root().breakpoint_el.connect('apply', lambda *_: self.show_sidebar_el.set_visible(True))
+        self.get_root().breakpoint_el.connect('unapply', lambda *_: self.show_sidebar_el.set_visible(False))
+        condition = self.get_root().breakpoint_el.get_condition().to_string()
+        is_small = self.get_root().get_width() < int(condition.split(': ')[1].strip('sp'))
+        self.show_sidebar_el.set_visible(is_small)
 
     @Gtk.Template.Callback()
     def seek_start(self, gesture, n_press, x, y):
@@ -104,6 +113,12 @@ class PlayingControlPage(Adw.NavigationPage):
         self.mode_button_el.set_tooltip_text(button.get_tooltip_text())
         self.mode_button_el.get_popover().popdown()
         integration.loaded_models['currentSong'].playbackMode = button.get_name()
+
+    @Gtk.Template.Callback()
+    def show_content_clicked(self, button):
+        view = self.get_ancestor(Adw.NavigationSplitView)
+        if view:
+            view.set_show_content(True)
 
     def handle_new_state(self, state):
         if not self.is_seeking:
