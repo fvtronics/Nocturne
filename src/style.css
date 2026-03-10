@@ -6,6 +6,30 @@
   padding: 10px;
 }
 
+.lrc_list, .lrc_list row:selected {
+  background: transparent;
+}
+
+.lrc_list row > label {
+  transition: font-size .2s,
+  opacity .2s;
+  opacity: 30%;
+  font-size: 20px;
+  margin: 5px;
+  font-weight: bold;
+}
+
+.lrc_list row:selected > label {
+  opacity: 100%;
+  font-size: 30px;
+}
+
+.lrc_list row {
+  border-radius: 12px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .button_no_bold label {
   font-weight: normal;
 }

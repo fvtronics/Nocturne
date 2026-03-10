@@ -267,7 +267,7 @@ class Navidrome(GObject.Object):
         })
         return response.get('status') == 'ok'
 
-    def getSimilarSongs(self, id:str, count:int=20):
+    def getSimilarSongs(self, id:str, count:int=20) -> list:
         # Receives an artist id
         response = self.make_request('getSimilarSongs', {
             'id': id,
@@ -279,7 +279,7 @@ class Navidrome(GObject.Object):
 
         return [s.get('id') for s in songs if s.get('id')]
 
-    def getRandomSongs(self, size:int=20):
+    def getRandomSongs(self, size:int=20) -> list:
         response = self.make_request('getRandomSongs', {
             'size': size
         })
@@ -288,6 +288,18 @@ class Navidrome(GObject.Object):
             self.verifySong(song.get('id'))
 
         return [s.get('id') for s in songs if s.get('id')]
+
+    def getLyrics(self, track_name:str, artist_name:str, album_name:str, duration:int) -> dict:
+        # This uses the LRCLIB public API
+        # Duration is in seconds
+        response = requests.get('https://lrclib.net/api/get', params={
+            'track_name': track_name,
+            'artist_name': artist_name,
+            'album_name': album_name,
+            'duration': duration
+        })
+        return response.json()
+
 
 integration = Navidrome('http://127.0.0.1:4533', 'tentri')
 current_song = None

@@ -8,6 +8,7 @@ blueprints = files(
   'ui/playing/footer.blp',
   'ui/playing/control_page.blp',
   'ui/playing/queue_page.blp',
+  'ui/playing/lyrics_page.blp',
 
   'ui/pages/home.blp',
   'ui/pages/sidebar.blp',
@@ -69,6 +70,7 @@ nocturne_sources = [
   'main.py',
   'window.py',
   'actions.py',
+  'constants.py',
 ]
 
 install_data(nocturne_sources, install_dir: moduledir)

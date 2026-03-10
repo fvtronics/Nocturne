@@ -5,6 +5,7 @@ widgets = [
   'footer.py',
   'control_page.py',
   'queue_page.py',
+  'lyrics_page.py',
 ]
 
 install_data(widgets, install_dir: moduledir)

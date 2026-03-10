@@ -1,0 +1,105 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $NocturnePlayingLyricsPage: Gtk.Stack {
+  transition-type: crossfade;
+
+  Gtk.StackPage {
+    name: "loading";
+    child: Adw.Spinner {};
+  }
+
+  Gtk.StackPage {
+    name: "plain";
+    child: Gtk.ScrolledWindow {
+      propagate-natural-width: true;
+      propagate-natural-height: true;
+      child: Adw.Clamp {
+        maximum-size: 800;
+        tightening-threshold: 600;
+        child: Gtk.Label plain_label_el {
+          wrap: true;
+          wrap-mode: word_char;
+          justify: center;
+          halign: center;
+          valign: center;
+          styles [
+            "title-4"
+          ]
+        };
+      };
+    };
+  }
+
+  Gtk.StackPage {
+    name: "lrc";
+    child: Gtk.ScrolledWindow scrolledwindow {
+      propagate-natural-width: true;
+      propagate-natural-height: true;
+      child: Adw.ClampScrollable {
+        maximum-size: 800;
+        tightening-threshold: 600;
+        child: Gtk.ListView lrc_list_el {
+          model: Gtk.SingleSelection lrc_model_parent {
+            selection-changed => $on_lrc_selection();
+          };
+          factory: Gtk.SignalListItemFactory {
+            setup => $lrc_setup();
+            bind => $lrc_bind();
+          };
+          styles [
+            "lrc_list"
+          ]
+        };
+      };
+    };
+  }
+
+  Gtk.StackPage {
+    name: "not-found";
+    child: Adw.StatusPage {
+      title: _("No Lyrics Found");
+      icon-name: "sad-computer-symbolic";
+    };
+  }
+
+  Gtk.StackPage {
+    name: "instrumental";
+    child: Adw.StatusPage {
+      title: _("Instrumental");
+      icon-name: "music-note-symbolic";
+    };
+  }
+
+  Gtk.StackPage {
+    name: "not-found-locally";
+    child: Adw.StatusPage {
+      title: _("Not Downloaded");
+      icon-name: "folder-download-symbolic";
+      description: _("The lyrics for this song have not been downloaded yet, they might be available for download");
+      child: Gtk.Box {
+        orientation: vertical;
+        spacing: 10;
+        halign: center;
+
+        Gtk.Button {
+          styles [
+            "accent"
+          ]
+          halign: center;
+          tooltip-text: _("Download");
+          child: Adw.ButtonContent {
+            icon-name: "folder-download-symbolic";
+            label: _("Download");
+          };
+          clicked => $lyric_download_requested();
+        }
+
+        Gtk.LinkButton {
+          uri: "https://lrclib.net";
+          label: _("Provided by LRCLIB");
+        }
+      };
+    };
+  }
+}

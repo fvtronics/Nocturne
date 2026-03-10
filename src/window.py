@@ -30,6 +30,7 @@ class NocturneWindow(Adw.ApplicationWindow):
     main_bottom_sheet = Gtk.Template.Child()
     playing_page = Gtk.Template.Child()
     queue_page = Gtk.Template.Child()
+    lyrics_page = Gtk.Template.Child()
 
     @Gtk.Template.Callback()
     def close_request(self, window):
