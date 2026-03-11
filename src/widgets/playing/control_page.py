@@ -278,8 +278,8 @@ class PlayingControlPage(Adw.NavigationPage):
             .dynamic-accent-bg {{
                 background-image: linear-gradient(
                     to bottom right,
-                    rgba({','.join([str(c) for c in palette[0]])},0.50),
-                    rgba({','.join([str(c) for c in palette[1]])},0.50)
+                    rgba({','.join([str(c) for c in palette[0]])},0.40),
+                    rgba({','.join([str(c) for c in palette[1]])},0.40)
                 );
                 transition: background-image 0.5s ease-in-out;
                 border-top-left-radius: 15px;
@@ -287,14 +287,16 @@ class PlayingControlPage(Adw.NavigationPage):
             }}
         }}
         """
+
+        stack_el = self.get_ancestor(Gtk.Stack)
+        stack_el.add_css_class('dynamic-accent-bg')
         provider = Gtk.CssProvider()
-        provider.load_from_data(css.encode('utf-8'))
+        provider.load_from_string(css)
         Gtk.StyleContext.add_provider_for_display(
             Gdk.Display.get_default(),
             provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
-        self.get_ancestor(Gtk.Stack).add_css_class('dynamic-accent-bg')
 
     def update_cover_art(self):
         integration = get_current_integration()
