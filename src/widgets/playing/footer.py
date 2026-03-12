@@ -38,9 +38,8 @@ class PlayingFooter(Gtk.Overlay):
     def update_cover_art(self):
         integration = get_current_integration()
         song_id = integration.loaded_models.get('currentSong').songId
-        song = integration.loaded_models.get(song_id)
-        if song:
-            paintable = integration.getCoverArt(song.coverArt, 480)
+        if song_id:
+            paintable = integration.getCoverArt(song_id, 480)
             if isinstance(paintable, Gdk.MemoryTexture):
                 GLib.idle_add(self.cover_el.set_from_paintable, paintable)
             else:

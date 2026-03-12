@@ -74,9 +74,16 @@ class Navidrome(GObject.Object):
     def getCoverArtWithBytes(self, id:str=None, size:int=480) -> tuple:
         # returns bytes, Gdk.Paintable
         if id:
+            model = self.loaded_models[id]
+            coverArtId = ""
+            if model:
+                if model.gdkPaintable:
+                    return model.gdkPaintableBytes, model.gdkPaintable
+                coverArtId = model.coverArt
+
             params = {
                 **self.get_base_params(),
-                'id': id,
+                'id': coverArtId,
                 'size': size
             }
             response = requests.get(self.get_url('getCoverArt'), params=params)
@@ -84,7 +91,10 @@ class Navidrome(GObject.Object):
 
             if response_bytes and len(response_bytes) > 0:
                 try:
-                    return response_bytes, Gdk.Texture.new_from_bytes(GLib.Bytes.new(response_bytes))
+                    texture = Gdk.Texture.new_from_bytes(GLib.Bytes.new(response_bytes))
+                    model.gdkPaintableBytes = response_bytes
+                    model.gdkPaintable = texture
+                    return model.gdkPaintableBytes, model.gdkPaintable
                 except Exception as e:
                     pass
 

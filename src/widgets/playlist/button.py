@@ -30,7 +30,7 @@ class PlaylistButton(Gtk.Box):
     def update_cover(self, coverArt:str=None):
         def update():
             integration = get_current_integration()
-            paintable = integration.getCoverArt(coverArt, 480)
+            paintable = integration.getCoverArt(self.id, 480)
             GLib.idle_add(self.cover_el.set_from_paintable, paintable)
         threading.Thread(target=update).start()
 
