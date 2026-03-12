@@ -13,12 +13,14 @@ blueprints = files(
 
   'ui/pages/home.blp',
   'ui/pages/login.blp',
+  'ui/pages/artists.blp',
 
   'ui/album/button.blp',
   'ui/album/page.blp',
 
   'ui/artist/button.blp',
   'ui/artist/page.blp',
+  'ui/artist/row.blp',
 
   'ui/playlist/button.blp',
   'ui/playlist/page.blp',

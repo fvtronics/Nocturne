@@ -26,9 +26,6 @@ def toggle_star(window, model_id:str):
             if integration.star(model.id):
                 model.starred = datetime.now(UTC).isoformat(timespec='microseconds').replace('+00:00', 'Z')
 
-def reload_page(window):
-    window.main_navigationview.get_visible_page().reload()
-
 # -- SONG --
 
 def play_song(window, model_id:str):

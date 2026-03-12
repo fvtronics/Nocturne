@@ -26,6 +26,7 @@ import threading
 class SidebarItem(Adw.SidebarItem):
     __gtype_name__ = 'NocturneSidebarItem'
     page_tag = GObject.Property(type=str)
+    page_type = GObject.Property(type=str) #optional
 
 @Gtk.Template(resource_path='/com/jeffser/Nocturne/window.ui')
 class NocturneWindow(Adw.ApplicationWindow):
@@ -56,12 +57,14 @@ class NocturneWindow(Adw.ApplicationWindow):
     @Gtk.Template.Callback()
     def on_sidebar_activated(self, sidebar, index):
         page_tag = sidebar.get_selected_item().page_tag
-        print(page_tag)
-        self.replace_root_page(page_tag)
+        page_type = sidebar.get_selected_item().page_type
+        self.replace_root_page(page_tag, page_type)
 
-    def replace_root_page(self, page_tag:str):
+    def replace_root_page(self, page_tag:str, page_type:str=None):
         page = self.main_navigationview.find_page(page_tag)
         if page:
+            if page_type:
+                page.set_property('page_type', page_type)
             threading.Thread(target=page.reload).start()
             self.main_navigationview.replace([page])
 
@@ -90,7 +93,8 @@ class NocturneWindow(Adw.ApplicationWindow):
                 section_el.append(SidebarItem(
                     title=item.get('title'),
                     icon_name=item.get('icon-name'),
-                    page_tag=item.get('page-name')
+                    page_tag=item.get('page-tag'),
+                    page_type=item.get('page-type')
                 ))
 
     def __init__(self, **kwargs):
@@ -104,12 +108,6 @@ class NocturneWindow(Adw.ApplicationWindow):
         add_song_to_playlist
         add_album_to_playlist
         """
-
-        self.create_action(
-            actions.reload_page,
-            shortcuts=["<ctrl>r"],
-            parameter_type=None
-        )
 
         self.create_action(actions.toggle_star)
 

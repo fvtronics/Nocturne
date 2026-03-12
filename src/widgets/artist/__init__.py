@@ -2,3 +2,4 @@
 
 from .button import ArtistButton
 from .page import ArtistPage
+from .row import ArtistRow

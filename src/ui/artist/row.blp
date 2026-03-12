@@ -1,0 +1,66 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $NocturneArtistRow: Adw.ActionRow {
+  action-name: "app.show_artist";
+  activatable: true;
+
+  [prefix]
+  Adw.Avatar avatar_el {
+    styles [
+      "p10"
+    ]
+    size: 48;
+    custom-image: Adw.SpinnerPaintable {
+      widget: avatar_el;
+    };
+  }
+
+  [suffix]
+  Gtk.MenuButton {
+    styles [
+      "circular",
+      "flat",
+    ]
+    icon-name: "view-more-symbolic";
+    valign: center;
+
+    popover: Gtk.Popover {
+      child: Gtk.Box {
+        orientation: vertical;
+
+        Gtk.Button play_shuffle_el {
+          styles [
+            "small",
+            "flat",
+            "button_no_bold"
+          ]
+
+          child: Adw.ButtonContent {
+            icon-name: "playlist-shuffle-symbolic";
+            label: _("Shuffle");
+            halign: start;
+          };
+          tooltip-text: _("Shuffle");
+          action-name: "app.play_shuffle_artist";
+        }
+
+        Gtk.Button play_radio_el {
+          styles [
+            "small",
+            "flat",
+            "button_no_bold"
+          ]
+
+          child: Adw.ButtonContent {
+            icon-name: "sound-symbolic";
+            label: _("Radio");
+            halign: start;
+          };
+          tooltip-text: _("Radio");
+          action-name: "app.play_radio_artist";
+        }
+      };
+    };
+  }
+}

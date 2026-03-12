@@ -86,7 +86,7 @@ class Navidrome(GObject.Object):
                 try:
                     return response_bytes, Gdk.Texture.new_from_bytes(GLib.Bytes.new(response_bytes))
                 except Exception as e:
-                    print('Texture error:', e)
+                    pass
 
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         return b'', theme.lookup_icon(
@@ -154,6 +154,13 @@ class Navidrome(GObject.Object):
                 else:
                     self.loaded_models[new_id] = models.Artist(**artist_dict)
         return artist_ids
+
+    def getArtistsIndexes(self) -> dict:
+        response = self.make_request('getArtists')
+        indexes = {}
+        for index in response.get('artists').get('index', []):
+            indexes[index.get('name')] = [artist.get('id') for artist in index.get('artist', [])]
+        return indexes
 
     def getPlaylists(self) -> list:
         # returns list of playlist ids

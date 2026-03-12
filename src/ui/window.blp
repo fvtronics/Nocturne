@@ -15,6 +15,7 @@ template $NocturneWindow: Adw.ApplicationWindow {
       sheet_header.title-widget: null;
       sheet_switch_bar.reveal: true;
       main_sidebar.mode: page;
+      main_bottom_sheet.full-width: true;
     }
   }
 
@@ -57,7 +58,8 @@ template $NocturneWindow: Adw.ApplicationWindow {
             };
             content: Adw.NavigationPage {
               child: Adw.NavigationView main_navigationview {
-                $NocturneHomePage home_page {}
+                $NocturneHomePage {}
+                $NocturneArtistsPage {}
               };
             };
           };

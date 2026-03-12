@@ -24,7 +24,7 @@ SIDEBAR_MENU = [
             { # Item
                 'title': _("Home"),
                 'icon-name': "user-home-symbolic",
-                'page-name': 'home'
+                'page-tag': 'home'
             }
         ]
     },
@@ -34,32 +34,38 @@ SIDEBAR_MENU = [
             { # Item
                 'title': _("All"),
                 'icon-name': "music-queue-symbolic",
-                'page-name': 'albums'
+                'page-tag': 'albums',
+                'page-type': 'all'
             },
             { # Item
                 'title': _("Random"),
                 'icon-name': "playlist-shuffle-symbolic",
-                'page-name': 'albums-random'
+                'page-tag': 'albums',
+                'page-type': 'random'
             },
             { # Item
                 'title': _("Favorites"),
                 'icon-name': "starred-symbolic",
-                'page-name': 'albums-favorites'
+                'page-tag': 'albums',
+                'page-type': 'favorites'
             },
             { # Item
                 'title': _("Recently Added"),
                 'icon-name': "list-add-symbolic",
-                'page-name': 'albums-recently-added'
+                'page-tag': 'albums',
+                'page-type': 'recently-added'
             },
             { # Item
                 'title': _("Recently Played"),
                 'icon-name': "media-playback-start-symbolic",
-                'page-name': 'albums-recently-played'
+                'page-tag': 'albums',
+                'page-type': 'recently-played'
             },
             { # Item
                 'title': _("Most Played"),
                 'icon-name': "media-playlist-repeat-symbolic",
-                'page-name': 'albums-most-played'
+                'page-tag': 'albums',
+                'page-type': 'most-played'
             }
         ]
     },
@@ -68,22 +74,22 @@ SIDEBAR_MENU = [
             { # Item
                 'title': _("Artists"),
                 'icon-name': "music-artist-symbolic",
-                'page-name': 'artists'
+                'page-tag': 'artists'
             },
             { # Item
                 'title': _("Songs"),
                 'icon-name': "music-note-symbolic",
-                'page-name': 'songs'
+                'page-tag': 'songs'
             },
             { # Item
                 'title': _("Radios"),
                 'icon-name': "sound-wave-symbolic",
-                'page-name': 'radios'
+                'page-tag': 'radios'
             },
             { # Item
                 'title': _("Playlists"),
                 'icon-name': "playlist-symbolic",
-                'page-name': 'playlists'
+                'page-tag': 'playlists'
             }
         ]
     }
