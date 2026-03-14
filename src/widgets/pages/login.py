@@ -18,10 +18,9 @@ class LoginPage(Adw.NavigationPage):
         settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
         saved_ip = settings.get_value('integration-ip').unpack()
         saved_user = settings.get_value('integration-user').unpack()
-        if saved_ip and saved_user:
-            GLib.idle_add(self.verify_login, saved_ip, saved_user)
-            self.url_el.set_text(saved_ip)
-            self.user_el.set_text(saved_user)
+        GLib.idle_add(self.verify_login, saved_ip, saved_user)
+        self.url_el.set_text(saved_ip)
+        self.user_el.set_text(saved_user)
 
     def verify_login(self, ip:str, user:str):
         integration = Navidrome(ip, user)
@@ -29,7 +28,6 @@ class LoginPage(Adw.NavigationPage):
             set_current_integration(integration)
             GLib.idle_add(self.login_success)
         else:
-            self.password_el.add_css_class('error')
             GLib.idle_add(lambda: self.get_root().main_stack.set_visible_child_name('login'))
 
     def login_success(self):

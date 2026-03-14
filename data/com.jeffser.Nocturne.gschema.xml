@@ -14,7 +14,10 @@
 	    <default>'http://127.0.0.1:4533'</default>
 	  </key>
 	  <key name="integration-user" type="s">
-	    <default>'tentri'</default>
+	    <default>''</default>
+	  </key>
+	  <key name="elements-per-home-section" type="i">
+	    <default>12</default>
 	  </key>
 	</schema>
 </schemalist>
