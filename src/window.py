@@ -119,6 +119,7 @@ class NocturneWindow(Adw.ApplicationWindow):
         self.create_action(actions.play_radio)
         self.create_action(actions.add_radio, parameter_type=None)
         self.create_action(actions.update_radio)
+        self.create_action(actions.delete_radio)
 
         self.create_action(actions.play_song)
         self.create_action(actions.play_song_next)

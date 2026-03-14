@@ -24,6 +24,7 @@ class SongRow(Adw.ActionRow):
     add_to_playlist_el = Gtk.Template.Child()
     edit_el = Gtk.Template.Child()
     remove_el = Gtk.Template.Child()
+    delete_el = Gtk.Template.Child()
 
     def __init__(self, id:str, draggable:bool=False, removable:bool=False):
         self.id = id
@@ -39,6 +40,7 @@ class SongRow(Adw.ActionRow):
         self.play_next_el.set_action_target_value(GLib.Variant.new_string(self.id))
         self.play_later_el.set_action_target_value(GLib.Variant.new_string(self.id))
         self.edit_el.set_action_target_value(GLib.Variant.new_string(self.id))
+        self.delete_el.set_action_target_value(GLib.Variant.new_string(self.id))
 
         integration.connect_to_model(self.id, 'title', self.update_title)
         integration.connect_to_model(self.id, 'artists', self.update_artists)
@@ -133,6 +135,7 @@ class SongRow(Adw.ActionRow):
         self.select_el.set_visible(not isRadio)
         self.add_to_playlist_el.set_visible(not isRadio)
         self.edit_el.set_visible(isRadio)
+        self.delete_el.set_visible(isRadio)
 
     def current_song_changed(self, songId:str):
         self.set_activatable(songId != self.id)

@@ -197,6 +197,23 @@ template $NocturneSongRow: Adw.ActionRow {
 
                   clicked => $option_selected();
                 }
+
+                Gtk.Button delete_el { // for radios
+                  styles [
+                    "small",
+                    "flat",
+                    "button_no_bold",
+                    "error"
+                  ]
+                  child: Adw.ButtonContent {
+                    label: _("Delete");
+                    icon-name: "user-trash-symbolic";
+                    halign: start;
+                  };
+
+                  action-name: "app.delete_radio";
+                  clicked => $option_selected();
+                }
               };
             };
           }

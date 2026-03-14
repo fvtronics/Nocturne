@@ -72,7 +72,7 @@ def play_radio(window, model_id:str):
 
 def update_radio(window, id:str=""):
     integration = navidrome.get_current_integration()
-    model = integration.loaded_models[id]
+    model = integration.loaded_models[id] if id else None
 
     def response(dialog, task, name_el, stream_el, homepage_el, id:str):
         if dialog.choose_finish(task) == 'save':
@@ -95,7 +95,6 @@ def update_radio(window, id:str=""):
                         homepage
                     )
                 if result:
-                    threading.Thread(target=window.main_navigationview.get_visible_page().reload).start()
                     toast = Adw.Toast(
                         title=_("Radio updated successfully") if id else _("Radio added successfully"),
                         timeout=2
@@ -105,6 +104,8 @@ def update_radio(window, id:str=""):
                         model.set_property('title', name)
                         model.set_property('streamUrl', stream)
                         model.set_property('homePageUrl', homepage)
+                    else:
+                        threading.Thread(target=window.main_navigationview.get_visible_page().reload).start()
                     return
             toast = Adw.Toast(
                 title=_("Error updating radio") if id else _("Error adding radio"),
@@ -140,6 +141,36 @@ def update_radio(window, id:str=""):
 
 def add_radio(window):
     update_radio(window)
+
+def delete_radio(window, model_id:str):
+    integration = navidrome.get_current_integration()
+    model = integration.loaded_models.get(model_id)
+
+    def response(dialog, task, id):
+        if dialog.choose_finish(task) == 'delete':
+            result = integration.deleteInternetRadioStation(id)
+            if result:
+                toast = Adw.Toast(
+                    title=_("Radio deleted successfully"),
+                    timeout=2
+                )
+                window.toast_overlay.add_toast(toast)
+                threading.Thread(target=window.main_navigationview.get_visible_page().reload).start()
+            else:
+                toast = Adw.Toast(
+                    title=_("Error deleting radio"),
+                    timeout=2
+                )
+                window.toast_overlay.add_toast(toast)
+
+    dialog = Adw.AlertDialog(
+        heading=_("Delete Radio Station"),
+        body=_("Are you sure you want to delete '{}'?").format(model.title)
+    )
+    dialog.add_response("cancel", _("Cancel"))
+    dialog.add_response("delete", _("Delete"))
+    dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE)
+    dialog.choose(window, None, response, model_id)
 
 # -- SONG --
 

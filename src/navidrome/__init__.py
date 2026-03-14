@@ -431,6 +431,13 @@ class Navidrome(GObject.Object):
         })
         return response.get('status') == 'ok'
 
+    def deleteInternetRadioStation(self, id:str) -> bool:
+        # returns true if ok
+        response = self.make_request('deleteInternetRadioStation', {
+            'id': id
+        })
+        return response.get('status') == 'ok'
+
 integration = None
 
 def get_current_integration():
