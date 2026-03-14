@@ -59,7 +59,8 @@ class ArtistPage(Adw.NavigationPage):
                 GLib.idle_add(self.avatar_el.set_custom_image, paintable)
             else:
                 GLib.idle_add(self.avatar_el.set_custom_image, None)
-        threading.Thread(target=update).start()
+        if coverArt:
+            threading.Thread(target=update).start()
 
     def update_name(self, name:str):
         self.name_el.set_label(name)

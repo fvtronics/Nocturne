@@ -33,7 +33,8 @@ class PlaylistRow(Adw.ActionRow):
             else:
                 GLib.idle_add(self.cover_el.set_from_icon_name, "playlist-symbolic")
                 GLib.idle_add(self.cover_el.set_pixel_size, -1)
-        threading.Thread(target=update).start()
+        if coverArt:
+            threading.Thread(target=update).start()
 
     def update_name(self, name:str):
         self.set_title(GLib.markup_escape_text(name))

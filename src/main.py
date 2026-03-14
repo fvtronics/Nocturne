@@ -30,6 +30,7 @@ from .window import NocturneWindow
 
 
 class NocturneApplication(Adw.Application):
+    __gtype_name__ = 'NocturneApplication'
     """The main application singleton class."""
 
     def __init__(self):
