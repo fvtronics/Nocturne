@@ -9,6 +9,8 @@ from datetime import timedelta
 class SongQueue(Gtk.Box):
     __gtype_name__ = 'NocturneSongQueue'
 
+    header_button = Gtk.Template.Child()
+    main_stack = Gtk.Template.Child()
     toolbar_revealer_el = Gtk.Template.Child()
     list_el = Gtk.Template.Child()
     remove_el = Gtk.Template.Child()
@@ -16,6 +18,15 @@ class SongQueue(Gtk.Box):
     play_next_el = Gtk.Template.Child()
     play_later_el = Gtk.Template.Child()
     playlist_id:str = ""
+
+    def set_header(self, label:str, icon_name:str, page_tag:str=None):
+        self.header_button.set_tooltip_text(label)
+        self.header_button.get_child().set_label(label)
+        self.header_button.get_child().set_icon_name(icon_name)
+        self.header_button.set_visible(True)
+        if page_tag:
+            self.header_button.set_action_target_value(GLib.Variant.new_string(page_tag))
+            self.header_button.set_action_name('app.replace_root_page')
 
     def set_selected_mode(self, select:bool=False, selected_row:Gtk.Widget=None):
         integration = get_current_integration()
@@ -30,7 +41,6 @@ class SongQueue(Gtk.Box):
             self.play_next_el.set_visible(not selected_row.draggable)
             self.play_later_el.set_visible(not selected_row.draggable)
         self.toolbar_revealer_el.set_reveal_child(select)
-
 
     def get_selected_rows(self) -> list:
         return [row for row in list(self.list_el) if row.check_el.get_active()]

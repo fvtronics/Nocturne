@@ -28,6 +28,7 @@ class PlaylistPage(Adw.NavigationPage):
         super().__init__(
             tag=str(uuid.uuid4())
         )
+        self.song_list_el.set_header(_("Songs"), "music-note-symbolic")
 
         self.play_el.set_action_target_value(GLib.Variant.new_string(self.id))
         self.play_shuffle_el.set_action_target_value(GLib.Variant.new_string(self.id))
@@ -63,6 +64,7 @@ class PlaylistPage(Adw.NavigationPage):
                     removable=True
                 )
             )
+        self.song_list_el.main_stack.set_visible_child_name('content' if len(song_list) > 0 else 'no-content')
 
     def update_song_count(self, songCount:int):
         if songCount == 1:

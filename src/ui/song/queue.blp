@@ -4,6 +4,22 @@ using Adw 1;
 template $NocturneSongQueue: Gtk.Box {
   orientation: vertical;
 
+  Gtk.Button header_button {
+    styles [
+      "flat",
+      "title-2",
+      "active_appearance_button"
+    ]
+    halign: start;
+    sensitive: false;
+    child: Adw.ButtonContent {
+      label: _("List");
+    };
+    tooltip-text: _("List");
+    visible: false;
+    margin-bottom: 10;
+  }
+
   Gtk.Revealer toolbar_revealer_el {
     transition-type: slide_up;
 
@@ -70,11 +86,23 @@ template $NocturneSongQueue: Gtk.Box {
       }
     };
   }
-
-  Gtk.ListBox list_el {
-    styles [
-      "boxed-list"
-    ]
-    selection-mode: none;
+  Gtk.Stack main_stack {
+    transition-type: crossfade;
+    Gtk.StackPage {
+      name: "content";
+      child: Gtk.ListBox list_el {
+        styles [
+          "boxed-list"
+        ]
+        selection-mode: none;
+        valign: start;
+      };
+    }
+    Gtk.StackPage {
+      name: "no-content";
+      child: Adw.StatusPage {
+        title: _("No Songs Found");
+      };
+    }
   }
 }

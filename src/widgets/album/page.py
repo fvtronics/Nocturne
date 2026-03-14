@@ -28,6 +28,7 @@ class AlbumPage(Adw.NavigationPage):
         super().__init__(
             tag=str(uuid.uuid4())
         )
+        self.song_list_el.set_header(_("Songs"), "music-note-symbolic")
 
         self.star_el.set_action_target_value(GLib.Variant.new_string(self.id))
         self.play_el.set_action_target_value(GLib.Variant.new_string(self.id))
@@ -77,4 +78,5 @@ class AlbumPage(Adw.NavigationPage):
         self.song_list_el.list_el.remove_all()
         for song_dict in song_list:
             self.song_list_el.list_el.append(SongRow(song_dict.get('id')))
+        self.song_list_el.main_stack.set_visible_child_name('content' if len(song_list) > 0 else 'no-content')
             
