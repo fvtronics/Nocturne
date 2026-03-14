@@ -166,6 +166,22 @@ template $NocturneSongRow: Adw.ActionRow {
                   clicked => $option_selected();
                 }
 
+                Gtk.Button edit_el { // for radios
+                  styles [
+                    "small",
+                    "flat",
+                    "button_no_bold"
+                  ]
+                  child: Adw.ButtonContent {
+                    label: _("Edit");
+                    icon-name: "document-edit-symbolic";
+                    halign: start;
+                  };
+
+                  action-name: "app.update_radio";
+                  clicked => $option_selected();
+                }
+
                 Gtk.Button remove_el {
                   styles [
                     "small",

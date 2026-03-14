@@ -70,43 +70,76 @@ def play_radio(window, model_id:str):
     else:
         window.queue_page.replace_queue([model_id])
 
-def add_radio(window):
-    def response(dialog, task, name_el, stream_el, homepage_el):
+def update_radio(window, id:str=""):
+    integration = navidrome.get_current_integration()
+    model = integration.loaded_models[id]
+
+    def response(dialog, task, name_el, stream_el, homepage_el, id:str):
         if dialog.choose_finish(task) == 'save':
             name = name_el.get_text()
             stream = stream_el.get_text()
             homepage = homepage_el.get_text()
             if name and stream and homepage:
                 integration = navidrome.get_current_integration()
-                result = integration.createInternetRadioStation(
-                    name,
-                    stream,
-                    homepage
-                )
+                if id:
+                    result = integration.updateInternetRadioStation(
+                        id,
+                        name,
+                        stream,
+                        homepage
+                    )
+                else:
+                    result = integration.createInternetRadioStation(
+                        name,
+                        stream,
+                        homepage
+                    )
                 if result:
                     threading.Thread(target=window.main_navigationview.get_visible_page().reload).start()
-            #TODO show toast if all good (or bad)
+                    toast = Adw.Toast(
+                        title=_("Radio updated successfully") if id else _("Radio added successfully"),
+                        timeout=2
+                    )
+                    window.toast_overlay.add_toast(toast)
+                    if id:
+                        model.set_property('title', name)
+                        model.set_property('streamUrl', stream)
+                        model.set_property('homePageUrl', homepage)
+                    return
+            toast = Adw.Toast(
+                title=_("Error updating radio") if id else _("Error adding radio"),
+                timeout=2
+            )
+            window.toast_overlay.add_toast(toast)
 
     list_box = Gtk.ListBox(
         selection_mode=Gtk.SelectionMode.NONE,
         css_classes=['boxed-list']
     )
     name_el = Adw.EntryRow(title=_("Name"))
+    if model and model.isRadio:
+        name_el.set_text(model.title)
     list_box.append(name_el)
     stream_el = Adw.EntryRow(title=_("Stream Url"))
+    if model and model.isRadio:
+        stream_el.set_text(model.streamUrl)
     list_box.append(stream_el)
     homepage_el = Adw.EntryRow(title=_("Homepage Url"))
+    if model and model.isRadio:
+        homepage_el.set_text(model.homePageUrl)
     list_box.append(homepage_el)
 
     dialog = Adw.AlertDialog(
-        heading=_("Add Radio Station"),
+        heading=_("Update Radio Station") if id else _("Add Radio Station"),
         extra_child=list_box
     )
     dialog.add_response("cancel", _("Cancel"))
     dialog.add_response("save", _("Save"))
     dialog.set_response_appearance("save", Adw.ResponseAppearance.SUGGESTED)
-    dialog.choose(window, None, response, name_el, stream_el, homepage_el)
+    dialog.choose(window, None, response, name_el, stream_el, homepage_el, id)
 
+def add_radio(window):
+    update_radio(window)
 
 # -- SONG --
 

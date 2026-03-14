@@ -421,6 +421,16 @@ class Navidrome(GObject.Object):
         })
         return response.get('status') == 'ok'
 
+    def updateInternetRadioStation(self, id:str, name:str, streamUrl:str, homepageUrl:str) -> bool:
+        # returns true if ok
+        response = self.make_request('updateInternetRadioStation', {
+            'id': id,
+            'name': name,
+            'streamUrl': streamUrl,
+            'homepageUrl': homepageUrl
+        })
+        return response.get('status') == 'ok'
+
 integration = None
 
 def get_current_integration():
