@@ -112,4 +112,7 @@ class SongQueue(Gtk.Box):
 
     @Gtk.Template.Callback()
     def add_to_playlist_selected(self, button):
-        ''
+        selected_rows = self.get_selected_rows()
+        target_value = GLib.Variant('as', [r.id for r in selected_rows])
+        self.get_root().activate_action("app.prompt_add_songs_to_playlist", target_value)
+        self.close_selector()

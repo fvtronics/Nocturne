@@ -422,14 +422,15 @@ class Navidrome(GObject.Object):
         })
         return response.get('status') == 'ok'
 
-    def createPlaylist(self, name:str, playlistId:str=None) -> bool:
+    def createPlaylist(self, name:str=None, playlistId:str=None, songId:list=[]) -> str:
         # returns true if ok
         # if playlistId is added then the name is updated
         response = self.make_request('createPlaylist', {
             'playlistId': playlistId,
-            'name': name
+            'name': name,
+            'songId': songId
         })
-        return response.get('status') == 'ok'
+        return response.get('playlist', {}).get('id')
 
     def updatePlaylist(self, playlistId:str, songIdToAdd:list=[], songIndexToRemove:list=[]) -> bool:
         # returns true if ok

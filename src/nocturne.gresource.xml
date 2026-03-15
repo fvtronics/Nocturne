@@ -68,6 +68,8 @@
     <file alias="playlist/button.ui">ui/playlist/button.ui</file>
     <file alias="playlist/page.ui">ui/playlist/page.ui</file>
     <file alias="playlist/row.ui">ui/playlist/row.ui</file>
+    <file alias="playlist/dialog.ui">ui/playlist/dialog.ui</file>
+    <file alias="playlist/selector_row.ui">ui/playlist/selector_row.ui</file>
 
     <file alias="song/row.ui">ui/song/row.ui</file>
     <file alias="song/queue.ui">ui/song/queue.ui</file>

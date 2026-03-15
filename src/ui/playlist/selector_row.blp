@@ -1,0 +1,23 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $NocturnePlaylistSelectorRow: Adw.ActionRow {
+  action-name: "app.add_songs_to_playlist";
+  activatable: true;
+  [prefix]
+  Gtk.Image cover_el {
+    styles [
+      "card"
+    ]
+    height-request: 48;
+    width-request: 48;
+    margin-top: 10;
+    margin-bottom: 10;
+    overflow: hidden;
+    valign: center;
+    halign: center;
+    paintable: Adw.SpinnerPaintable {
+      widget: cover_el;
+    };
+  }
+}

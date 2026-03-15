@@ -391,6 +391,61 @@ def remove_songs_from_playlist(window, data:dict):
                 args=(window, playlist_id, "name", _("Song Removed"))
             ).start()
 
+def prompt_add_songs_to_playlist(window, song_list:list):
+    dialog = Widgets.playlist.PlaylistDialog(song_list)
+    dialog.present(window)
+
+def add_songs_to_playlist(window, data):
+    integration = navidrome.get_current_integration()
+    dialogs = window.get_dialogs()
+    if len(dialogs) > 0:
+        dialogs[0].close()
+
+    if data.get('new_playlist'):
+        response = integration.createPlaylist(
+            name=data.get('new_playlist'),
+            songId=data.get('songs')
+        )
+        if response:
+            integration.verifyPlaylist(response, force_update=True, use_threading=False)
+            if len(data.get("songs")) > 1:
+                message = _("{} Songs Added").format(len(data.get("songs")))
+            else:
+                message = _("1 Song Added")
+            threading.Thread(
+                target=__show_custom_toast,
+                args=(window, response, "name", message)
+            ).start()
+
+    elif data.get('playlist'):
+        integration.verifyPlaylist(data.get('playlist'), force_update=True, use_threading=False)
+        model = integration.loaded_models.get(data.get('playlist'))
+        existing_songs = [e.get('id') for e in model.entry]
+        songs = [s for s in data.get('songs') if s not in existing_songs]
+        response = integration.updatePlaylist(
+            playlistId=data.get('playlist'),
+            songIdToAdd=songs
+        )
+
+        message = []
+        if len(songs) > 0:
+            if len(songs) == 1:
+                message.append(_("1 Song Added"))
+            else:
+                message.append(_("{} Songs Added").format(len(songs)))
+
+        skipped_songs = len(data.get('songs')) - len(songs)
+        if skipped_songs > 0:
+            if skipped_songs == 1:
+                message.append(_("1 Song Skipped"))
+            else:
+                message.append(_("{} Songs Skipped").format(skipped_songs))
+
+        threading.Thread(
+            target=__show_custom_toast,
+            args=(window, data.get('playlist'), "name", ' | '.join(message))
+        ).start()
+
 # -- ARTIST --
 
 def show_artist(window, model_id:str):

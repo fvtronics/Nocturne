@@ -1,0 +1,36 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $NocturnePlaylistDialog: Adw.Dialog {
+  content-width: 400;
+  title: _("Playlist");
+  child: Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {
+      title-widget: Gtk.SearchEntry {
+        placeholder-text: _("Search (or create new playlist)");
+        hexpand: true;
+        search-changed => $search_changed();
+      };
+    }
+    content: Adw.PreferencesGroup preferences_group_el {
+      title: _("Adding Music to Playlist");
+      margin-start: 10;
+      margin-end: 10;
+      margin-bottom: 10;
+      margin-top: 10;
+      Gtk.ListBox list_el {
+        styles [
+          "boxed-list"
+        ]
+        selection-mode: none;
+        Adw.ButtonRow add_button_el {
+          activatable: true;
+          start-icon-name: "list-add-symbolic";
+          visible: false;
+          tooltip-text: _("Create new playlist and add songs");
+        }
+      }
+    };
+  };
+}

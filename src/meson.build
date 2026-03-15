@@ -31,6 +31,8 @@ blueprints = files(
   'ui/playlist/button.blp',
   'ui/playlist/page.blp',
   'ui/playlist/row.blp',
+  'ui/playlist/dialog.blp',
+  'ui/playlist/selector_row.blp',
 
   'ui/song/row.blp',
   'ui/song/queue.blp',
