@@ -198,12 +198,10 @@ def play_song_later(window, model_id:str):
         args=(window, model_id, 'title', _("Playing Later"))
     ).start()
 
-def play_songs(window, song_list:str):
-    song_list = song_list.split('|')
+def play_songs(window, song_list:list):
     window.queue_page.replace_queue(song_list)
 
-def play_songs_next(window, song_list:str):
-    song_list = song_list.split('|')
+def play_songs_next(window, song_list:list):
     window.queue_page.play_next(song_list)
     if len(song_list)> 1:
         threading.Thread(
@@ -216,8 +214,7 @@ def play_songs_next(window, song_list:str):
             args=(window, song_list[0], "title", _("Playing Next"))
         ).start()
 
-def play_songs_later(window, song_list:str):
-    song_list = song_list.split('|')
+def play_songs_later(window, song_list:list):
     window.queue_page.play_later(song_list)
     if len(song_list) > 1:
         threading.Thread(
@@ -373,10 +370,9 @@ def update_playlist(window, model_id:str=None):
 def create_playlist(window):
     update_playlist(window)
 
-def remove_songs_from_playlist(window, song_list:str):
-    song_list = song_list.split('|')
-    playlist_id = song_list[0]
-    song_list = song_list[1:]
+def remove_songs_from_playlist(window, data:dict):
+    playlist_id = data.get('playlist', "")
+    song_list = data.get('indexes', [])
 
     integration = navidrome.get_current_integration()
     result = integration.updatePlaylist(
@@ -413,7 +409,7 @@ def play_shuffle_artist(window, model_id:str):
                 if album_model:
                     songs.extend([s.get('id') for s in album_model.song])
             if len(songs) > 0:
-                play_songs(window, '|'.join(random.sample(songs, min(20, len(songs)))))
+                play_songs(window, random.sample(songs, min(20, len(songs))))
     threading.Thread(target=run).start()
 
 def play_radio_artist(window, model_id:str):
@@ -421,7 +417,7 @@ def play_radio_artist(window, model_id:str):
     def run():
         songs = integration.getSimilarSongs(model_id)
         if len(songs) > 0:
-            play_songs(window, '|'.join(songs))
+            play_songs(window, songs)
         else:
             toast = Adw.Toast(
                 title=_("No songs found")

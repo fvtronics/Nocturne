@@ -59,10 +59,16 @@ class SongQueue(Gtk.Box):
     def remove_selected(self, button):
         if self.playlist_id: # is playlist
             indexes = self.get_selected_indexes()
-            target_value = GLib.Variant('s', '|'.join([self.playlist_id] + [str(i) for i in indexes]))
+            target_value = GLib.Variant('a{sv}', {
+                'playlist': GLib.Variant('s', self.playlist_id),
+                'indexes': GLib.Variant('as', [str(i) for i in indexes])
+            })
             self.get_root().activate_action("app.remove_songs_from_playlist", target_value)
             for index in indexes:
                 GLib.idle_add(self.list_el.remove, list(self.list_el)[index])
+            def verify_visibility():
+                self.main_stack.set_visible_child_name('content' if len(list(self.list_el)) > 0 else 'no-content')
+            GLib.idle_add(verify_visibility)
         else:
             integration = get_current_integration()
             all_ids = self.get_all_ids()
@@ -84,7 +90,7 @@ class SongQueue(Gtk.Box):
     def play_selected(self, button):
         selected_rows = self.get_selected_rows()
         selected_ids = [r.id for r in selected_rows]
-        target_value = GLib.Variant('s', '|'.join(selected_ids))
+        target_value = GLib.Variant('as', selected_ids)
         self.get_root().activate_action("app.play_songs", target_value)
         self.close_selector()
 
@@ -92,7 +98,7 @@ class SongQueue(Gtk.Box):
     def play_next_selected(self, button):
         selected_rows = self.get_selected_rows()
         selected_ids = [r.id for r in selected_rows]
-        target_value = GLib.Variant('s', '|'.join(selected_ids))
+        target_value = GLib.Variant('as', selected_ids)
         self.get_root().activate_action("app.play_songs_next", target_value)
         self.close_selector()
 
@@ -100,7 +106,7 @@ class SongQueue(Gtk.Box):
     def play_later_selected(self, button):
         selected_rows = self.get_selected_rows()
         selected_ids = [r.id for r in selected_rows]
-        target_value = GLib.Variant('s', '|'.join(selected_ids))
+        target_value = GLib.Variant('as', selected_ids)
         self.get_root().activate_action("app.play_songs_later", target_value)
         self.close_selector()
 
