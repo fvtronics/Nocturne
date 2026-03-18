@@ -171,7 +171,7 @@ class PlayingLyricsPage(Gtk.Stack):
     @Gtk.Template.Callback()
     def on_lrc_selection(self, selection_model, position, n_items):
         if not self.code_is_selecting:
-            self.get_root().playing_page.player.seek_simple(
+            self.get_root().playing_page.player.gst.seek_simple(
                 Gst.Format.TIME,
                 Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
                 int(selection_model.get_selected_item().ms/1000 * Gst.SECOND)

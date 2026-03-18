@@ -84,7 +84,7 @@ class NocturneWindow(Adw.ApplicationWindow):
         current_id, song_list = integration.getPlayQueue()
         if len(song_list) > 0:
             GLib.idle_add(self.get_root().queue_page.replace_queue, song_list, current_id)
-            GLib.idle_add(lambda: self.get_root().playing_page.player.set_state(Gst.State.PAUSED) and False)
+            GLib.timeout_add(200, lambda: self.playing_page.player.gst.set_state(Gst.State.PAUSED) and False)
 
     def setup_sidebar(self):
         for section in SIDEBAR_MENU:

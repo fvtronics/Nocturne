@@ -149,20 +149,20 @@ class Song(GObject.Object):
     #path = GObject.Property(type=str)
     #created = GObject.Property(type=str)
     #type = GObject.Property(type=str)
-    #bpm = GObject.Property(type=int)
+    bpm = GObject.Property(type=int)
     #comment = GObject.Property(type=str)
     #sortName = GObject.Property(type=str)
     #mediaType = GObject.Property(type=str)
     #isrc = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
-    #genres = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
+    genres = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
     #channelCount = GObject.Property(type=int)
     #samplingRate = GObject.Property(type=int)
     #bitDepth = GObject.Property(type=int)
     #displayArtist = GObject.Property(type=str)
     #displayAlbumArtist = GObject.Property(type=str)
-    #displayComposer = GObject.Property(type=str)
+    displayComposer = GObject.Property(type=str)
     #moods = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
-    #albumArtists = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
+    albumArtists = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
     #contributors = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
 
     def __init__(self, **kwargs):
