@@ -21,7 +21,7 @@ class Navidrome(GObject.Object):
         }
 
     def get_base_params(self) -> dict:
-        salt, token = secret.get_hashed_password(self.username, self.base_url)
+        salt, token = secret.get_hashed_password()
         return {
             'u': self.username,
             't': token,

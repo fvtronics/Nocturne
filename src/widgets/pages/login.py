@@ -55,5 +55,5 @@ class LoginPage(Adw.NavigationPage):
         password_str = self.password_el.get_text()
 
         if url_str and user_str and password_str:
-            secret.store_password(user_str, url_str, password_str)
+            secret.store_password(password_str)
             GLib.idle_add(self.verify_login, url_str, user_str)

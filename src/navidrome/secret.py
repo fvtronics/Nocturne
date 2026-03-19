@@ -7,16 +7,12 @@ BASE_SCHEMA = Secret.Schema.new(
     "com.jeffser.Nocturne.Password",
     Secret.SchemaFlags.NONE,
     {
-        "username": Secret.SchemaAttributeType.STRING,
-        "base_url": Secret.SchemaAttributeType.STRING
+        "type": Secret.SchemaAttributeType.STRING
     }
 )
 
-def store_password(username:str, base_url:str, password:str):
-    attributes = {
-        "username": username,
-        "base_url": base_url
-    }
+def store_password(password:str):
+    attributes = {"type": "password"}
 
     Secret.password_store_sync(
         BASE_SCHEMA,
@@ -27,12 +23,9 @@ def store_password(username:str, base_url:str, password:str):
         None
     )
 
-def get_hashed_password(username:str, base_url:str) -> tuple:
+def get_hashed_password() -> tuple:
     # returns salt, hashed password
-    attributes = {
-        "username": username,
-        "base_url": base_url
-    }
+    attributes = {"type": password}
 
     password = Secret.password_lookup_sync(
         BASE_SCHEMA,
