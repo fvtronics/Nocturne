@@ -58,22 +58,27 @@ template $NocturneArtistPage: Adw.NavigationPage {
                 visible: false;
               }
 
-              Gtk.Label biography_el {
+              Gtk.Button {
                 styles [
-                  "document"
+                  "flat",
+                  "force_p0",
+                  "no_bold_button"
                 ]
-                wrap: true;
-                wrap-mode: word_char;
-                ellipsize: end;
-                lines: 4;
-                valign: center;
-                hexpand: true;
-                max-width-chars: 1;
-                visible: false;
-
-                Gtk.GestureClick {
-                  pressed => $on_biography_pressed();
-                }//TODO change for a button
+                Gtk.Label biography_el {
+                  styles [
+                    "document"
+                  ]
+                  wrap: true;
+                  wrap-mode: word_char;
+                  ellipsize: end;
+                  lines: 4;
+                  valign: center;
+                  hexpand: true;
+                  max-width-chars: 1;
+                  visible: false;
+                }
+                tooltip-text: _("Expand Biography");
+                clicked => $on_biography_clicked();
               }
 
               Adw.WrapBox context_wrap_el {

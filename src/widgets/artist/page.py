@@ -101,10 +101,9 @@ class ArtistPage(Adw.NavigationPage):
     # -- Callbacks --
 
     @Gtk.Template.Callback()
-    def on_biography_pressed(self, gesture, n_press, x, y):
-        if n_press == 1:
-            if self.biography_el.get_ellipsize() == Pango.EllipsizeMode.NONE:
-                self.biography_el.set_ellipsize(Pango.EllipsizeMode.END)
-            else:
-                self.biography_el.set_ellipsize(Pango.EllipsizeMode.NONE)
+    def on_biography_clicked(self, button):
+        if button.get_child().get_ellipsize() == Pango.EllipsizeMode.NONE:
+            button.get_child().set_ellipsize(Pango.EllipsizeMode.END)
+        else:
+            button.get_child().set_ellipsize(Pango.EllipsizeMode.NONE)
 
