@@ -309,7 +309,7 @@ class Integration(GObject.Object):
             if song_dict.get('id') not in self.loaded_models:
                 self.loaded_models[id] = models.Song(**song_dict)
             else:
-                self.verifySong(self, force_update=True)
+                self.verifySong(song_dict.get('id'), force_update=True)
 
         return play_queue.get('current'), [s.get('id') for s in song_list]
 
@@ -453,9 +453,10 @@ class Integration(GObject.Object):
 
     def scrobble(self, id:str):
         # Registers the song as played, useful for keeping track of "most played" albums and the sorts
-        self.make_request('scrobble', {
-            'id': id
-        })
+        if id:
+            self.make_request('scrobble', {
+                'id': id
+            })
 
 integration = None
 
