@@ -25,10 +25,14 @@ template $NocturnePreferencesDialog: Adw.PreferencesDialog {
       }
     }
     Adw.PreferencesGroup {
-      title: _("Startup");
+      title: _("Behavior");
       Adw.SwitchRow restore_el {
         title: _("Restore Session");
         subtitle: _("Retrieve previous queue from server");
+      }
+      Adw.SwitchRow hide_on_close_el {
+        title: _("Hide on Close");
+        subtitle: _("Hide Nocturne when closing");
       }
     }
   }

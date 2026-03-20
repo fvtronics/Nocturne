@@ -10,6 +10,9 @@
 	  <key name="welcome-viewed" type="b">
 	    <default>false</default>
 	  </key>
+	  <key name="hide-on-close" type="b">
+	    <default>false</default>
+	  </key>
 	  <key name="use-integrated-server" type="b">
 	    <default>false</default>
 	  </key>

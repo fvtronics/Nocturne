@@ -5,6 +5,7 @@ template $NocturneWindow: Adw.ApplicationWindow {
   title: "Nocturne";
   width-request: 360;
   height-request: 560;
+  hide-on-close: true;
   close-request => $close_request();
   Adw.Breakpoint breakpoint_el {
     condition ("max-width: 480sp")

@@ -13,6 +13,7 @@ class NocturnePreferences(Adw.PreferencesDialog):
     dynamic_bg_el = Gtk.Template.Child()
     blur_bg_el = Gtk.Template.Child()
     restore_el = Gtk.Template.Child()
+    hide_on_close_el = Gtk.Template.Child()
 
     hp_songs_el = Gtk.Template.Child()
     hp_albums_el = Gtk.Template.Child()
@@ -47,6 +48,12 @@ class NocturnePreferences(Adw.PreferencesDialog):
         settings.bind(
             "restore-session",
             self.restore_el,
+            "active",
+            Gio.SettingsBindFlags.DEFAULT
+        )
+        settings.bind(
+            "hide-on-close",
+            self.hide_on_close_el,
             "active",
             Gio.SettingsBindFlags.DEFAULT
         )

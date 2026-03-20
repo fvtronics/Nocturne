@@ -48,14 +48,17 @@ class NocturneWindow(Adw.ApplicationWindow):
 
     @Gtk.Template.Callback()
     def close_request(self, window):
-        integration = navidrome.get_current_integration()
-        if integration:
-            id_list = self.queue_page.song_list_el.get_all_ids()
-            current_song = integration.loaded_models.get('currentSong')
-            integration.savePlayQueue(id_list, current_song.get_property('songId'), current_song.get_property('positionSeconds') * 1000)
-        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-        settings.set_int('default-width', self.get_width())
-        settings.set_int('default-height', self.get_height())
+        if not self.get_hide_on_close():
+            integration = navidrome.get_current_integration()
+            if integration:
+                id_list = self.queue_page.song_list_el.get_all_ids()
+                current_song = integration.loaded_models.get('currentSong')
+                integration.savePlayQueue(id_list, current_song.get_property('songId'), current_song.get_property('positionSeconds') * 1000)
+            settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
+            settings.set_int('default-width', self.get_width())
+            settings.set_int('default-height', self.get_height())
+            if self.login_page.navidrome_proc:
+                self.login_page.navidrome_proc.terminate()
 
     @Gtk.Template.Callback()
     def on_sidebar_activated(self, sidebar, index):
@@ -142,6 +145,13 @@ class NocturneWindow(Adw.ApplicationWindow):
         settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
         self.set_property('default-width', settings.get_value('default-width').unpack())
         self.set_property('default-height', settings.get_value('default-height').unpack())
+        self.set_property('hide-on-close', settings.get_value('hide-on-close').unpack())
+        settings.bind(
+            "hide-on-close",
+            self,
+            "hide-on-close",
+            Gio.SettingsBindFlags.DEFAULT
+        )
         if settings.get_value('player-blur-bg').unpack():
             self.add_css_class('player-blur')
 
