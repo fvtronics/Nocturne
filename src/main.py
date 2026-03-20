@@ -56,6 +56,7 @@ class NocturneApplication(Adw.Application):
             developer_name="Jeffry Samuel",
             issue_url="https://github.com/Jeffser/Nocturne/issues",
             license="GPL-3.0-or-later",
+            support_url="https://github.com/Jeffser/Nocturne/discussions",
             version=self.version,
             website="https://jeffser.com/nocturne"
         )
