@@ -24,4 +24,6 @@
 
 ## Screenies
 
-TODO
+HomePage | Song Queue | Lyrics | Song List | Album Page
+:------------------:|:-----------------:|:----------------:|:---------------------------:|:--------------------:
+![screenie1](https://jeffser.com/images/nocturne/screenie1.png) | ![screenie2](https://jeffser.com/images/nocturne/screenie2.png) | ![screenie3](https://jeffser.com/images/nocturne/screenie3.png) | ![screenie4](https://jeffser.com/images/nocturne/screenie4.png) | ![screenie5](https://jeffser.com/images/nocturne/screenie5.png)
