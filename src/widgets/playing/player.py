@@ -232,6 +232,7 @@ class Player(EventAdapter):
     def __init__(self, control_page):
         self.control_page = control_page
         self.gst = Gst.ElementFactory.make("playbin", "music-player")
+        self.gst.set_property('volume', 0.25)
         self.bus = self.gst.get_bus()
         self.bus.add_signal_watch()
         self.bus.connect("message", self.on_message)
@@ -372,3 +373,4 @@ class Player(EventAdapter):
             if len(self.control_page.get_root().get_application().external_songs) == 0:
                 GLib.idle_add(lambda: self.gst.set_state(Gst.State.PAUSED) and False)
         self.control_page.get_root().get_application().external_songs = []
+
