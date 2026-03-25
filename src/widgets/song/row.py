@@ -211,14 +211,15 @@ class SongRow(Adw.ActionRow):
             queue.list_el.remove(self)
         else:
             integration = get_current_integration()
-            all_ids = queue.get_all_ids()
-            if len(all_ids) > 1:
-                next_index = all_ids.index(self.id) + 1
-                if len(all_ids) <= next_index:
-                    next_index = 0
-                integration.loaded_models.get('currentSong').set_property('songId', all_ids[next_index])
-            else:
-                integration.loaded_models.get('currentSong').set_property('songId', None)
+            if self.id == integration.loaded_models.get('currentSong').get_property('songId'):
+                all_ids = queue.get_all_ids()
+                if len(all_ids) > 1:
+                    next_index = all_ids.index(self.id) + 1
+                    if len(all_ids) <= next_index:
+                        next_index = 0
+                    integration.loaded_models.get('currentSong').set_property('songId', all_ids[next_index])
+                else:
+                    integration.loaded_models.get('currentSong').set_property('songId', None)
             queue.list_el.remove(self)
 
     @Gtk.Template.Callback()
@@ -247,6 +248,7 @@ class SongRow(Adw.ActionRow):
         )
         popover.set_parent(self)
         popover.popup()
+
 
 
 
