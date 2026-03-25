@@ -66,7 +66,7 @@ class PlayingControlPage(Adw.NavigationPage):
         self.get_root().breakpoint_el.connect('unapply', lambda *_: self.breakpoint_toggled(False))
         condition = self.get_root().breakpoint_el.get_condition().to_string()
         is_small = self.get_root().get_width() < int(condition.split(': ')[1].strip('sp'))
-        self.breakpoint_toggled(is_small)
+        self.breakpoint_toggled(is_small and self.get_root().get_width() > 0)
 
     @Gtk.Template.Callback()
     def seek_start(self, gesture, n_press, x, y):
