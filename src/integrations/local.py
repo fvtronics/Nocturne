@@ -235,10 +235,34 @@ class Local(GObject.Object):
         return True
 
     def getAlbumList(self, list_type:str="recent", size:int=10, offset:int=0) -> list:
-        # list_type and offset are not implemented yet
+        # list_type is not implemented yet
+        album_list = []
         if list_type == "random":
             album_list = [id for id in list(self.loaded_models) if id.startswith('ALBUM:')]
             random.shuffle(album_list)
+        elif list_type in ("frequent", "recent"):
+            try:
+                with open(os.path.join(LOCAL_DATA_DIR, 'scrobble.json'), 'r') as f:
+                    scrobble_dict = json.load(f)
+                if not isinstance(scrobble_dict, dict):
+                    return []
+            except Exception:
+                return []
+
+            album_views = {}
+            for data in scrobble_dict.values():
+                if data.get('album') in album_views:
+                    album_views[data.get('album')]['plays'] += data.get('plays')
+                    album_views[data.get('album')]['last_play'] = max(data.get('last_play'), album_views.get(data.get('album')).get('last_play'))
+                else:
+                    album_views[data.get('album')] = {
+                        'plays': data.get('plays'),
+                        'last_play': data.get('last_play')
+                    }
+            if list_type == "frequent":
+                album_list = sorted(album_views, key=lambda x: album_views.get(x).get('plays'), reverse=True)
+            elif list_type == "recent":
+                album_list = sorted(album_views, key=lambda x: album_views.get(x).get('last_play'), reverse=True)
         elif list_type == "starred":
             album_list = [id for id, model in self.loaded_models.items() if id.startswith('ALBUM:') and model.starred]
         else:
@@ -531,24 +555,27 @@ class Local(GObject.Object):
     def scrobble(self, id:str):
         if not id:
             return
-        SCROBBLEFILE = os.path.join(LOCAL_DATA_DIR, 'scrobble.json')
-        try:
-            with open(SCROBBLEFILE, 'r') as f:
-                scrobble_dict = json.load(f)
-            if not isinstance(scrobble_dict, dict):
+        if model := self.loaded_models.get(id):
+            SCROBBLEFILE = os.path.join(LOCAL_DATA_DIR, 'scrobble.json')
+            try:
+                with open(SCROBBLEFILE, 'r') as f:
+                    scrobble_dict = json.load(f)
+                if not isinstance(scrobble_dict, dict):
+                    scrobble_dict = {}
+            except Exception:
                 scrobble_dict = {}
-        except Exception:
-            scrobble_dict = {}
 
-        if id in scrobble_dict:
-            scrobble_dict[id]['plays'] += 1
-            scrobble_dict[id]['last_play'] = int(time.time())
-        else:
-            scrobble_dict[id] = {
-                'plays': 1,
-                'last_play': int(time.time())
-            }
+            if id in scrobble_dict:
+                scrobble_dict[id]['plays'] += 1
+                scrobble_dict[id]['last_play'] = int(time.time())
+                scrobble_dict[id]['album'] = model.albumId
+            else:
+                scrobble_dict[id] = {
+                    'plays': 1,
+                    'last_play': int(time.time()),
+                    'album': model.albumId
+                }
 
-        with open(SCROBBLEFILE, 'w') as f:
-            json.dump(scrobble_dict, f, ensure_ascii=False)
+            with open(SCROBBLEFILE, 'w') as f:
+                json.dump(scrobble_dict, f, ensure_ascii=False)
 
