@@ -23,6 +23,7 @@ template $NocturneWelcomePage: Adw.NavigationPage {
         selection-mode: none;
         Adw.ActionRow {
           title: _("Connect to Server");
+          tooltip-text: _("Connect to Server");
           subtitle: _("Use existing instance");
           activated => $existing_clicked();
           activatable: true;
@@ -34,7 +35,8 @@ template $NocturneWelcomePage: Adw.NavigationPage {
         }
         Adw.ActionRow {
           title: _("Use Navidrome");
-          subtitle: _("Integrated instance");
+          tooltip-text: _("Use Navidrome");
+          subtitle: _("Use integrated instance");
           activated => $setup_clicked();
           activatable: true;
           [suffix]
@@ -44,7 +46,8 @@ template $NocturneWelcomePage: Adw.NavigationPage {
           }
         }
         Adw.ActionRow {
-          title: _("Only Use Local Files");
+          title: _("Only Local Files");
+          tooltip-text: _("Only Local Files");
           subtitle: _("Limited functionallity");
           activated => $local_clicked();
           activatable: true;
