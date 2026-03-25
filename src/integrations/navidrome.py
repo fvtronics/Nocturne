@@ -1,7 +1,7 @@
 # navidrome.py
 
 from gi.repository import Gtk, GLib, GObject, Gdk, Gio, GdkPixbuf
-from . import secret, models
+from . import secret, models, local
 import requests, random, threading, favicon, io
 from PIL import Image
 
@@ -115,6 +115,8 @@ class Navidrome(GObject.Object):
             if model:= self.loaded_models.get(id):
                 if isinstance(model, models.Song) and model.isRadio:
                     return self.getRadioCoverArtWithBytes(id)
+                if isinstance(model, models.Song) and model.isExternalFile:
+                    return local.Local.getCoverArtWithBytes(self, id)
                 coverArtId = ""
                 if model.gdkPaintable:
                     return model.gdkPaintableBytes, model.gdkPaintable
@@ -442,7 +444,8 @@ class Navidrome(GObject.Object):
 
     def scrobble(self, id:str):
         # Registers the song as played, useful for keeping track of "most played" albums and the sorts
-        if id:
-            self.make_request('scrobble', {
-                'id': id
-            })
+        if model := self.loaded_models.get(id) :
+            if not model.isExternalFile:
+                self.make_request('scrobble', {
+                    'id': id
+                })
