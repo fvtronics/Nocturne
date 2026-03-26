@@ -77,7 +77,7 @@ def logout(window):
     settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
     settings.set_string('integration-user', '')
     settings.set_int('auto-login', 0)
-    window.queue_page.replace_queue([])
+    threading.Thread(target=window.queue_page.replace_queue, args=([],)).start()
     GLib.idle_add(window.main_stack.set_visible_child_name, 'welcome')
     GLib.idle_add(window.replace_root_page, 'home')
     dialogs = window.get_dialogs()
@@ -128,7 +128,7 @@ def play_radio(window, model_id:str):
         integration = get_current_integration()
         integration.loaded_models.get('currentSong').set_property('songId', model_id)
     else:
-        window.queue_page.replace_queue([model_id])
+        threading.Thread(target=window.queue_page.replace_queue, args=([model_id],)).start()
 
 def update_radio(window, id:str=""):
     integration = get_current_integration()
@@ -239,27 +239,39 @@ def play_song(window, model_id:str):
         integration = get_current_integration()
         integration.loaded_models.get('currentSong').set_property('songId', model_id)
     else:
-        window.queue_page.replace_queue([model_id])
+        threading.Thread(target=window.queue_page.replace_queue, args=([model_id],)).start()
 
 def play_song_next(window, model_id:str):
-    window.queue_page.play_next([model_id])
+    threading.Thread(
+        target=window.queue_page.play_next,
+        args=([model_id],)
+    ).start()
     threading.Thread(
         target=__show_custom_toast,
         args=(window, model_id, 'title', _("Playing Next"))
     ).start()
 
 def play_song_later(window, model_id:str):
-    window.queue_page.play_later([model_id])
+    threading.Thread(
+        target=window.queue_page.play_later,
+        args=([model_id],)
+    ).start()
     threading.Thread(
         target=__show_custom_toast,
         args=(window, model_id, 'title', _("Playing Later"))
     ).start()
 
 def play_songs(window, song_list:list):
-    window.queue_page.replace_queue(song_list)
+    threading.Thread(
+        target=window.queue_page.replace_queue,
+        args=(song_list,)
+    ).start()
 
 def play_songs_next(window, song_list:list):
-    window.queue_page.play_next(song_list)
+    threading.Thread(
+        target=window.queue_page.play_next,
+        args=(song_list,)
+    ).start()
     if len(song_list)> 1:
         threading.Thread(
             target=__show_custom_toast,
@@ -272,7 +284,10 @@ def play_songs_next(window, song_list:list):
         ).start()
 
 def play_songs_later(window, song_list:list):
-    window.queue_page.play_later(song_list)
+    threading.Thread(
+        target=window.queue_page.play_later,
+        args=(song_list,)
+    ).start()
     if len(song_list) > 1:
         threading.Thread(
             target=__show_custom_toast,
@@ -315,7 +330,10 @@ def save_lyrics(window, lyric_dict:dict):
 
 def play_random_queue(window):
     integration = get_current_integration()
-    window.queue_page.replace_queue(integration.getRandomSongs())
+    threading.Thread(
+        target=window.queue_page.replace_queue,
+        args=(integration.getRandomSongs(),)
+    ).start()
 
 # -- ALBUM --
 
@@ -328,7 +346,10 @@ def play_album(window, model_id:str):
 
     if album:
         integration.verifyAlbum(album.get_property('id'), force_update=True, use_threading=False)
-        window.queue_page.replace_queue([s.get('id') for s in album.get_property('song')])
+        threading.Thread(
+            target=window.queue_page.replace_queue,
+            args=([s.get('id') for s in album.get_property('song')],)
+        ).start()
 
 def play_album_next(window, model_id:str):
     integration = get_current_integration()
@@ -336,7 +357,10 @@ def play_album_next(window, model_id:str):
 
     if album:
         integration.verifyAlbum(album.get_property('id'), force_update=True, use_threading=False)
-        window.queue_page.play_next([s.get('id') for s in album.get_property('song')])
+        threading.Thread(
+            target=window.queue_page.play_next,
+            args=([s.get('id') for s in album.get_property('song')],)
+        ).start()
     threading.Thread(
         target=__show_custom_toast,
         args=(window, model_id, 'name', _("Playing Next"))
@@ -348,7 +372,10 @@ def play_album_later(window, model_id:str):
 
     if album:
         integration.verifyAlbum(album.get_property('id'), force_update=True, use_threading=False)
-        window.queue_page.play_later([s.get('id') for s in album.get_property('song')])
+        threading.Thread(
+            target=window.queue_page.play_later,
+            args=([s.get('id') for s in album.get_property('song')],)
+        ).start()
     threading.Thread(
         target=__show_custom_toast,
         args=(window, model_id, 'name', _("Playing Later"))
@@ -362,7 +389,10 @@ def play_album_shuffle(window, model_id:str):
         integration.verifyAlbum(album.get_property('id'), force_update=True, use_threading=False)
         song_list = [s.get('id') for s in album.get_property('song')]
         random.shuffle(song_list)
-        window.queue_page.replace_queue(song_list)
+        threading.Thread(
+            target=window.queue_page.replace_queue,
+            args=(song_list,)
+        ).start()
 
 # -- PLAYLIST --
 
@@ -375,7 +405,10 @@ def play_playlist(window, model_id:str):
 
     if playlist:
         integration.verifyPlaylist(playlist.get_property('id'), force_update=True, use_threading=False)
-        window.queue_page.replace_queue([s.get('id') for s in playlist.get_property('entry')])
+        threading.Thread(
+            target=window.queue_page.replace_queue,
+            args=([s.get('id') for s in playlist.get_property('entry')],)
+        ).start()
 
 def play_playlist_next(window, model_id:str):
     integration = get_current_integration()
@@ -383,7 +416,10 @@ def play_playlist_next(window, model_id:str):
 
     if playlist:
         integration.verifyPlaylist(playlist.get_property('id'), force_update=True, use_threading=False)
-        window.queue_page.play_next([s.get('id') for s in playlist.get_property('entry')])
+        threading.Thread(
+            target=window.queue_page.play_next,
+            args=([s.get('id') for s in playlist.get_property('entry')],)
+        ).start()
     threading.Thread(
         target=__show_custom_toast,
         args=(window, model_id, 'name', _("Playing Next"))
@@ -395,7 +431,10 @@ def play_playlist_later(window, model_id:str):
 
     if playlist:
         integration.verifyPlaylist(playlist.get_property('id'), force_update=True, use_threading=False)
-        window.queue_page.play_later([s.get('id') for s in playlist.get_property('entry')])
+        threading.Thread(
+            target=window.queue_page.play_later,
+            args=([s.get('id') for s in playlist.get_property('entry')],)
+        ).start()
     threading.Thread(
         target=__show_custom_toast,
         args=(window, model_id, 'name', _("Playing Later"))
@@ -409,7 +448,10 @@ def play_playlist_shuffle(window, model_id:str):
         integration.verifyPlaylist(playlist.get_property('id'), force_update=True, use_threading=False)
         song_list = [s.get('id') for s in playlist.get_property('entry')]
         random.shuffle(song_list)
-        window.queue_page.replace_queue(song_list)
+        threading.Thread(
+            target=window.queue_page.replace_queue,
+            args=(song_list,)
+        ).start()
 
 def update_playlist(window, model_id:str=None):
     integration = get_current_integration()
