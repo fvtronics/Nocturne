@@ -71,15 +71,14 @@ def toggle_star(window, model_id:str):
                 model.set_property('starred', datetime.now(UTC).isoformat(timespec='microseconds').replace('+00:00', 'Z'))
 
 def logout(window):
-    if window.login_page.navidrome_proc:
-        window.login_page.navidrome_proc.terminate()
-        window.login_page.navidrome_proc = None
+    integration = get_current_integration()
+    integration.terminate_instance()
     settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
     settings.set_string('integration-user', '')
-    settings.set_int('auto-login', 0)
+    settings.set_string('selected-instance-type', '')
     threading.Thread(target=window.queue_page.replace_queue, args=([],)).start()
     GLib.idle_add(window.main_stack.set_visible_child_name, 'welcome')
-    GLib.idle_add(window.replace_root_page, 'home')
+    GLib.idle_add(replace_root_page, window, 'home')
     dialogs = window.get_dialogs()
     if len(dialogs) > 0:
         dialogs[0].close()

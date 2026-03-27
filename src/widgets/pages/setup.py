@@ -13,6 +13,10 @@ class SetupPage(Adw.NavigationPage):
     downloading_status_page = Gtk.Template.Child()
     progressbar_el = Gtk.Template.Child()
     continue_button = Gtk.Template.Child()
+    integration = None
+
+    def set_integration(self, integration):
+        self.integration = integration
 
     def get_latest_url(self) -> str:
         url = "https://api.github.com/repos/navidrome/navidrome/releases/latest"
@@ -57,18 +61,15 @@ class SetupPage(Adw.NavigationPage):
             GLib.idle_add(self.downloading_status_page.set_description, _("Installing"))
             with tarfile.open(download_path, "r:gz") as tar:
                 tar.extractall(path=BASE_NAVIDROME_DIR, filter='fully_trusted')
-            GLib.idle_add(self.start_server)
-            settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-            settings.set_boolean('use-integrated-server', True)
-            GLib.idle_add(self.main_stack.set_visible_child_name, 'success')
-            if os.path.isfile(download_path):
-                os.remove(download_path)
+            if self.instance.start_instance():
+                GLib.idle_add(self.main_stack.set_visible_child_name, 'success')
+                if os.path.isfile(download_path):
+                    os.remove(download_path)
+            else:
+                self.main_stack.set_visible_child_name('error')
 
         except Exception:
             self.main_stack.set_visible_child_name('error')
-
-    def start_server(self):
-        self.get_root().login_page.navidrome_proc = subprocess.Popen([get_navidrome_path()], env=get_navidrome_env())
 
     @Gtk.Template.Callback()
     def download_clicked(self, button):
@@ -81,5 +82,6 @@ class SetupPage(Adw.NavigationPage):
 
     @Gtk.Template.Callback()
     def continue_clicked(self, button):
+        self.instance.terminate_instance() # Just so that the library_directory can be changed
         self.get_root().main_stack.set_visible_child_name('login')
-        self.get_root().login_page.load_defaults(True)
+        self.get_root().login_page.setup_page(self.integration)

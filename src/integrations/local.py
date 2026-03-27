@@ -7,23 +7,27 @@ from datetime import datetime, timezone
 import requests, random, threading, favicon, io, pathlib, re, json, os, time, uuid
 from PIL import Image
 from mutagen import File
-from ..constants import DEFAULT_MUSIC_DIR, LOCAL_DATA_DIR, get_song_info_from_file
+from ..constants import LOCAL_DATA_DIR, get_song_info_from_file
 
 class Local(Base):
     __gtype_name__ = 'NocturneIntegrationLocal'
 
-    supported_extensions = ('.mp3', '.flac', '.m4a', '.ogg', '.wav')
+    login_page_metadata = {
+        'icon-name': "music-note-symbolic",
+        'title': _("Local Files"),
+        'entries': ['library-dir'],
+        'login-label': _("Continue")
+    }
+    button_metadata = {
+        'title': _("Local Files"),
+        'subtitle': _("Limited functionality")
+    }
+    library_dir = GObject.Property(type=str)
 
-    def __init__(self, music_dir:str):
-        super().__init__()
-        self.music_dir = music_dir
-        Gio.File.new_for_path(self.music_dir).query_exists() # Gives flatpak portal access to dir
-        self.update_loaded_models()
-
-    def update_loaded_models(self):
+    def on_login(self):
         # Goes through the whole directory retrieving all the metadata
         audio_data_list = []
-        path_obj = pathlib.Path(self.music_dir)
+        path_obj = pathlib.Path(self.get_property('library_dir'))
 
         # load star_dict
         STARFILE = os.path.join(LOCAL_DATA_DIR, 'stars.json')
@@ -37,7 +41,7 @@ class Local(Base):
 
         # load songs, albums, artists
         for file_path in path_obj.rglob("*"):
-            if file_path.suffix.lower() in self.supported_extensions:
+            if file_path.suffix.lower() in ('.mp3', '.flac', '.m4a', '.ogg', '.wav'):
                 try:
                     # Making Song Model
                     song = get_song_info_from_file(file_path, star_dict)
@@ -204,7 +208,7 @@ class Local(Base):
         return None, None
 
     def ping(self) -> bool:
-        # Implemented from Navidrome, just a check
+        # Always true, it checks it at login
         return True
 
     def getAlbumList(self, list_type:str="recent", size:int=10, offset:int=0) -> list:
@@ -357,17 +361,6 @@ class Local(Base):
     def getRandomSongs(self, size:int=20) -> list:
         songs = [id for id in list(self.loaded_models) if id.startswith('SONG:')]
         return random.sample(songs, k=min(size, len(songs)))
-
-    def getLyrics(self, track_name:str, artist_name:str, album_name:str, duration:int) -> dict:
-        # This uses the LRCLIB public API
-        # Duration is in seconds
-        response = requests.get('https://lrclib.net/api/get', params={
-            'track_name': track_name,
-            'artist_name': artist_name,
-            'album_name': album_name,
-            'duration': duration
-        })
-        return response.json()
 
     def search(self, query:str, artistCount:int=0, artistOffset:int=0, albumCount:int=0, albumOffset:int=0, songCount:int=0, songOffset:int=0) -> dict:
         all_artists = [model for id, model in self.loaded_models.items() if id.startswith('ARTIST:')]

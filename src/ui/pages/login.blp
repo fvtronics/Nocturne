@@ -25,7 +25,7 @@ template $NocturneLoginPage: Adw.NavigationPage {
       show-title: false;
     }
 
-    content: Adw.StatusPage {
+    content: Adw.StatusPage status_page {
       title: _("Login");
       child: Gtk.ListBox {
         styles [
@@ -47,7 +47,19 @@ template $NocturneLoginPage: Adw.NavigationPage {
           title: _("Password");
         }
 
-        Adw.ButtonRow {
+        Adw.ActionRow directory_el {
+          title: _("Library Directory");
+          notify::subtitle => $library_changed();
+          activated => $open_local_directory();
+          activatable: true;
+          [prefix]
+          Gtk.Image {
+            icon-name: "folder-open-symbolic";
+            valign: center;
+          }
+        }
+
+        Adw.ButtonRow login_button_el {
           styles [
             "suggested-action"
           ]
@@ -57,9 +69,11 @@ template $NocturneLoginPage: Adw.NavigationPage {
           activatable: true;
         }
 
-        Gtk.LinkButton integrated_instance_link_el {
-          label: _("Instance Webpage");
-          uri: "http://127.0.0.1:4534";
+        Adw.ActionRow link_el {
+          child: Gtk.LinkButton {
+            label: _("Instance Webpage");
+            uri: "http://127.0.0.1:4534";
+          };
         }
       };
     };

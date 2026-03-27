@@ -2,73 +2,54 @@
 
 from gi.repository import Gtk, Adw, Gio, GLib
 from ...constants import get_navidrome_path, DEFAULT_MUSIC_DIR
-from ...integrations import set_current_integration, Local
+from ...integrations import set_current_integration, get_available_integrations, Local, Navidrome, NavidromeIntegrated
 import threading
 
 @Gtk.Template(resource_path='/com/jeffser/Nocturne/pages/welcome.ui')
 class WelcomePage(Adw.NavigationPage):
     __gtype_name__ = 'NocturneWelcomePage'
 
-    local_btn_el = Gtk.Template.Child()
+    listbox_el = Gtk.Template.Child()
 
     def __init__(self):
         super().__init__()
         settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-        selected_local_folder = settings.get_value("local-dir").unpack()
+        selected_local_folder = settings.get_value("integration-library-dir").unpack()
         if not selected_local_folder:
-            settings.set_string("local-dir", DEFAULT_MUSIC_DIR)
-        self.local_btn_el.set_subtitle(settings.get_value("local-dir").unpack())
+            settings.set_string("integration-library-dir", DEFAULT_MUSIC_DIR)
 
         GLib.idle_add(self.check_auto_login)
 
+    def setup_page(self):
+        integrations = [Navidrome, NavidromeIntegrated, Local]
+        for integration in integrations:
+            metadata = integration.button_metadata
+            row = Adw.ActionRow(
+                title=metadata.get('title', _("Integration")),
+                subtitle=metadata.get('subtitle', ""),
+                tooltip_text=metadata.get('title', _("Integration")),
+                activatable=True
+            )
+            row.add_suffix(Gtk.Image(
+                icon_name="go-next-symbolic",
+                valign=Gtk.Align.CENTER
+            ))
+            row.connect('activated', self.option_selected, integration)
+            self.listbox_el.append(row)
+
     def check_auto_login(self):
         settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-        auto_login_mode = settings.get_value("auto-login").unpack()
-        if auto_login_mode == 0:
+        selected_instance = settings.get_value("selected-instance-type").unpack()
+        if not selected_instance:
             self.get_root().main_stack.set_visible_child_name('welcome')
-        elif auto_login_mode == 1:
-            self.get_root().login_page.load_defaults(False)
-        elif auto_login_mode == 2:
-            self.get_root().login_page.load_defaults(True)
-        elif auto_login_mode == 3:
-            self.local_clicked()
-
-
-    @Gtk.Template.Callback()
-    def existing_clicked(self, button):
-        self.get_root().main_stack.set_visible_child_name('login')
-        self.get_root().login_page.load_defaults(False)
-
-    @Gtk.Template.Callback()
-    def setup_clicked(self, button):
-        if get_navidrome_path():
+            self.setup_page()
+        elif integration := get_available_integrations().get(selected_instance):
             self.get_root().main_stack.set_visible_child_name('login')
-            self.get_root().login_page.load_defaults(True)
-        else:
-            self.get_root().main_stack.set_visible_child_name('setup')
+            self.get_root().login_page.setup_page(integration())
 
-    @Gtk.Template.Callback()
-    def local_clicked(self, button=None):
-        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-        settings.set_int("auto-login", 3)
-        def run():
-            integration = Local(settings.get_value("local-dir").unpack())
-            set_current_integration(integration)
-            GLib.idle_add(self.get_root().login_page.login_success)
-        threading.Thread(target=run).start()
+    def option_selected(self, row, integration):
+        integration = integration()
+        if integration.check_if_ready(row):
+            self.get_root().main_stack.set_visible_child_name('login')
+            self.get_root().login_page.setup_page(integration)
 
-    @Gtk.Template.Callback()
-    def local_change_dir_clicked(self, button):
-        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-
-        def response(dialog, result):
-            if folder := dialog.select_folder_finish(result):
-                settings.set_string('local-dir', folder.get_path())
-                self.local_btn_el.set_subtitle(folder.get_path())
-
-        initial_folder = Gio.File.new_for_path(settings.get_value("local-dir").unpack() or DEFAULT_MUSIC_DIR)
-        dialog = Gtk.FileDialog(
-            title=_("Local Music Library"),
-            initial_folder=initial_folder
-        )
-        dialog.select_folder(self.get_root(), None, response)

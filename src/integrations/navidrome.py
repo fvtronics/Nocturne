@@ -2,25 +2,30 @@
 
 from gi.repository import Gtk, GLib, GObject, Gdk, Gio, GdkPixbuf
 from . import secret, models, local
+from ..constants import get_navidrome_path, check_if_navidrome_ready, get_navidrome_env
 from .base import Base
-import requests, random, threading, favicon, io
+import requests, random, threading, favicon, io, subprocess, time
 from PIL import Image
 
 class Navidrome(Base):
     __gtype_name__ = 'NocturneIntegrationNavidrome'
 
-    base_url = GObject.Property(type=str)
-    username = GObject.Property(type=str)
-
-    def __init__(self, base_url:str, username:str):
-        super().__init__()
-        self.base_url = base_url
-        self.username = username
+    login_page_metadata = {
+        'icon-name': "music-note-symbolic",
+        'title': _("Navidrome"),
+        'entries': ['url', 'user', 'password']
+    }
+    button_metadata = {
+        'title': _("External Server"),
+        'subtitle': _("Use an existing Navidrome / Subsonic instance")
+    }
+    url = GObject.Property(type=str)
+    user = GObject.Property(type=str)
 
     def get_base_params(self) -> dict:
         salt, token = secret.get_hashed_password()
         return {
-            'u': self.username,
+            'u': self.get_property('user'),
             't': token,
             's': salt,
             'v': '1.16.1',
@@ -29,7 +34,7 @@ class Navidrome(Base):
         }
 
     def get_url(self, action:str) -> str:
-        return '{}/rest/{}'.format(self.base_url.strip('/'), action)
+        return '{}/rest/{}'.format(self.get_property('url').strip('/'), action)
 
     def make_request(self, action:str, params:dict={}) -> dict:
         params = {
@@ -56,7 +61,7 @@ class Navidrome(Base):
         params = self.get_base_params()
         params['id'] = song_id
         query_string = "&".join([f"{k}={v}" for k, v in params.items()])
-        return '{}/rest/stream?{}'.format(self.base_url.strip('/'), query_string)
+        return '{}/rest/stream?{}'.format(self.get_property('url').strip('/'), query_string)
 
     def getRadioCoverArt(self, id:str=None) -> tuple:
         # returns bytes, Gdk.Paintable or None, None
@@ -324,17 +329,6 @@ class Navidrome(Base):
 
         return [s.get('id') for s in songs if s.get('id')]
 
-    def getLyrics(self, track_name:str, artist_name:str, album_name:str, duration:int) -> dict:
-        # This uses the LRCLIB public API
-        # Duration is in seconds
-        response = requests.get('https://lrclib.net/api/get', params={
-            'track_name': track_name,
-            'artist_name': artist_name,
-            'album_name': album_name,
-            'duration': duration
-        })
-        return response.json()
-
     def search(self, query:str, artistCount:int=0, artistOffset:int=0, albumCount:int=0, albumOffset:int=0, songCount:int=0, songOffset:int=0) -> dict:
         response = self.make_request('search3', {
             'query': query,
@@ -436,3 +430,54 @@ class Navidrome(Base):
                 self.make_request('scrobble', {
                     'id': id
                 })
+
+class NavidromeIntegrated(Navidrome):
+    __gtype_name__ = 'NocturneIntegrationNavidromeIntegrated'
+
+    login_page_metadata = {
+        'icon-name': "music-note-symbolic",
+        'title': _("Navidrome Managed"),
+        'entries': ['library-dir', 'user', 'password'],
+        'link': 'http://127.0.0.1:4534',
+        'link-label': _("Instance Website")
+    }
+    button_metadata = {
+        'title': _("Managed Server"),
+        'subtitle': _("Create and use Navidrome instance")
+    }
+    library_dir = GObject.Property(type=str)
+    process = None
+
+    def __init__(self):
+        super().__init__()
+        self.set_property('url', 'http://127.0.0.1:4534')
+
+    def check_if_ready(self, row) -> bool:
+        if get_navidrome_path():
+            return True
+        else:
+            row.get_root().main_stack.set_visible_child_name('setup')
+            row.get_root().main_stack.get_child_by_name('setup').set_integration(self)
+        return False
+
+    def start_instance(self) -> bool:
+        path = get_navidrome_path()
+        env = get_navidrome_env()
+        library_directory = self.get_property('library_dir')
+        if self.process:
+            return True
+
+        try:
+            if path and env and library_directory:
+                env["ND_MUSICFOLDER"] = library_directory
+                self.process = subprocess.Popen([path], env=env)
+                return True
+            else:
+                return False
+        except Exception as e:
+            return False
+
+    def terminate_instance(self):
+        if self.process:
+            self.process.terminate()
+            self.process = None
