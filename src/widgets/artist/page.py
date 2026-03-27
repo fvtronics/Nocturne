@@ -53,9 +53,9 @@ class ArtistPage(Adw.NavigationPage):
 
     def update_cover(self, paintable:Gdk.Paintable=None):
         if paintable:
-            self.avatar_el.set_custom_image(paintable)
+            GLib.idle_add(self.avatar_el.set_custom_image, paintable)
         else:
-            self.avatar_el.set_custom_image(None)
+            GLib.idle_add(self.avatar_el.set_custom_image, None)
 
     def update_name(self, name:str):
         self.avatar_el.set_tooltip_text(name)

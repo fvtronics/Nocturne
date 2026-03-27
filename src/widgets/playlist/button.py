@@ -31,11 +31,11 @@ class PlaylistButton(Gtk.Box):
 
     def update_cover(self, paintable:Gdk.Paintable=None):
         if paintable:
-            self.cover_el.set_from_paintable(paintable)
-            self.cover_el.set_pixel_size(240)
+            GLib.idle_add(self.cover_el.set_from_paintable, paintable)
+            GLib.idle_add(self.cover_el.set_pixel_size, 240)
         else:
-            self.cover_el.set_from_icon_name("music-note-symbolic")
-            self.cover_el.set_pixel_size(-1)
+            GLib.idle_add(self.cover_el.set_from_icon_name, "music-note-symbolic")
+            GLib.idle_add(self.cover_el.set_pixel_size, -1)
 
     def update_name(self, name:str):
         self.name_el.set_tooltip_text(name)
