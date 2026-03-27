@@ -26,7 +26,7 @@ class AlbumButton(Gtk.Box):
 
         integration.connect_to_model(self.id, 'name', self.update_name)
         integration.connect_to_model(self.id, 'artist', self.update_artist)
-        integration.connect_to_model(self.id, 'artistId', self.update_artist_id, use_gtk_thread=False)
+        integration.connect_to_model(self.id, 'artistId', self.update_artist_id)
         integration.connect_to_model(self.id, 'gdkPaintable', self.update_cover)
 
         threading.Thread(target=self.update_cover).start()

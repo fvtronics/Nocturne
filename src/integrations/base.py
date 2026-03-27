@@ -18,23 +18,14 @@ class Base(GObject.Object):
         # gets called to see if it is ready to show login page
         return True
 
-    def connect_to_model(self, id:str, parameter:str, callback:callable, use_gtk_thread:bool=True) -> str:
-        use_gtk_thread = True
+    def connect_to_model(self, id:str, parameter:str, callback:callable) -> str:
         connection_id = ""
         if id in self.loaded_models:
-            if use_gtk_thread:
-                connection_id = self.loaded_models[id].connect(
-                    'notify::{}'.format(parameter),
-                    lambda *_, parameter=parameter, id=id: GLib.idle_add(callback, self.loaded_models[id].get_property(parameter))
-                )
-                GLib.idle_add(callback, self.loaded_models[id].get_property(parameter))
-            else:
-                connection_id = self.loaded_models[id].connect(
-                    'notify::{}'.format(parameter),
-                    lambda *_, parameter=parameter, id=id: callback(self.loaded_models[id].get_property(parameter))
-                )
-                callback(self.loaded_models[id].get_property(parameter))
-
+            connection_id = self.loaded_models[id].connect(
+                'notify::{}'.format(parameter),
+                lambda *_, parameter=parameter, id=id: GLib.idle_add(callback, self.loaded_models[id].get_property(parameter))
+            )
+            GLib.idle_add(callback, self.loaded_models[id].get_property(parameter))
         return connection_id
 
     def start_instance(self) -> bool:

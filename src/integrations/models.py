@@ -11,41 +11,23 @@ class Album(GObject.Object):
     name = GObject.Property(type=str)
     artist = GObject.Property(type=str)
     artistId = GObject.Property(type=str)
-    coverArt = GObject.Property(type=str)
     songCount = GObject.Property(type=int)
     duration = GObject.Property(type=int)
     artists = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
     song = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
     starred = GObject.Property(type=str)
     path = GObject.Property(type=str) # For use in Local
-    #playCount = GObject.Property(type=int)
-    #created = GObject.Property(type=str)
-    #played = GObject.Property(type=str)
-    #userRating = GObject.Property(type=int)
-    #genres = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
-    #musicBrainzId = GObject.Property(type=str)
-    #isCompilation = GObject.Property(type=bool, default=False)
-    #sortName = GObject.Property(type=str)
-    #discTitles = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
-    #releaseTypes = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
-    #recordLabels = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
-    #moods = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
-    #displayArtist = GObject.Property(type=str)
-    #explicitStatus = GObject.Property(type=str)
-    #version = GObject.Property(type=str)
 
     def __init__(self, **kwargs):
         super().__init__()
         self.update_data(**kwargs)
 
     def update_data(self, **kwargs):
-        LISTS = ('genres', 'discTitles', 'releaseTypes', 'recordLabels', 'moods', 'artists', 'song')
-
         for prop in self.list_properties():
             if prop.get_name() in kwargs:
                 self.set_property(prop.get_name(), kwargs.get(prop.get_name()))
             else:
-                if prop.get_name() in LISTS: # is list
+                if prop.value_type.name == 'PyObject': #LIST
                     self.set_property(prop.get_name(), [])
                 else:
                     self.set_property(prop.get_name(), prop.get_default_value())
@@ -57,31 +39,23 @@ class Artist(GObject.Object):
     gdkPaintable = GObject.Property(type=Gdk.Paintable) #Gdk.Paintable
     gdkPaintableBytes = GObject.Property(type=GLib.Bytes)
     name = GObject.Property(type=str)
-    coverArt = GObject.Property(type=str)
     albumCount = GObject.Property(type=int)
     album = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
     starred = GObject.Property(type=str)
     biography = GObject.Property(type=str)
-    lastFmUrl = GObject.Property(type=str)
     similarArtist = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
     path = GObject.Property(type=str) # For use in Local
-    #artistImageUrl = GObject.Property(type=str)
-    #musicBrainzId = GObject.Property(type=str)
-    #sortName = GObject.Property(type=str)
-    #roles = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
 
     def __init__(self, **kwargs):
         super().__init__()
         self.update_data(**kwargs)
 
     def update_data(self, **kwargs):
-        LISTS = ('roles', 'album', 'similarArtist')
-
         for prop in self.list_properties():
             if prop.get_name() in kwargs:
                 self.set_property(prop.get_name(), kwargs.get(prop.get_name()))
             else:
-                if prop.get_name() in LISTS: # is list
+                if prop.value_type.name == 'PyObject': #LIST
                     self.set_property(prop.get_name(), [])
                 else:
                     self.set_property(prop.get_name(), prop.get_default_value())
@@ -96,9 +70,6 @@ class Playlist(GObject.Object):
     songCount = GObject.Property(type=int)
     duration = GObject.Property(type=int)
     owner = GObject.Property(type=str)
-    created = GObject.Property(type=str)
-    changed = GObject.Property(type=str)
-    coverArt = GObject.Property(type=str)
     readonly = GObject.Property(type=bool, default=False)
     entry = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
     path = GObject.Property(type=str) # For use in Local
@@ -108,13 +79,11 @@ class Playlist(GObject.Object):
         self.update_data(**kwargs)
 
     def update_data(self, **kwargs):
-        LISTS = ('entry',)
-
         for prop in self.list_properties():
             if prop.get_name() in kwargs:
                 self.set_property(prop.get_name(), kwargs.get(prop.get_name()))
             else:
-                if prop.get_name() in LISTS: # is list
+                if prop.value_type.name == 'PyObject': #LIST
                     self.set_property(prop.get_name(), [])
                 else:
                     self.set_property(prop.get_name(), prop.get_default_value())
@@ -128,7 +97,6 @@ class Song(GObject.Object):
     title = GObject.Property(type=str)
     album = GObject.Property(type=str)
     artist = GObject.Property(type=str)
-    coverArt = GObject.Property(type=str)
     duration = GObject.Property(type=int)
     albumId = GObject.Property(type=str)
     artistId = GObject.Property(type=str)
@@ -142,45 +110,18 @@ class Song(GObject.Object):
     homePageUrl = GObject.Property(type=str)
     # ---------
 
-    #explicitStatus = GObject.Property(type=str)
-    #size = GObject.Property(type=int)
-    #contentType = GObject.Property(type=str)
-    #parent = GObject.Property(type=str)
-    #musicBrainzId = GObject.Property(type=str)
-    #isDir = GObject.Property(type=bool, default=False)
-    #suffix = GObject.Property(type=str)
-    #bitRate = GObject.Property(type=int)
     path = GObject.Property(type=str) # For use in Local
-    #created = GObject.Property(type=str)
-    #type = GObject.Property(type=str)
-    bpm = GObject.Property(type=int)
-    #comment = GObject.Property(type=str)
-    #sortName = GObject.Property(type=str)
-    #mediaType = GObject.Property(type=str)
-    #isrc = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
-    genres = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
-    #channelCount = GObject.Property(type=int)
-    #samplingRate = GObject.Property(type=int)
-    #bitDepth = GObject.Property(type=int)
-    #displayArtist = GObject.Property(type=str)
-    #displayAlbumArtist = GObject.Property(type=str)
-    displayComposer = GObject.Property(type=str)
-    #moods = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
-    albumArtists = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
-    #contributors = GObject.Property(type=GObject.TYPE_PYOBJECT) # list
 
     def __init__(self, **kwargs):
         super().__init__()
         self.update_data(**kwargs)
 
     def update_data(self, **kwargs):
-        LISTS = ('isrc', 'genres', 'moods', 'artists', 'albumArtists', 'contributors')
-
         for prop in self.list_properties():
             if prop.get_name() in kwargs:
                 self.set_property(prop.get_name(), kwargs.get(prop.get_name()))
             else:
-                if prop.get_name() in LISTS: # is list
+                if prop.value_type.name == 'PyObject': #LIST
                     self.set_property(prop.get_name(), [])
                 else:
                     self.set_property(prop.get_name(), prop.get_default_value())
@@ -191,5 +132,4 @@ class CurrentSong(GObject.Object):
     songId = GObject.Property(type=str)
     positionSeconds = GObject.Property(type=float, default=0.0)
     playbackMode = GObject.Property(type=str, default="consecutive") # consecutive, # repeat-one # repeat-all
-
 

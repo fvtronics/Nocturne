@@ -36,7 +36,7 @@ class AlbumPage(Adw.NavigationPage):
 
         integration.connect_to_model(self.id, 'name', self.update_name)
         integration.connect_to_model(self.id, 'artist', self.update_artist)
-        integration.connect_to_model(self.id, 'artistId', self.update_artist_id, use_gtk_thread=False)
+        integration.connect_to_model(self.id, 'artistId', self.update_artist_id)
         integration.connect_to_model(self.id, 'starred', self.update_starred)
         integration.connect_to_model(self.id, 'song', self.update_song_list)
         integration.connect_to_model(self.id, 'gdkPaintable', self.update_cover)
