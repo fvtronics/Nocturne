@@ -28,9 +28,9 @@ class ArtistButton(Gtk.Button):
 
     def update_cover(self, paintable:Gdk.Paintable=None):
         if paintable:
-            GLib.idle_add(self.avatar_el.set_custom_image, paintable)
-        else:
-            GLib.idle_add(self.avatar_el.set_custom_image, None)
+            self.avatar_el.set_custom_image(paintable)
+        elif isinstance(self.avatar_el.get_custom_image(), Adw.SpinnerPaintable):
+            self.avatar_el.set_custom_image(None)
 
     def update_name(self, name:str):
         self.avatar_el.set_tooltip_text(name)

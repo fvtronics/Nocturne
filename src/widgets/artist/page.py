@@ -24,6 +24,7 @@ class ArtistPage(Adw.NavigationPage):
     def __init__(self, id:str):
         self.id = id
         integration = get_current_integration()
+        #print(integration.loaded_models.get(id).get_property("gdkPaintable"))
         integration.verifyArtist(self.id, True)
         super().__init__(
             tag=str(uuid.uuid4()),
@@ -53,9 +54,9 @@ class ArtistPage(Adw.NavigationPage):
 
     def update_cover(self, paintable:Gdk.Paintable=None):
         if paintable:
-            GLib.idle_add(self.avatar_el.set_custom_image, paintable)
-        else:
-            GLib.idle_add(self.avatar_el.set_custom_image, None)
+            self.avatar_el.set_custom_image(paintable)
+        elif isinstance(self.avatar_el.get_custom_image(), Adw.SpinnerPaintable):
+            self.avatar_el.set_custom_image(None)
 
     def update_name(self, name:str):
         self.avatar_el.set_tooltip_text(name)

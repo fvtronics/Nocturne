@@ -45,11 +45,11 @@ class PlaylistPage(Adw.NavigationPage):
 
     def update_cover(self, paintable:Gdk.Paintable=None):
         if paintable:
-            GLib.idle_add(self.cover_el.set_from_paintable, paintable)
-            GLib.idle_add(self.cover_el.set_pixel_size, 240)
-        else:
-            GLib.idle_add(self.cover_el.set_from_icon_name, "music-note-symbolic")
-            GLib.idle_add(self.cover_el.set_pixel_size, -1)
+            self.cover_el.set_from_paintable(paintable)
+            self.cover_el.set_pixel_size(240)
+        elif isinstance(self.cover_el.get_paintable(), Adw.SpinnerPaintable):
+            self.cover_el.set_from_icon_name("music-note-symbolic")
+            self.cover_el.set_pixel_size(-1)
 
     def update_name(self, name:str):
         self.name_el.set_label(name)

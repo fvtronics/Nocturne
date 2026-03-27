@@ -104,7 +104,9 @@ class Jellyfin(Base):
                     return self.getRadioCoverArt(id)
                 if isinstance(model, models.Song) and model.isExternalFile:
                     return local.Local.getCoverArt(self, id)
-                if model.get_property('gdkPaintable'):
+                if model.get_property('gdkPaintable') is not None:
+                    if isinstance(model, models.Artist):
+                        print('has paintable')
                     return model.get_property('gdkPaintableBytes'), model.get_property('gdkPaintable')
 
                 params = {
@@ -344,7 +346,7 @@ class Jellyfin(Base):
                 songCount=len(songs),
                 duration=duration,
                 artists=[{"id": art.get("Id"), "name": art.get("Name")} for art in album.get("ArtistItems", [])],
-                songs=[{"id": song.get("Id"), "name": song.get("Name")} for song in songs],
+                song=[{"id": song.get("Id"), "name": song.get("Name")} for song in songs],
                 starred=_("Starred") if album.get("UserData", {}).get("IsFavorite", False) else ""
             )
 
@@ -425,7 +427,7 @@ class Jellyfin(Base):
 
         if id not in self.loaded_models or force_update:
             if id not in self.loaded_models:
-                self.loaded_models[id] = models.Album(id=id)
+                self.loaded_models[id] = models.Song(id=id)
             if use_threading:
                 threading.Thread(target=run).start()
             else:
