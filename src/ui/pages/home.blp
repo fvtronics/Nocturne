@@ -5,8 +5,12 @@ template $NocturneHomePage: Adw.NavigationPage {
   title: _("Home");
   tag: "home";
   child: Adw.ToolbarView {
+    extend-content-to-top-edge: true;
+
     [top]
-    Adw.HeaderBar {}
+    Adw.HeaderBar {
+      show-title: false;
+    }
 
     content: Gtk.Stack main_stack {
       Gtk.StackPage {
@@ -18,6 +22,7 @@ template $NocturneHomePage: Adw.NavigationPage {
           child: Adw.Clamp {
             maximum-size: 2000;
             tightening-threshold: 800;
+            margin-top: 50;
 
             child: Gtk.Box {
               orientation: vertical;

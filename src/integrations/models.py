@@ -26,7 +26,7 @@ class Album(GObject.Object):
         for prop in self.list_properties():
             if prop.get_name() in kwargs:
                 self.set_property(prop.get_name(), kwargs.get(prop.get_name()))
-            else:
+            elif self.get_property(prop.get_name()) is None:
                 if prop.value_type.name == 'PyObject': #LIST
                     self.set_property(prop.get_name(), [])
                 else:
@@ -54,7 +54,7 @@ class Artist(GObject.Object):
         for prop in self.list_properties():
             if prop.get_name() in kwargs:
                 self.set_property(prop.get_name(), kwargs.get(prop.get_name()))
-            else:
+            elif self.get_property(prop.get_name()) is None:
                 if prop.value_type.name == 'PyObject': #LIST
                     self.set_property(prop.get_name(), [])
                 else:
@@ -81,7 +81,7 @@ class Playlist(GObject.Object):
         for prop in self.list_properties():
             if prop.get_name() in kwargs:
                 self.set_property(prop.get_name(), kwargs.get(prop.get_name()))
-            else:
+            elif self.get_property(prop.get_name()) is None:
                 if prop.value_type.name == 'PyObject': #LIST
                     self.set_property(prop.get_name(), [])
                 else:
@@ -118,7 +118,7 @@ class Song(GObject.Object):
         for prop in self.list_properties():
             if prop.get_name() in kwargs:
                 self.set_property(prop.get_name(), kwargs.get(prop.get_name()))
-            else:
+            elif self.get_property(prop.get_name()) is None:
                 if prop.value_type.name == 'PyObject': #LIST
                     self.set_property(prop.get_name(), [])
                 else:
