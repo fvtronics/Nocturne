@@ -5,7 +5,7 @@ from . import secret, models, local
 from ..constants import JELLYFIN_DATA_DIR
 from .base import Base
 import requests, subprocess, random, threading, base64, os, json, platform
-
+print('hash', str(abs(hash(platform.node()))))
 class Jellyfin(Base):
     __gtype_name__ = 'NocturneIntegrationJellyfin'
 
@@ -27,7 +27,7 @@ class Jellyfin(Base):
     url = GObject.Property(type=str)
     user = GObject.Property(type=str)
 
-    AUTH_HEADER = 'MediaBrowser Client="Nocturne", Device="{}", DeviceId="{}", Version="1.0.0"'.format(platform.node(), str(hash(platform.node())))
+    AUTH_HEADER = 'MediaBrowser Client="Nocturne", Device="{}", DeviceId="{}", Version="1.0.0"'.format(platform.node(), str(abs(hash(platform.node()))))
 
     # Loaded by API
     accessToken = GObject.Property(type=str)
