@@ -86,8 +86,6 @@ class NocturnePreferences(Adw.PreferencesDialog):
         )
 
         if integration := get_current_integration():
-            self.restore_el.set_visible('no-restore-queue' not in integration.limitations)
-
             data = integration.getServerInformation()
             self.instance_el.set_title(data.get('username', ""))
 

@@ -2,7 +2,7 @@
 
 from gi.repository import Gtk, GLib, GObject, Gdk, Gio, GdkPixbuf
 from . import secret, models, local
-from ..constants import get_pc_name
+from ..constants import get_pc_name, JELLYFIN_DATA_DIR
 from .base import Base
 import requests, subprocess, random, threading, base64
 
@@ -19,7 +19,7 @@ class Jellyfin(Base):
         'title': _("Jellyfin (Experimental)"),
         'subtitle': _("Use an existing Jellyfin instance")
     }
-    limitations = ('no-edit-radio','no-restore-queue')
+    limitations = ('no-edit-radio',)
     cache_actions = {
         'deleted-radios': [],
         'deleted-playlists': []
@@ -455,9 +455,50 @@ class Jellyfin(Base):
         return not response.get('IsFavorite', False)
 
     def getPlayQueue(self) -> tuple:
-        return "", []
+        QUEUEFILE = os.path.join(JELLYFIN_DATA_DIR, 'queue.json')
+
+        try:
+            with open(QUEUEFILE, 'r') as f:
+                queue_dict = json.load(f)
+            if not isinstance(queue_dict, dict):
+                queue_dict = {}
+        except Exception:
+            queue_dict = {}
+
+        song_list = [id for id in queue_dict.get('id', []) if id in self.loaded_models]
+        current = queue_dict.get('current', "")
+        if current not in song_list:
+            if len(song_list) > 0:
+                current = song_list[0]
+            else:
+                current = ""
+
+        return current, song_list
 
     def savePlayQueue(self, id_list:list, current:str, position:int) -> bool:
+        QUEUEFILE = os.path.join(JELLYFIN_DATA_DIR, 'queue.json')
+
+        final_id_list = []
+        for id in id_list:
+            if model := self.loaded_models.get(id):
+                if not model.isExternalFile:
+                    final_id_list.append(id)
+
+        if current not in final_id_list:
+            if len(final_id_list) > 0:
+                current = final_id_list[0]
+            else:
+                current = ""
+
+        queue_dict = {
+            'id': final_id_list,
+            'current': current,
+            'position': position
+        }
+
+        with open(QUEUEFILE, 'w') as f:
+            json.dump(queue_dict, f, ensure_ascii=False)
+
         return True
 
     def getSimilarSongs(self, id:str, count:int=20) -> list:
