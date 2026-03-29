@@ -247,6 +247,16 @@ class Player(EventAdapter):
 
     # ---
 
+    # Catch MPRIS publish exceptions to prevent crashing
+    # since it can fail for various reasons (like d-bus issues on non-Linux platforms)
+    # and it's not critical for the player to function
+    def emit_changes(self, *args, **kwargs):
+        if getattr(self, 'mpris_published', False):
+            try:
+                super().emit_changes(*args, **kwargs)
+            except Exception:
+                pass
+
     def handle_new_state(self, state):
         if not self.control_page.is_seeking:
             stack_page_name = 'play' if state in (Gst.State.NULL, Gst.State.READY, Gst.State.PAUSED) else 'pause'
