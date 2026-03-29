@@ -119,6 +119,5 @@ modules:
     builddir: true
     buildsystem: meson
     sources:
-      - type: git
-        url: https://github.com/Jeffser/Nocturne.git
-        branch: main
+      - type: dir
+        path: .

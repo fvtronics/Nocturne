@@ -31,10 +31,11 @@ def prepare_lrc(lrc_str:str) -> list:
 
 def list_to_lrc_str(lrc_list:list) -> str:
     lrc_lines = []
-    for item in lyrics_list:
-        minutes = item.get('ms', 0) // 60000
-        seconds = (item.get('ms', 0) % 60000) // 1000
-        centiseconds = (item.get('ms', 0) % 1000) // 10
+    for item in lrc_list:
+        ms = int(item.get('ms', 0))
+        minutes = ms // 60000
+        seconds = (ms % 60000) // 1000
+        centiseconds = (ms % 1000) // 10
 
         timestamp = f"[{minutes:02d}:{seconds:02d}.{centiseconds:02d}]"
         lrc_lines.append(f"{timestamp} {item.get('content').strip()}")
@@ -70,7 +71,7 @@ def get_lyrics(song_id:str, lrclib_download:bool) -> dict:
     plain_lyrics_path = os.path.join(lyrics_dir, file_name_without_ext+'.txt')
 
     if not lrclib_download:
-        result =  integration.getLyrics(song_id)
+        result = integration.getLyrics(song_id)
         if result.get('type') != 'not-found':
             if result.get('type') == 'lrc':
                 with open(lrc_path, 'w+') as f:
