@@ -1,15 +1,15 @@
 # constants.py
 
 import os, subprocess, json
-from mutagen import File
+from mutagen._file import File
 
 IN_FLATPAK = bool(os.getenv("FLATPAK_ID"))
 IN_SNAP = bool(os.getenv("FLATPAK_ID"))
 
-def get_xdg_home(env, default):
-    if IN_FLATPAK:
-        return os.getenv(env)
+def get_xdg_home(env: str, default: str) -> str:
     base = os.getenv(env) or os.path.expanduser(default)
+    if IN_FLATPAK:
+        return base
     path = os.path.join(base, "com.jeffser.Nocturne")
     if not os.path.exists(path):
         os.makedirs(path)
@@ -18,7 +18,13 @@ def get_xdg_home(env, default):
 DATA_DIR = get_xdg_home("XDG_DATA_HOME", "~/.local/share")
 CONFIG_DIR = get_xdg_home("XDG_CONFIG_HOME", "~/.config")
 CACHE_DIR = get_xdg_home("XDG_CACHE_HOME", "~/.cache")
-DEFAULT_MUSIC_DIR = subprocess.check_output(["xdg-user-dir", "MUSIC"], text=True).strip() or os.path.expanduser("~/Music")
+
+# Wrapped in a try/catch for non-Linux platforms where these commands don't exist
+try:
+    DEFAULT_MUSIC_DIR = subprocess.check_output(["xdg-user-dir", "MUSIC"], text=True).strip() or os.path.expanduser("~/Music")
+except Exception:
+    DEFAULT_MUSIC_DIR = os.path.expanduser("~/Music")
+
 JELLYFIN_DATA_DIR = os.path.join(DATA_DIR, "jellyfin")
 os.makedirs(JELLYFIN_DATA_DIR, exist_ok=True)
 LOCAL_DATA_DIR = os.path.join(DATA_DIR, "local")
@@ -37,6 +43,15 @@ NAVIDROME_ENV = {
     "ND_LOGLEVEL": "ERROR",
     "ND_ENABLEINSIGHTSCOLLECTOR": "false"
 }
+
+def get_pc_name() -> str:
+    # Used by Jellyfin for auth header
+    # Wrapped in a try/catch for non-Linux platforms where /proc doesn't exist
+    try:
+        return subprocess.check_output(['cat', '/proc/sys/kernel/hostname'], stderr=subprocess.STDOUT).decode("utf-8").strip()
+    except Exception:
+        import socket
+        return socket.gethostname()
 
 def get_navidrome_path() -> str | None:
     NAVIDROME_PATH = os.path.join(BASE_NAVIDROME_DIR, 'navidrome')
