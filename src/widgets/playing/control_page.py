@@ -209,6 +209,7 @@ class PlayingControlPage(Adw.NavigationPage):
         css = f"""
         window.dynamic-accent-bg {{
             --accent-color: oklab(from rgb({','.join([str(c) for c in palette[0]])}) var(--standalone-color-oklab));
+            --accent-fg-color: oklab(from rgb({','.join([str(c) for c in palette[0]])}) var(--standalone-color-oklab));
         }}
         window.popout-window,
         window.dynamic-accent-bg bottom-sheet#main-bottom-sheet sheet > stack {{
