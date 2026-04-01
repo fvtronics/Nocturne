@@ -113,8 +113,13 @@ class PopoutWindow(Adw.ApplicationWindow):
             self.fs_progress_el.get_adjustment().set_upper(model.get_property('duration'))
             self.set_title(model.get_property('title'))
             self.fs_title_el.set_label(model.get_property('title'))
-            self.fs_album_el.set_label(model.get_property('album'))
-            self.fs_artist_el.set_label(model.get_property('artists')[0].get('name') if len(model.get_property('artists')) > 0 else model.get_property('artist'))
+            self.fs_album_el.get_child().set_label(model.get_property('album'))
+            self.fs_album_el.set_tooltip_text(model.get_property('album'))
+            self.fs_album_el.set_action_target_value(GLib.Variant.new_string(model.get_property('albumId')))
+            artist = model.get_property('artists')[0] if len(model.get_property('artists')) > 0 else {'name': model.get_property('artist'), 'id': model.get_property('artistId')}
+            self.fs_artist_el.get_child().set_label(artist.get('name'))
+            self.fs_artist_el.set_tooltip_text(artist.get('name'))
+            self.fs_artist_el.set_action_target_value(GLib.Variant.new_string(artist.get('id')))
             self.cover_el.set_paintable(model.get_property('gdkPaintable'))
 
     @Gtk.Template.Callback()

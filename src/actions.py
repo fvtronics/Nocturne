@@ -11,9 +11,19 @@ from .constants import DATA_DIR, BASE_NAVIDROME_DIR
 
 def __show_page(window, page):
     # page is Adw.NavigationViewPage
-    window.main_bottom_sheet.set_open(False)
-    window.main_split_view.set_show_content(True)
-    window.main_navigationview.push(page)
+    application = window.get_application()
+    active_window = application.props.active_window
+    if active_window.__gtype_name__ == 'NocturnePopoutWindow':
+        page_dialog = None
+        for dialog in active_window.get_dialogs():
+            if dialog.__gtype_name__ == 'NocturnePageDialog':
+                dialog.navigation_view.push(page)
+                return
+        Widgets.PageDialog(page).present(active_window)
+    else:
+        active_window.main_bottom_sheet.set_open(False)
+        active_window.main_split_view.set_show_content(True)
+        active_window.main_navigationview.push(page)
 
 def __show_custom_toast(window, model_id:str, title_property:str, subtitle:str, icon_name:str=None):
     integration = get_current_integration()
@@ -43,7 +53,7 @@ def __show_custom_toast(window, model_id:str, title_property:str, subtitle:str, 
         custom_title=custom_widget,
         timeout=2
     )
-    GLib.idle_add(window.toast_overlay.add_toast, toast)
+    GLib.idle_add(window.get_application().props.active_window.toast_overlay.add_toast, toast)
 
 # -- MISC --
 
@@ -364,7 +374,7 @@ def play_songs_later(window, song_list:list):
         ).start()
 
 def edit_lyrics(window, song_id:str):
-    Widgets.LyricsDialog(song_id).present(window)
+    Widgets.LyricsDialog(song_id).present(window.get_application().props.active_window)
 
 def save_lyrics(window, lyric_dict:dict):
     # lyric_dict KEYS
@@ -589,18 +599,18 @@ def remove_songs_from_playlist(window, data:dict):
 
 def prompt_add_songs_to_playlist(window, song_list:list):
     dialog = Widgets.playlist.PlaylistDialog(song_list)
-    dialog.present(window)
+    dialog.present(window.get_application().props.active_window)
 
 def prompt_add_song_to_playlist(window, model_id:str):
     dialog = Widgets.playlist.PlaylistDialog([model_id])
-    dialog.present(window)
+    dialog.present(window.get_application().props.active_window)
 
 def prompt_add_album_to_playlist(window, model_id:str):
     integration = get_current_integration()
     integration.verifyAlbum(model_id, force_update=True, use_threading=False)
     model = integration.loaded_models.get(model_id)
     dialog = Widgets.playlist.PlaylistDialog([s.get('id') for s in model.get_property('song')])
-    dialog.present(window)
+    dialog.present(window.get_application().props.active_window)
 
 def add_songs_to_playlist(window, data):
     integration = get_current_integration()
@@ -710,3 +720,4 @@ def play_radio_artist(window, model_id:str):
             )
             GLib.idle_add(window.toast_overlay.add_toast, toast)
     threading.Thread(target=run).start()
+

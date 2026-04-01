@@ -55,7 +55,7 @@ popover button label, button.no_bold_button, .no-bold {
   font-weight: normal;
 }
 
-button.p0, menubutton.p0 > button {
+button.p0, menubutton.p0 > button, label.ph5 {
   padding: 0 5px 0 5px;
 }
 
@@ -151,14 +151,13 @@ window.popout-window.fullscreen navigation-split-view > .sidebar-pane {
 	box-shadow: none;
 }
 
-window.popout-window.fullscreen navigation-view-page toolbarview stack scrolledwindow > * > *{
-  padding-top: 45px;
-}
-
 window.popout-window.fullscreen .view_box,
-window.popout-window.fullscreen navigation-view-page > toolbarview stack > scrolledwindow > * > * {
+window.popout-window.fullscreen navigation-view-page > toolbarview stack > scrolledwindow > * > *,
+window.popout-window.fullscreen navigation-view-page > toolbarview stack > * > scrolledwindow > * > * {
+  padding-top: 45px;
   padding-bottom: 152px;
 }
+
 
 switch:checked {
   background: var(--accent-color);

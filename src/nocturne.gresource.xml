@@ -100,11 +100,13 @@
 
     <file alias="containers/carousel.ui">ui/containers/carousel.ui</file>
     <file alias="containers/wrapbox.ui">ui/containers/wrapbox.ui</file>
+    <file alias="containers/page_dialog.ui">ui/containers/page_dialog.ui</file>
 
     <file alias="lyrics/dialog.ui">ui/lyrics/dialog.ui</file>
     <file alias="lyrics/edit_row.ui">ui/lyrics/edit_row.ui</file>
   </gresource>
 </gresources>
+
 
 
 

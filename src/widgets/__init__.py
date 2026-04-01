@@ -6,5 +6,5 @@ from .album import AlbumButton, AlbumPage, AlbumRow
 from .artist import ArtistButton, ArtistPage, ArtistRow
 from .playlist import PlaylistButton, PlaylistPage, PlaylistRow, PlaylistDialog, PlaylistSelectorRow
 from .song import SongRow, SongQueue, SongSmallRow
-from .containers import Carousel, Wrapbox
+from .containers import Carousel, Wrapbox, PageDialog
 from .lyrics import LyricsDialog, lrclib_get, prepare_lrc, get_lyrics
