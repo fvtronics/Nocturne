@@ -293,19 +293,6 @@ def play_song(window, model_id:str):
     else:
         threading.Thread(target=window.queue_page.replace_queue, args=([model_id],)).start()
 
-def play_song_from_album(window, model_id:str):
-    integration = get_current_integration()
-    song_list = [model_id]
-
-    if model := integration.loaded_models.get(model_id):
-        if album_model := integration.loaded_models.get(model.get_property("albumId")):
-            song_list = [s.get('id') for s in album_model.get_property('song')]
-
-    threading.Thread(
-        target=window.queue_page.replace_queue,
-        args=(song_list, model_id)
-    ).start()
-
 def play_song_from_list(window, data:dict):
     song_id = data.get('songId')
     songs = data.get('songs', [song_id])
