@@ -29,8 +29,8 @@ class PlaylistSelectorRow(Adw.ActionRow):
             self.cover_el.set_pixel_size(-1)
 
     def update_name(self, name:str):
-        self.set_title(GLib.markup_escape_text(name))
-        self.set_name(GLib.markup_escape_text(name))
+        self.set_title(name)
+        self.set_name(name)
         self.set_tooltip_text(_("Add songs to '{}'").format(name))
 
     def update_song_count(self, songCount:int):

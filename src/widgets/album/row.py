@@ -41,8 +41,8 @@ class AlbumRow(Adw.ActionRow):
             self.cover_el.set_pixel_size(-1)
 
     def update_name(self, name:str):
-        self.set_title(GLib.markup_escape_text(name))
-        self.set_name(GLib.markup_escape_text(name))
+        self.set_title(name)
+        self.set_name(name)
 
     def update_artist(self, artist:str):
         self.set_subtitle(artist)
