@@ -63,11 +63,7 @@ class PopoutWindow(Adw.ApplicationWindow):
             ),
             css_classes=["p0"]
         )
-        self.footer_scale.get_adjustment().connect("value-changed", self.playing_page.progress_bar_changed)
-        footer_scale_controller = Gtk.GestureClick()
-        footer_scale_controller.connect("pressed", self.playing_page.seek_start)
-        footer_scale_controller.connect("stopped", self.playing_page.seek_end)
-        self.footer_scale.add_controller(footer_scale_controller)
+        self.footer_scale.connect("change-value", self.playing_page.progress_bar_changed)
         self.footer.detail_container.append(self.footer_scale)
         integration.connect_to_model('currentSong', 'songId', self.song_changed)
         integration.connect_to_model('currentSong', 'positionSeconds', self.song_position_changed)
@@ -121,14 +117,6 @@ class PopoutWindow(Adw.ApplicationWindow):
             self.cover_el.set_paintable(model.get_property('gdkPaintable'))
 
     @Gtk.Template.Callback()
-    def seek_start(self, gesture, n_press, x, y):
-        self.playing_page.seek_start(gesture, n_press, x, y)
-
-    @Gtk.Template.Callback()
-    def seek_end(self, gesture):
-        self.playing_page.seek_end(gesture)
-
-    @Gtk.Template.Callback()
-    def progress_bar_changed(self, adjustment):
-        self.playing_page.progress_bar_changed(adjustment)
+    def progress_bar_changed(self, scale_el, scroll_type, value):
+        self.playing_page.progress_bar_changed(scale_el, scroll_type, value)
 
