@@ -114,13 +114,20 @@ class Jellyfin(Base):
                     'maxWidth': 720,
                     'quality': 90
                 }
-                response = requests.get(
-                    self.get_url('Items/{id}/Images/Primary', id=id),
-                    headers=self.get_base_header(),
-                    params=params,
-                    verify=not self.get_property('trust_server')
-                )
-                response_bytes = response.content if response.status_code == 200 else b''
+                try:
+                    response = requests.get(
+                        self.get_url('Items/{id}/Images/Primary', id=id),
+                        headers=self.get_base_header(),
+                        params=params,
+                        verify=not self.get_property('trust_server'),
+                        timeout=10
+                    )
+                    # Treat non-200 responses as empty content to avoid
+                    # propagating network-related exceptions up and into the UI thread
+                    response.raise_for_status()
+                    response_bytes = response.content
+                except Exception:
+                    response_bytes = b''
 
                 if response_bytes and len(response_bytes) > 0:
                     try:
@@ -426,7 +433,7 @@ class Jellyfin(Base):
                 album=song.get("Album"),
                 albumId=song.get("AlbumId"),
                 artist=song.get("AlbumArtist"),
-                artistId=song.get("ArtistItems", [{}])[0].get("Id"),
+                artistId=(song.get("ArtistItems") or [{}])[0].get("Id"),
                 duration=duration,
                 artists=[{"id": art.get("Id"), "name": art.get("Name")} for art in song.get("ArtistItems", [])],
                 starred=song.get("UserData", {}).get("IsFavorite", False),
@@ -542,7 +549,7 @@ class Jellyfin(Base):
                 "album": song.get("Album"),
                 "albumId": song.get("AlbumId"),
                 "artist": song.get("AlbumArtist"),
-                "artistId": song.get("ArtistItems", [{}])[0].get("Id"),
+                "artistId": (song.get("ArtistItems") or [{}])[0].get("Id"),
                 "duration": duration,
                 "artists": [{"id": art.get("Id"), "name": art.get("Name")} for art in song.get("ArtistItems", [])],
                 "starred": song.get("UserData", {}).get("IsFavorite", False)
@@ -577,7 +584,7 @@ class Jellyfin(Base):
                 "album": song.get("Album"),
                 "albumId": song.get("AlbumId"),
                 "artist": song.get("AlbumArtist"),
-                "artistId": song.get("ArtistItems", [{}])[0].get("Id"),
+                "artistId": (song.get("ArtistItems") or [{}])[0].get("Id"),
                 "duration": duration,
                 "artists": [{"id": art.get("Id"), "name": art.get("Name")} for art in song.get("ArtistItems", [])],
                 "starred": song.get("UserData", {}).get("IsFavorite", False)
