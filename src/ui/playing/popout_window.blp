@@ -12,6 +12,18 @@ template $NocturnePopoutWindow: Adw.ApplicationWindow {
     "popout-window"
   ]
 
+  Adw.Breakpoint {
+    condition ("min-width: 1000sp")
+    setters {
+      split_view.max-sidebar-width: 1080;
+      bottom_bar.visible: true;
+      toolbarview.extend-content-to-top-edge: true;
+      sidebar_stack.visible-child-name: 'view';
+      header_view_switcher.visible: false;
+    }
+    apply => $big_mode_apply();
+    unapply => $big_mode_unapply();
+  }
   Adw.Breakpoint breakpoint_el {
     condition ("max-width: 480sp")
     setters {
@@ -223,8 +235,8 @@ template $NocturnePopoutWindow: Adw.ApplicationWindow {
                     [top]
                     Adw.HeaderBar {
                       [start]
-                      Gtk.Button {
-                        icon-name: "view-unfullscreen-symbolic";
+                      Gtk.Button toggle_fullscreen_el {
+                        icon-name: "view-fullscreen-symbolic";
                         tooltip-text: _("Toggle Fullscreen");
                         clicked => $toggle_fullscreen();
                       }

@@ -127,12 +127,12 @@ window.popout-window .fullscreen-bottom-bar {
   padding: 20px;
 }
 
-window.popout-window.fullscreen .fullscreen-bottom-bar button {
+window.popout-window.big-mode .fullscreen-bottom-bar button {
   padding: 8px;
   -gtk-icon-size: 18px;
 }
 
-window.popout-window.fullscreen .fullscreen-bottom-bar button.color {
+window.popout-window.big-mode .fullscreen-bottom-bar button.color {
   padding: 12px;
   -gtk-icon-size: 24px;
 }
@@ -147,13 +147,13 @@ window.dynamic-accent-bg bottom-sheet#main-bottom-sheet sheet > stack {
   transition: background .2s;
 }
 
-window.popout-window.fullscreen navigation-split-view > .sidebar-pane {
+window.popout-window.big-mode navigation-split-view > .sidebar-pane {
 	box-shadow: none;
 }
 
-window.popout-window.fullscreen .view_box,
-window.popout-window.fullscreen navigation-view-page > toolbarview stack > scrolledwindow > * > *,
-window.popout-window.fullscreen navigation-view-page > toolbarview stack > * > scrolledwindow > * > * {
+window.popout-window.big-mode .view_box,
+window.popout-window.big-mode navigation-view-page > toolbarview stack > scrolledwindow > * > *,
+window.popout-window.big-mode navigation-view-page > toolbarview stack > * > scrolledwindow > * > * {
   padding-top: 45px;
   padding-bottom: 152px;
 }
@@ -184,7 +184,7 @@ button.lyrics_go_back_overlay_button {
   margin: 10px;
 }
 
-window.popout-window.fullscreen button.lyrics_go_back_overlay_button {
+window.popout-window.big-mode button.lyrics_go_back_overlay_button {
   margin: 20px;
   margin-bottom: 162px;
 }

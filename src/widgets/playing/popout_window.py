@@ -28,6 +28,7 @@ class PopoutWindow(Adw.ApplicationWindow):
     state_stack_el = Gtk.Template.Child()
     cover_el = Gtk.Template.Child()
     sidebar_stack = Gtk.Template.Child()
+    toggle_fullscreen_el = Gtk.Template.Child()
 
     def __init__(self, application, player, queue_list_el, fullscreened):
         super().__init__(
@@ -81,15 +82,6 @@ class PopoutWindow(Adw.ApplicationWindow):
     def close_request(self, window):
         self.get_root().activate_action("app.close_popout_window")
 
-    @Gtk.Template.Callback()
-    def fullscreen_toggled(self, window, gparam):
-        isFullscreen = window.is_fullscreen()
-        self.split_view.set_max_sidebar_width(1080 if isFullscreen else 320)
-        self.bottom_bar.set_visible(isFullscreen)
-        self.toolbarview.set_extend_content_to_top_edge(isFullscreen)
-        self.sidebar_stack.set_visible_child_name('view' if isFullscreen else 'controller')
-        self.header_view_switcher.set_visible(not isFullscreen)
-
     def song_position_changed(self, positionSeconds:int):
         integration = get_current_integration()
         songId = integration.loaded_models.get('currentSong').get_property('songId')
@@ -126,3 +118,14 @@ class PopoutWindow(Adw.ApplicationWindow):
     def progress_bar_changed(self, scale_el, scroll_type, value):
         self.playing_page.progress_bar_changed(scale_el, scroll_type, value)
 
+    @Gtk.Template.Callback()
+    def big_mode_apply(self, breakpoint_el):
+        self.add_css_class('big-mode')
+
+    @Gtk.Template.Callback()
+    def big_mode_unapply(self, breakpoint_el):
+        self.remove_css_class('big-mode')
+
+    @Gtk.Template.Callback()
+    def fullscreen_toggled(self, window, gparam):
+        self.toggle_fullscreen_el.set_icon_name('view-unfullscreen-symbolic' if window.is_fullscreen() else 'view-fullscreen-symbolic')
