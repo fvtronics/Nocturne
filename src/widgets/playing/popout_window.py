@@ -1,6 +1,6 @@
 # popout_window.py
 
-from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject, Pango
+from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject, Pango, Gdk
 from . import PlayingControlPage
 from ...integrations import get_current_integration
 from ...constants import get_display_time
@@ -112,7 +112,29 @@ class PopoutWindow(Adw.ApplicationWindow):
             self.fs_artist_el.get_child().set_label(artist.get('name'))
             self.fs_artist_el.set_tooltip_text(artist.get('name'))
             self.fs_artist_el.set_action_target_value(GLib.Variant.new_string(artist.get('id')))
-            self.cover_el.set_paintable(model.get_property('gdkPaintable'))
+
+            # Paintable
+            paintable = model.get_property('gdkPaintable')
+            if paintable:
+                self.cover_el.remove_css_class('p50')
+            else:
+                icon_theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
+                paintable = icon_theme.lookup_icon(
+                    'music-note-symbolic',
+                    None,
+                    64,
+                    1,
+                    Gtk.TextDirection.NONE,
+                    0
+                )
+                self.cover_el.add_css_class('p50')
+            GLib.idle_add(self.cover_el.set_paintable, paintable)
+
+            # Radio
+            self.fs_artist_el.set_visible(not model.get_property('isRadio'))
+            self.fs_album_el.set_visible(not model.get_property('isRadio'))
+            self.fs_timestamp_el.set_visible(not model.get_property('isRadio'))
+            self.fs_progress_el.set_visible(not model.get_property('isRadio'))
 
     @Gtk.Template.Callback()
     def progress_bar_changed(self, scale_el, scroll_type, value):
