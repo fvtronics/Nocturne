@@ -286,7 +286,12 @@ class Player(EventAdapter):
             mode = "consecutive"
 
         if action == "previous" and integration.loaded_models.get('currentSong').get_property('positionSeconds') > 5:
-            integration.loaded_models.get('currentSong').set_property('songId', current_song_id)
+            self.gst.seek_simple(
+                Gst.Format.TIME,
+                Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
+                0
+            )
+            self.gst.set_state(Gst.State.PLAYING)
             return
 
         id_list = self.control_page.get_root().queue_page.song_list_el.get_all_ids()

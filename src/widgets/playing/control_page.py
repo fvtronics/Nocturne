@@ -77,11 +77,9 @@ class PlayingControlPage(Adw.NavigationPage):
 
     @Gtk.Template.Callback()
     def progress_bar_changed(self, scale_el, scroll_type, value):
-        #print(scale_el, scroll_type, value)
         value = scale_el.get_adjustment().get_value()
         self.is_seeking = True
         def change_time(val):
-            print(val)
             self.is_seeking = False
             nanoseconds = int(val * Gst.SECOND)
             self.player.gst.seek_simple(
