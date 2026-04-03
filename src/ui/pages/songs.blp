@@ -30,13 +30,6 @@ template $NocturneSongsPage: Adw.NavigationPage {
           label: _("Search songs");
         }
       };
-
-      [end]
-      Gtk.ToggleButton star_filter_el {
-        icon-name: "non-starred-symbolic";
-        tooltip-text: _("No Filtering");
-        toggled => $star_filter_toggled();
-      }
     }
 
     content: Gtk.Stack main_stack {
