@@ -5,9 +5,9 @@ from ...integrations import get_current_integration, models
 from ..song import SongRow, SongSmallRow
 import threading
 
-@Gtk.Template(resource_path='/com/jeffser/Nocturne/pages/songs.ui')
-class SongsPage(Adw.NavigationPage):
-    __gtype_name__ = 'NocturneSongsPage'
+@Gtk.Template(resource_path='/com/jeffser/Nocturne/pages/songs_all.ui')
+class SongsAllPage(Adw.NavigationPage):
+    __gtype_name__ = 'NocturneSongsAllPage'
 
     toggle_group_el = Gtk.Template.Child()
     search_entry = Gtk.Template.Child()
