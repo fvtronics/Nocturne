@@ -9,6 +9,7 @@ from PIL import Image
 
 class Navidrome(Base):
     __gtype_name__ = 'NocturneIntegrationNavidrome'
+    _use_plain_password_auth = False
 
     login_page_metadata = {
         'icon-name': "music-note-symbolic",
@@ -25,32 +26,41 @@ class Navidrome(Base):
     user = GObject.Property(type=str)
 
     def get_base_params(self) -> dict:
-        salt, token = secret.get_hashed_password()
-        return {
+        params = {
             'u': self.get_property('user'),
-            't': token,
-            's': salt,
             'v': '1.16.1',
             'c': 'Nocturne',
             'f': 'json'
         }
+        if self._use_plain_password_auth:
+            params['p'] = secret.get_plain_password()
+        else:
+            salt, token = secret.get_hashed_password()
+            params['t'] = token
+            params['s'] = salt
+        return params
 
     def get_url(self, action:str) -> str:
         return '{}/rest/{}'.format(self.get_property('url').strip('/'), action)
 
+    def send_request(self, action: str, params:dict={}) -> requests.Response:
+        return requests.get(
+            self.get_url(action),
+            params={**self.get_base_params(), **params},
+            verify=not self.get_property('trust_server')
+        )
+
     def make_request(self, action:str, params:dict={}) -> dict:
-        params = {
-            **self.get_base_params(),
-            **params
-        }
         try:
-            response = requests.get(
-                self.get_url(action),
-                params=params,
-                verify=not self.get_property('trust_server')
-            )
+            response = self.send_request(action, params)
             if response.status_code == 200:
-                return response.json().get('subsonic-response', {})
+                data = response.json().get('subsonic-response', {})
+                if data.get('status') == 'failed' and data.get('error', {}).get('code') == 41:
+                    self._use_plain_password_auth = True
+                    response = self.send_request(action, params)
+                    if response.status_code == 200:
+                        return response.json().get('subsonic-response', {})
+                return data
         except Exception:
             pass
         return {}
