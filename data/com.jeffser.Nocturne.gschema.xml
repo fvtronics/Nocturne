@@ -34,6 +34,9 @@
 	  <key name="default-view-mode" type="s">
 	    <default>'list'</default>
 	  </key>
+	  <key name="show-rating-in-player" type="b">
+	    <default>false</default>
+	  </key>
 	  <key name="show-playlists-in-sidebar" type="b">
 	    <default>true</default>
 	  </key>

@@ -783,6 +783,23 @@ class Jellyfin(Base):
         )
         return response.get("state") == "ok"
 
+    def setRating(self, id:str, rating:int=0) -> bool:
+        RATINGSFILE = os.path.join(JELLYFIN_DATA_DIR, 'ratings.json')
+
+        try:
+            with open(RATINGSFILE, 'r') as f:
+                rating_dict = json.load(f)
+            if not isinstance(rating_dict, dict):
+                rating_dict = {}
+        except Exception:
+            rating_dict = {}
+        rating_dict[id] = rating
+
+        self.loaded_models.get(id).set_property('userRating', rating)
+        with open(RATINGSFILE, 'w') as f:
+            json.dump(ratings, f, ensure_ascii=False)
+        return True
+
     def scrobble(self, id:str):
         # not needed in jellyfin
         pass

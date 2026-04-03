@@ -431,6 +431,16 @@ class Navidrome(Base):
         })
         return response.get('status') == 'ok'
 
+    def setRating(self, id:str, rating:int=0) -> bool:
+        response = self.make_request('setRating', {
+            'id': id,
+            'rating': rating
+        })
+        if response.get('status') == 'ok':
+            self.loaded_models.get(id).set_property('userRating', rating)
+            return True
+        return False
+
     def scrobble(self, id:str):
         # Registers the song as played, useful for keeping track of "most played" albums and the sorts
         if model := self.loaded_models.get(id) :

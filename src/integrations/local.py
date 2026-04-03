@@ -492,6 +492,14 @@ class Local(Base):
             with open(os.path.join(LOCAL_DATA_DIR, 'scrobble.json'), 'w') as f:
                 json.dump(scrobble_dict, f, ensure_ascii=False)
 
+    def setRating(self, id:str, rating:int=0) -> bool:
+        ratings = self.open_json('ratings.json')
+        ratings[id] = rating
+        self.loaded_models.get(id).set_property('userRating', rating)
+        with open(os.path.join(LOCAL_DATA_DIR, 'ratings.json'), 'w') as f:
+            json.dump(ratings, f, ensure_ascii=False)
+        return True
+
     def getServerInformation(self) -> dict:
         server_information = {
             'link': 'file://{}'.format(self.get_property('library_dir')),

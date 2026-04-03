@@ -118,6 +118,59 @@ template $NocturnePlayingControlPage: Adw.NavigationPage {
                   "p0"
                 ]
               }
+
+              Gtk.Box rating_container {
+                styles [
+                  "linked"
+                ]
+                hexpand: true;
+                halign: center;
+                Gtk.Button {
+                  name: "1";
+                  tooltip-text: _("1 Star");
+                  icon-name: "non-starred-symbolic";
+                  clicked => $change_rating();
+                  styles [
+                    "flat"
+                  ]
+                }
+                Gtk.Button {
+                  name: "2";
+                  tooltip-text: _("2 Stars");
+                  icon-name: "non-starred-symbolic";
+                  clicked => $change_rating();
+                  styles [
+                    "flat"
+                  ]
+                }
+                Gtk.Button {
+                  name: "3";
+                  tooltip-text: _("3 Stars");
+                  icon-name: "non-starred-symbolic";
+                  clicked => $change_rating();
+                  styles [
+                    "flat"
+                  ]
+                }
+                Gtk.Button {
+                  name: "4";
+                  tooltip-text: _("4 Stars");
+                  icon-name: "non-starred-symbolic";
+                  clicked => $change_rating();
+                  styles [
+                    "flat"
+                  ]
+                }
+                Gtk.Button {
+                  name: "5";
+                  tooltip-text: _("5 Stars");
+                  icon-name: "non-starred-symbolic";
+                  clicked => $change_rating();
+                  styles [
+                    "flat"
+                  ]
+                }
+              }
             }
 
             Gtk.Scale progress_el {

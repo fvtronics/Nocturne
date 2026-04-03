@@ -26,6 +26,7 @@ class PlayingControlPage(Adw.NavigationPage):
     star_el = Gtk.Template.Child()
     show_sidebar_el = Gtk.Template.Child()
     state_stack_el = Gtk.Template.Child()
+    rating_container = Gtk.Template.Child()
     pause_next_change = False
 
     def __init__(self):
@@ -33,7 +34,12 @@ class PlayingControlPage(Adw.NavigationPage):
         self.starred_connection = None
         self.last_song_id = None
         super().__init__()
-
+        Gio.Settings(schema_id="com.jeffser.Nocturne").bind(
+            "show-rating-in-player",
+            self.rating_container,
+            "visible",
+            Gio.SettingsBindFlags.DEFAULT
+        )
         self.is_seeking = False
 
     def setup(self, player=None):
@@ -91,6 +97,21 @@ class PlayingControlPage(Adw.NavigationPage):
         view = self.get_ancestor(Adw.NavigationSplitView)
         if view:
             view.set_show_content(True)
+
+    @Gtk.Template.Callback()
+    def change_rating(self, button):
+        integration = get_current_integration()
+        songId = integration.loaded_models.get('currentSong').get_property('songId')
+        try:
+            rating = int(button.get_name())
+            if rating == integration.loaded_models.get(songId).get_property('userRating'):
+                rating = 0
+        except:
+            return
+
+        if integration.setRating(songId, rating):
+            for i, el in enumerate(list(self.rating_container)):
+                el.set_icon_name("starred-symbolic" if rating >= i+1 else "non-starred-symbolic")
 
     def change_bottom_sheet_state(self, playing:bool):
         bottom_sheet = self.get_ancestor(Adw.BottomSheet)
@@ -151,6 +172,11 @@ class PlayingControlPage(Adw.NavigationPage):
         # Progressbar
         self.progress_el.get_adjustment().set_upper(model.get_property('duration'))
         self.progress_el.set_visible(not model.get_property('isRadio'))
+
+        # Rating
+        rating = model.get_property("userRating")
+        for i, el in enumerate(list(self.rating_container)):
+            el.set_icon_name("starred-symbolic" if rating >= i+1 else "non-starred-symbolic")
 
         # Star
         self.star_el.set_visible(not model.get_property('isRadio'))

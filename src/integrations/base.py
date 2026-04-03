@@ -207,6 +207,11 @@ class Base(GObject.Object):
         print('WARNING', 'deletePlaylist', 'not implemented')
         return False
 
+    def setRating(self, id:str, rating:int=0) -> bool:
+        # returns True if rated successfully
+        print('WARNING', 'setRating', 'not implemented')
+        return False
+
     def scrobble(self, id:str):
         # the id is for a Song, this is how views are stored
         # called when a song is played

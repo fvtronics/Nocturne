@@ -103,6 +103,7 @@ class Song(GObject.Object):
     starred = GObject.Property(type=bool, default=False)
     track = GObject.Property(type=int) #Track N in album
     isExternalFile = GObject.Property(type=bool, default=False)
+    userRating = GObject.Property(type=int)
 
     # --RADIO--
     isRadio = GObject.Property(type=bool, default=False)
