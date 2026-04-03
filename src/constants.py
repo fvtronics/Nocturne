@@ -164,7 +164,8 @@ def get_song_info_from_file(file_path:str, star_dict:dict={}, is_external_file:b
     return song
 
 TRANSLATORS = [
-    "Jeffry Samuel (Spanish) https://jeffser.com"
+    "Jeffry Samuel (Spanish) https://jeffser.com",
+    "Martin Prokoph (German) https://github.com/Motschen"
 ]
 
 PLAYBACK_MODES = {

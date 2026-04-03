@@ -91,4 +91,5 @@ nocturne
 
 Language                | Contributors
 :-----------------------|:-----------
-Spanish              | [Jeffry Samuel](https://github.com/jeffser)
+Spanish                 | [Jeffry Samuel](https://github.com/jeffser)
+German                  | [Martin Prokoph](https://github.com/Motschen)
