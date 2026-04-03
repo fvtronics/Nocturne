@@ -36,6 +36,7 @@ class Local(Base):
             if file_path.suffix.lower() in ('.mp3', '.flac', '.m4a', '.ogg', '.wav'):
                 song_id = 'SONG:{}'.format(file_path)
                 self.loaded_models[song_id] = models.Song(id=song_id, path=file_path)
+                threading.Thread(target=self.verifySong, args=(song_id,)).start()
 
         # Load radios
         RADIOFILE = os.path.join(LOCAL_DATA_DIR, 'radios.json')
