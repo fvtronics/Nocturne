@@ -169,8 +169,9 @@ toast {
 
 @media (prefers-color-scheme: light) {
   window.popout-window list.boxed-list,
-  bottom-sheet#main-bottom-sheet sheet list.boxed-list {
-    background-color: rgba(255,255,255,0.2);
+  bottom-sheet#main-bottom-sheet sheet list.boxed-list,
+  window.popout-window .fullscreen-bottom-bar {
+    background-color: rgba(255,255,255,0.25);
   }
 }
 
@@ -204,3 +205,4 @@ window.popout-window.big-mode .fullscreen-bottom-bar {
 button.lyrics_go_back_overlay_button {
   margin: 10px;
 }
+
