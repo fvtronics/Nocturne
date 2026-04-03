@@ -200,3 +200,7 @@ window.popout-window.big-mode .fullscreen-bottom-bar {
 	letter-spacing: -0.02em;
 	line-height: 1.1;
 }
+
+button.lyrics_go_back_overlay_button {
+  margin: 10px;
+}
