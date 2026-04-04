@@ -74,6 +74,8 @@ class SongRow(Adw.ActionRow):
         if not model or model.get_property('isRadio') or model.get_property('isExternalFile'):
             del context_dict["add-to-playlist"]
             del context_dict["edit-lyrics"]
+            del context_dict["show-album"]
+            del context_dict["show-artist"]
         if self.removable:
             context_dict["remove"]["connection"] = self.remove_selected
         else:

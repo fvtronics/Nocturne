@@ -6,6 +6,7 @@ from ..constants import get_navidrome_path, check_if_navidrome_ready, get_navidr
 from .base import Base
 import requests, random, threading, favicon, io, subprocess, shutil, os
 from PIL import Image
+from urllib.parse import urlparse
 
 class Navidrome(Base):
     __gtype_name__ = 'NocturneIntegrationNavidrome'
@@ -382,20 +383,22 @@ class Navidrome(Base):
 
     def createInternetRadioStation(self, name:str, streamUrl:str) -> bool:
         # returns true if ok
+        parsedStreamUrl = urlparse(streamUrl)
         response = self.make_request('createInternetRadioStation', {
             'name': name,
             'streamUrl': streamUrl,
-            'homepageUrl': '{}://{}'.format(streamUrl.scheme, streamUrl.netloc)
+            'homepageUrl': '{}://{}'.format(parsedStreamUrl.scheme, parsedStreamUrl.netloc)
         })
         return response.get('status') == 'ok'
 
     def updateInternetRadioStation(self, id:str, name:str, streamUrl:str) -> bool:
         # returns true if ok
+        parsedStreamUrl = urlparse(streamUrl)
         response = self.make_request('updateInternetRadioStation', {
             'id': id,
             'name': name,
             'streamUrl': streamUrl,
-            'homepageUrl': '{}://{}'.format(streamUrl.scheme, streamUrl.netloc)
+            'homepageUrl': '{}://{}'.format(parsedStreamUrl.scheme, parsedStreamUrl.netloc)
         })
         return response.get('status') == 'ok'
 
