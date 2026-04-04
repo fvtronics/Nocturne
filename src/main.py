@@ -31,6 +31,9 @@ from .preferences import NocturnePreferences
 from .constants import get_song_info_from_file, TRANSLATORS
 from .integrations import get_current_integration, models
 
+GLib.set_prgname('com.jeffser.Nocturne')
+GLib.set_application_name("Nocturne")
+
 class NocturneApplication(Adw.Application):
     __gtype_name__ = 'NocturneApplication'
     """The main application singleton class."""
