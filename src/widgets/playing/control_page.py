@@ -171,6 +171,7 @@ class PlayingControlPage(Adw.NavigationPage):
         rating = model.get_property("userRating")
         for i, el in enumerate(list(self.rating_container)):
             el.set_icon_name("starred-symbolic" if rating >= i+1 else "non-starred-symbolic")
+        self.rating_container.set_visible(not model.get_property('isRadio'))
 
         # Star
         self.star_el.set_visible(not model.get_property('isRadio'))
