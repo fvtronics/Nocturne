@@ -10,7 +10,6 @@ class AlbumsPage(Adw.NavigationPage):
 
     list_el = Gtk.Template.Child()
     main_stack = Gtk.Template.Child()
-    page_type = GObject.Property(type=str)
 
     def reload(self):
         # call in different thread
@@ -18,7 +17,7 @@ class AlbumsPage(Adw.NavigationPage):
         integration = get_current_integration()
 
         albums = integration.getAlbumList(
-            list_type=self.page_type,
+            list_type=self.get_tag().split('-')[1],
             size=20
         )
         self.list_el.set_widgets([AlbumButton(id) for id in albums])

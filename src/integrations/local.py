@@ -17,7 +17,7 @@ class Local(Base):
         'title': _("Local Files"),
         'entries': ['library-dir'],
         'login-label': _("Continue"),
-        'default-page': 'home'
+        'default-page': 'songs-all'
     }
     button_metadata = {
         'title': _("Local Files"),
@@ -71,22 +71,27 @@ class Local(Base):
                 isRadio=True
             )
 
+        self.load_playlists()
+
+    def load_playlists(self):
         # Load playlists
         playlist_dict = self.open_json('playlists.json')
 
         for playlist_id, playlist in playlist_dict.items():
-            path_str = ""
-            if len(playlist.get('songId', [])) > 0:
-                if model := self.loaded_models.get(playlist.get('songId')[0]):
-                    path_str = model.path
+            if playlist_id not in self.loaded_models:
+                path_str = ""
+                if len(playlist.get('songId', [])) > 0:
+                    if model := self.loaded_models.get(playlist.get('songId')[0]):
+                        path_str = model.path
 
-            self.loaded_models[playlist_id] = models.Playlist(
-                id=playlist_id,
-                name=playlist.get('name'),
-                songCount=len(playlist.get('songId', [])),
-                entry=[{'id': id} for id in playlist.get('songId', [])],
-                path = path_str
-            )
+                self.loaded_models[playlist_id] = models.Playlist(
+                    id=playlist_id,
+                    name=playlist.get('name'),
+                    songCount=len(playlist.get('songId', [])),
+                    entry=[{'id': id} for id in playlist.get('songId', [])],
+                    path = path_str
+                )
+
     # ----------- #
 
     def get_stream_url(self, song_id:str) -> str:
@@ -180,6 +185,7 @@ class Local(Base):
         return [model_id for model_id in list(self.loaded_models) if model_id.startswith('ARTIST:')][:size]
 
     def getPlaylists(self) -> list:
+        self.load_playlists()
         return [model_id for model_id in list(self.loaded_models) if model_id.startswith('PLAYLIST:')]
 
     def getStarredSongs(self) -> list:
@@ -420,7 +426,7 @@ class Local(Base):
     def createPlaylist(self, name:str=None, playlistId:str=None, songId:list=[]) -> str:
         playlist_dict = self.open_json('playlists.json')
 
-        playlistId = playlistId or str(uuid.uuid4())
+        playlistId = playlistId or 'PLAYLIST:{}'.format(str(uuid.uuid4()))
 
         playlist_dict[playlistId] = {
             'name': name,

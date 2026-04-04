@@ -93,8 +93,27 @@ template $NocturneWindow: Adw.ApplicationWindow {
                 $NocturneSongsAllPage {}
                 $NocturneSongsStarredPage {}
                 $NocturneAlbumsAllPage {}
-                $NocturneAlbumsPage {}
                 $NocturneRadiosPage {}
+                $NocturneAlbumsPage {
+                  tag: "albums-random";
+                  title: _("Random Albums");
+                }
+                $NocturneAlbumsPage {
+                  tag: "albums-starred";
+                  title: _("Favorite Albums");
+                }
+                $NocturneAlbumsPage {
+                  tag: "albums-newest";
+                  title: _("Newest Albums");
+                }
+                $NocturneAlbumsPage {
+                  tag: "albums-recent";
+                  title: _("Recent Albums");
+                }
+                $NocturneAlbumsPage {
+                  tag: "albums-frequent";
+                  title: _("Frequent Albums");
+                }
               };
             };
           };

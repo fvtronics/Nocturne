@@ -212,32 +212,27 @@ SIDEBAR_MENU = [
             { # Item
                 'title': _("Random"),
                 'icon-name': "playlist-shuffle-symbolic",
-                'page-tag': 'albums',
-                'page-type': 'random'
+                'page-tag': 'albums-random'
             },
             { # Item
                 'title': _("Favorites"),
                 'icon-name': "heart-filled-symbolic",
-                'page-tag': 'albums',
-                'page-type': 'starred'
+                'page-tag': 'albums-starred'
             },
             { # Item
                 'title': _("Recently Added"),
                 'icon-name': "list-add-symbolic",
-                'page-tag': 'albums',
-                'page-type': 'newest'
+                'page-tag': 'albums-newest'
             },
             { # Item
                 'title': _("Recently Played"),
                 'icon-name': "media-playback-start-symbolic",
-                'page-tag': 'albums',
-                'page-type': 'recent'
+                'page-tag': 'albums-recent'
             },
             { # Item
                 'title': _("Most Played"),
                 'icon-name': "media-playlist-repeat-symbolic",
-                'page-tag': 'albums',
-                'page-type': 'frequent'
+                'page-tag': 'albums-frequent'
             }
         ]
     },

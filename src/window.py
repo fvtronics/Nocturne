@@ -27,7 +27,7 @@ import threading
 class SidebarItem(Adw.SidebarItem):
     __gtype_name__ = 'NocturneSidebarItem'
     page_tag = GObject.Property(type=str)
-    page_type = GObject.Property(type=str) #optional
+    playlist_id = GObject.Property(type=str) # optional
 
 @Gtk.Template(resource_path='/com/jeffser/Nocturne/window.ui')
 class NocturneWindow(Adw.ApplicationWindow):
@@ -64,21 +64,19 @@ class NocturneWindow(Adw.ApplicationWindow):
 
     @Gtk.Template.Callback()
     def on_sidebar_activated(self, sidebar, index):
-        page_tag = sidebar.get_selected_item().page_tag
-        page_type = sidebar.get_selected_item().page_type
+        page_tag = sidebar.get_selected_item().get_property('page_tag')
         if page_tag == "playlist":
+            playlist_id = sidebar.get_selected_item().get_property('playlist_id')
             self.activate_action("app.replace_root_page", GLib.Variant('s', 'playlists'))
-            self.activate_action("app.show_playlist", GLib.Variant('s', page_type))
+            self.activate_action("app.show_playlist", GLib.Variant('s', playlist_id))
         else:
-            self.replace_root_page(page_tag, page_type)
+            self.replace_root_page(page_tag)
 
-    def replace_root_page(self, page_tag:str, page_type:str=None):
+    def replace_root_page(self, page_tag:str):
         page = self.main_navigationview.find_page(page_tag)
         if page:
             self.main_bottom_sheet.set_open(False)
             self.main_split_view.set_show_content(True)
-            if page_type:
-                page.set_property('page_type', page_type)
             threading.Thread(target=page.reload).start()
             self.main_navigationview.replace([page])
 
@@ -101,8 +99,7 @@ class NocturneWindow(Adw.ApplicationWindow):
                 row = SidebarItem(
                     title=item.get('title'),
                     icon_name=item.get('icon-name'),
-                    page_tag=item.get('page-tag'),
-                    page_type=item.get('page-type')
+                    page_tag=item.get('page-tag')
                 )
                 if item.get('page-tag') == 'playlists':
                     settings.bind(
@@ -144,7 +141,7 @@ class NocturneWindow(Adw.ApplicationWindow):
             if model := integration.loaded_models.get(playlistId):
                 item = SidebarItem(
                     page_tag="playlist",
-                    page_type=playlistId
+                    playlist_id=playlistId
                 )
                 settings.bind(
                     'show-playlists-in-sidebar',
