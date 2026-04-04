@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#find data src -type f \( -name "*.py" -o -name "*.blp" -o -name "*.in" -o -name "*.xml" \) | sort > po/POTFILES.in
 set -euo pipefail
 cd "$(dirname "$0")"
 
