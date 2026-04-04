@@ -182,7 +182,7 @@ class PlayerAdapter(MprisAdapter):
         pass
 
     def set_volume(self, value:Volume):
-        self.player.control_page.volume_el.set_value(value)
+        Gio.Settings(schema_id="com.jeffser.Nocturne").set_double('volume', value)
 
     def stop(self):
         self.player.gst.set_state(Gst.State.NULL)
