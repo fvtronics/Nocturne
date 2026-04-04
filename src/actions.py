@@ -245,8 +245,7 @@ def update_radio(window, id:str=""):
         name_el.set_text(model.get_property('title'))
     list_box.append(name_el)
     stream_el = Adw.EntryRow(
-        title=_("Stream Url"),
-        visible=model.get_property('streamUrl')
+        title=_("Stream Url")
     )
     if model and model.get_property('isRadio'):
         stream_el.set_text(model.get_property('streamUrl'))
