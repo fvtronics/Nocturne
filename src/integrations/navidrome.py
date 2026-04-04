@@ -97,7 +97,7 @@ class Navidrome(Base):
 
                 params = {
                     **self.get_base_params(),
-                    'id': model.id,
+                    'id': model.get_property('coverArt') or model.id,
                     'size': 720
                 }
                 response = requests.get(
@@ -254,6 +254,7 @@ class Navidrome(Base):
             response = self.make_request('getSong', {'id': id})
             song_dict = response.get('song', {})
             self.loaded_models[id].update_data(**song_dict)
+            threading.Thread(target=self.getCoverArt, args=(id,)).start()
 
         if id not in self.loaded_models:
             self.loaded_models[id] = models.Song(id=id)
@@ -264,8 +265,8 @@ class Navidrome(Base):
                 threading.Thread(target=update).start()
             else:
                 update()
-
-        threading.Thread(target=self.getCoverArt, args=(id,)).start()
+        else:
+            threading.Thread(target=self.getCoverArt, args=(id,)).start()
 
     def star(self, id:str) -> bool:
         response = self.make_request('star', {'id': id})

@@ -6,6 +6,7 @@ class Album(GObject.Object):
     __gtype_name__ = 'NocturneModelAlbum'
 
     id = GObject.Property(type=str)
+    coverArt = GObject.Property(type=str)
     gdkPaintable = GObject.Property(type=Gdk.Paintable)
     gdkPaintableBytes = GObject.Property(type=GLib.Bytes)
     name = GObject.Property(type=str)
@@ -37,6 +38,7 @@ class Artist(GObject.Object):
     __gtype_name__ = 'NocturneModelArtist'
 
     id = GObject.Property(type=str)
+    coverArt = GObject.Property(type=str)
     gdkPaintable = GObject.Property(type=Gdk.Paintable) #Gdk.Paintable
     gdkPaintableBytes = GObject.Property(type=GLib.Bytes)
     name = GObject.Property(type=str)
@@ -66,6 +68,7 @@ class Playlist(GObject.Object):
     __gtype_name__ = 'NocturneModelPlaylist'
 
     id = GObject.Property(type=str)
+    coverArt = GObject.Property(type=str)
     gdkPaintable = GObject.Property(type=Gdk.Paintable) #Gdk.Paintable
     gdkPaintableBytes = GObject.Property(type=GLib.Bytes)
     name = GObject.Property(type=str)
@@ -93,6 +96,7 @@ class Song(GObject.Object):
     __gtype_name__ = 'NocturneModelSong'
 
     id = GObject.Property(type=str)
+    coverArt = GObject.Property(type=str)
     gdkPaintable = GObject.Property(type=Gdk.Paintable) #Gdk.Paintable
     gdkPaintableBytes = GObject.Property(type=GLib.Bytes)
     title = GObject.Property(type=str)
