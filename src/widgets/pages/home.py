@@ -31,7 +31,7 @@ class HomePage(Adw.NavigationPage):
         self.song_wrapbox.set_header(
             label=_("Songs"),
             icon_name="music-note-symbolic",
-            page_tag="songs"
+            page_tag="songs-all"
         )
         self.song_wrapbox.list_el.set_margin_start(10)
         self.song_wrapbox.list_el.set_margin_end(10)

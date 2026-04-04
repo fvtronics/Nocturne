@@ -18,7 +18,7 @@ class AlbumPage(Adw.NavigationPage):
     artist_el = Gtk.Template.Child()
     star_el = Gtk.Template.Child()
     song_list_el = Gtk.Template.Child()
-
+    rating_container = Gtk.Template.Child()
     context_wrap_el = Gtk.Template.Child()
 
     def __init__(self, id:str):
@@ -42,6 +42,7 @@ class AlbumPage(Adw.NavigationPage):
         integration.connect_to_model(self.id, 'song', self.update_song_list)
         integration.connect_to_model(self.id, 'gdkPaintable', self.update_cover)
         integration.connect_to_model(self.id, 'gdkPaintableBytes', self.update_background)
+        integration.connect_to_model(self.id, 'userRating', self.update_rating)
         self.song_list_el.list_el.set_sort_func(self.song_list_sort_func)
 
     def song_list_sort_func(self, r1, r2):
@@ -84,6 +85,10 @@ class AlbumPage(Adw.NavigationPage):
         if gbytes:
             threading.Thread(target=run).start()
 
+    def update_rating(self, rating:int):
+        for i, el in enumerate(list(self.rating_container)):
+            el.set_icon_name("starred-symbolic" if rating >= i+1 else "non-starred-symbolic")
+
     def update_name(self, name:str):
         self.name_el.set_label(name)
         self.name_el.set_visible(name)
@@ -101,12 +106,14 @@ class AlbumPage(Adw.NavigationPage):
     def update_starred(self, starred:bool):
         if starred:
             self.star_el.add_css_class('accent')
-            self.star_el.set_icon_name('starred-symbolic')
-            self.star_el.set_tooltip_text(_('Starred'))
+            self.star_el.remove_css_class('dim-label')
+            self.star_el.set_icon_name('heart-filled-symbolic')
+            self.star_el.set_tooltip_text(_('Favorite'))
         else:
             self.star_el.remove_css_class('accent')
-            self.star_el.set_icon_name('non-starred-symbolic')
-            self.star_el.set_tooltip_text(_('Star'))
+            self.star_el.add_css_class('dim-label')
+            self.star_el.set_icon_name('heart-outline-thick-symbolic')
+            self.star_el.set_tooltip_text(_('Not Favorite'))
 
     def update_song_list(self, song_list:list):
         self.song_list_el.list_el.remove_all()
@@ -121,3 +128,15 @@ class AlbumPage(Adw.NavigationPage):
             self.song_list_el.list_el.append(row)
         self.song_list_el.main_stack.set_visible_child_name('content' if len(song_list) > 0 else 'no-content')
         self.song_list_el.list_el.invalidate_sort()
+
+
+    @Gtk.Template.Callback()
+    def change_rating(self, button):
+        integration = get_current_integration()
+        try:
+            rating = int(button.get_name())
+            if rating == integration.loaded_models.get(self.id).get_property('userRating'):
+                rating = 0
+        except:
+            return
+        integration.setRating(self.id, rating)

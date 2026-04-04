@@ -20,6 +20,7 @@ class ArtistPage(Adw.NavigationPage):
     star_el = Gtk.Template.Child()
     album_wrapbox = Gtk.Template.Child()
     artist_carousel = Gtk.Template.Child()
+    rating_container = Gtk.Template.Child()
     context_wrap_el = Gtk.Template.Child()
 
     def __init__(self, id:str):
@@ -42,6 +43,7 @@ class ArtistPage(Adw.NavigationPage):
         integration.connect_to_model(self.id, 'similarArtist', self.update_artist_list)
         integration.connect_to_model(self.id, 'gdkPaintable', self.update_cover)
         integration.connect_to_model(self.id, 'gdkPaintableBytes', self.update_background)
+        integration.connect_to_model(self.id, 'userRating', self.update_rating)
 
         self.artist_carousel.set_header(
             label=_("Related Artists"),
@@ -52,6 +54,10 @@ class ArtistPage(Adw.NavigationPage):
             label=_("Albums"),
             icon_name="music-queue-symbolic"
         )
+
+    def update_rating(self, rating:int):
+        for i, el in enumerate(list(self.rating_container)):
+            el.set_icon_name("starred-symbolic" if rating >= i+1 else "non-starred-symbolic")
 
     def update_cover(self, paintable:Gdk.Paintable=None):
         if paintable:
@@ -89,18 +95,20 @@ class ArtistPage(Adw.NavigationPage):
         self.set_name(name)
 
     def update_biography(self, biography:str):
-        self.biography_el.set_label(biography)
-        self.biography_el.get_parent().set_visible(biography)
+        self.biography_el.set_label(biography.strip())
+        self.biography_el.get_parent().set_visible(biography.strip())
 
     def update_starred(self, starred:bool):
         if starred:
             self.star_el.add_css_class('accent')
-            self.star_el.set_icon_name('starred-symbolic')
-            self.star_el.set_tooltip_text(_('Starred'))
+            self.star_el.remove_css_class('dim-label')
+            self.star_el.set_icon_name('heart-filled-symbolic')
+            self.star_el.set_tooltip_text(_('Favorite'))
         else:
             self.star_el.remove_css_class('accent')
-            self.star_el.set_icon_name('non-starred-symbolic')
-            self.star_el.set_tooltip_text(_('Star'))
+            self.star_el.add_css_class('dim-label')
+            self.star_el.set_icon_name('heart-outline-thick-symbolic')
+            self.star_el.set_tooltip_text(_('Not Favorite'))
 
     def update_album_list(self, album_list:list):
         if album_list:
@@ -127,3 +135,13 @@ class ArtistPage(Adw.NavigationPage):
         else:
             button.get_child().set_ellipsize(Pango.EllipsizeMode.NONE)
 
+    @Gtk.Template.Callback()
+    def change_rating(self, button):
+        integration = get_current_integration()
+        try:
+            rating = int(button.get_name())
+            if rating == integration.loaded_models.get(self.id).get_property('userRating'):
+                rating = 0
+        except:
+            return
+        integration.setRating(self.id, rating)

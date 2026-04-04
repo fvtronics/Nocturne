@@ -2,7 +2,7 @@ using Gtk 4.0;
 using Adw 1;
 
 template $NocturneSongsStarredPage: Adw.NavigationPage {
-  title: _("Starred Songs");
+  title: _("Favorite Songs");
   tag: "songs-starred";
   child: Adw.ToolbarView {
     [top]
@@ -24,10 +24,10 @@ template $NocturneSongsStarredPage: Adw.NavigationPage {
 
       title-widget: Gtk.SearchEntry {
         hexpand: true;
-        placeholder-text: _("Starred Songs");
+        placeholder-text: _("Favorite Songs");
         search-changed => $on_search();
         accessibility {
-          label: _("Search starred songs");
+          label: _("Search favorite songs");
         }
       };
     }

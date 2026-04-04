@@ -17,6 +17,7 @@ class Album(GObject.Object):
     song = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
     starred = GObject.Property(type=bool, default=False)
     path = GObject.Property(type=str) # For use in Local
+    userRating = GObject.Property(type=int)
 
     def __init__(self, **kwargs):
         super().__init__()
@@ -45,6 +46,7 @@ class Artist(GObject.Object):
     biography = GObject.Property(type=str)
     similarArtist = GObject.Property(type=GObject.TYPE_PYOBJECT) #list
     path = GObject.Property(type=str) # For use in Local
+    userRating = GObject.Property(type=int)
 
     def __init__(self, **kwargs):
         super().__init__()
