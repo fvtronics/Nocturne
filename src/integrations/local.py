@@ -17,7 +17,7 @@ class Local(Base):
         'title': _("Local Files"),
         'entries': ['library-dir'],
         'login-label': _("Continue"),
-        'default-page': 'songs-all'
+        'default-page': 'home'
     }
     button_metadata = {
         'title': _("Local Files"),
