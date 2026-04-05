@@ -179,7 +179,7 @@ class Local(Base):
             album_list = [model_id for model_id, model in self.loaded_models.items() if model_id.startswith('ALBUM:') and model.starred]
         else:
             album_list = [model_id for model_id in list(self.loaded_models) if model_id.startswith('ALBUM:')]
-        return [model_id for model_id in album_list if model_id in self.loaded_models][offset:size]
+        return [model_id for model_id in album_list if model_id in self.loaded_models][offset:offset+size]
 
     def getArtists(self, size:int=10) -> list:
         return [model_id for model_id in list(self.loaded_models) if model_id.startswith('ARTIST:')][:size]

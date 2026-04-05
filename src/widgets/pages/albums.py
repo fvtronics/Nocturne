@@ -46,7 +46,7 @@ class AlbumsPage(Adw.NavigationPage):
         )
 
         for album_id in albums:
-            results = [button for button in list(self.list_el.list_el) if button.id == album_id]
+            results = [button for button in list(self.list_el.list_el) if getattr(button, 'id', None) == album_id]
             if len(results) > 0:
                 GLib.idle_add(results[0].set_visible, True)
             else:
