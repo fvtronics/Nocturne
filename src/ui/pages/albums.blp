@@ -18,20 +18,46 @@ template $NocturneAlbumsPage: Adw.NavigationPage {
       }
       Gtk.StackPage {
         name: "content";
-        child: Gtk.ScrolledWindow {
+        child: Gtk.ScrolledWindow scrolledwindow {
           propagate-natural-width: true;
           propagate-natural-height: true;
+          edge-reached => $scroll_edge_reached();
 
           child: Adw.Clamp {
             maximum-size: 2000;
             tightening-threshold: 800;
             margin-top: 50;
-            child: $NocturneWrapbox list_el {
-              margin-top: 10;
-              margin-bottom: 10;
-              margin-start: 10;
-              margin-end: 10;
-              valign: start;
+            child: Gtk.Box {
+              orientation: vertical;
+              spacing: 5;
+
+              $NocturneWrapbox list_el {
+                margin-top: 10;
+                margin-bottom: 10;
+                margin-start: 10;
+                margin-end: 10;
+                valign: start;
+              }
+
+              Gtk.Stack end_stack {
+                Gtk.StackPage {
+                  name: "loading";
+                  child: Adw.Spinner {};
+                }
+                Gtk.StackPage {
+                  name: "end";
+                  child: Gtk.Label {
+                    styles [
+                      "dimmed"
+                    ]
+                    label: _("Reached End of List");
+                    halign: center;
+                    wrap: true;
+                    wrap-mode: word_char;
+                    justify: center;
+                  };
+                }
+              }
             };
           };
         };
