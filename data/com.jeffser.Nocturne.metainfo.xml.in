@@ -89,6 +89,25 @@
   </keywords>
 
   <releases>
+    <release version="0.7.1" date="2026-04-04">
+      <url type="details">https://github.com/Jeffser/Nocturne/releases/tag/0.7.1</url>
+      <description translate="no">
+        <p>New</p>
+        <ul>
+          <li>Added loading indicator for local instance</li>
+          <li>Added option to change default page on launch (does not apply to Local instances)</li>
+          <li>Made improvements to general stability</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>Improved compatibility with more Mpris features</li>
+          <li>Fixed errors with radio creation</li>
+          <li>Fixed null title on radio stations that do not report song names</li>
+          <li>Removed favorite button from radio rows</li>
+          <li>Fixed problems relating to albums in local instance</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.7.0" date="2026-04-03">
       <url type="details">https://github.com/Jeffser/Nocturne/releases/tag/0.7.0</url>
       <description translate="no">
