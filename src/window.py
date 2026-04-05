@@ -114,6 +114,8 @@ class NocturneWindow(Adw.ApplicationWindow):
         message = integration.get_property("loadingMessage")
         self.loading_el.set_visible(message)
         self.loading_el.set_tooltip_text(message)
+        if not message:
+            threading.Thread(target=self.main_navigationview.get_visible_page().reload).start()
 
     def update_playlist_section_of_sidebar(self):
         integration = get_current_integration()

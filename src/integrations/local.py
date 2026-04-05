@@ -16,8 +16,7 @@ class Local(Base):
         'icon-name': "music-note-symbolic",
         'title': _("Local Files"),
         'entries': ['library-dir'],
-        'login-label': _("Continue"),
-        'default-page': 'songs-all'
+        'login-label': _("Continue")
     }
     button_metadata = {
         'title': _("Local Files"),

@@ -44,7 +44,6 @@ class LoginPage(Adw.NavigationPage):
                 'notify::serverRunning',
                 lambda *p, integ=self.integration: self.server_status_el.set_subtitle(_("Running") if integ.get_property('serverRunning') else _("Not Running"))
             )
-            print(self.integration.get_property('serverRunning'))
         else:
             self.server_status_el.set_visible(False)
 
@@ -162,12 +161,9 @@ class LoginPage(Adw.NavigationPage):
         root.footer.setup()
         root.lyrics_page.setup()
 
-        default_page = self.integration.login_page_metadata.get('default-page')
-        if not default_page:
-            default_page = settings.get_value('default-page-tag').unpack() or 'home'
+        default_page = settings.get_value('default-page-tag').unpack() or 'home'
 
         root.activate_action("app.replace_root_page", GLib.Variant('s', default_page))
-        threading.Thread(target=root.main_navigationview.find_page(default_page).reload).start()
         threading.Thread(target=root.update_playlist_section_of_sidebar).start()
         if settings.get_value("restore-session").unpack():
             threading.Thread(target=root.playing_page.player.restore_play_queue).start()

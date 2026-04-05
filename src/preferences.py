@@ -126,10 +126,8 @@ class NocturnePreferences(Adw.PreferencesDialog):
             self.instance_avatar_el.set_text(data.get('username', ''))
             self.instance_el.set_visible(len(data) > 0)
             self.session_group_el.set_visible(True)
-            self.default_page_el.set_visible(not integration.login_page_metadata.get('default-page'))
         else:
             self.session_group_el.set_visible(False)
-            self.default_page_el.set_visible(False)
 
     @Gtk.Template.Callback()
     def on_dynamic_bg_toggled(self, row, gparam):
