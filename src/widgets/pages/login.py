@@ -10,6 +10,7 @@ import threading, subprocess
 class LoginPage(Adw.NavigationPage):
     __gtype_name__ = 'NocturneLoginPage'
 
+    server_status_el = Gtk.Template.Child()
     extra_menu_el = Gtk.Template.Child()
     status_page = Gtk.Template.Child()
     url_el = Gtk.Template.Child()
@@ -35,6 +36,17 @@ class LoginPage(Adw.NavigationPage):
         metadata = self.integration.login_page_metadata
         self.status_page.set_icon_name(metadata.get('icon-name'))
         self.status_page.set_title(metadata.get('title') or _("Login"))
+
+        # Server Status
+        if 'status' in metadata.get('entries'):
+            self.server_status_el.set_visible(True)
+            self.integration.connect(
+                'notify::serverRunning',
+                lambda *p, integ=self.integration: self.server_status_el.set_subtitle(_("Running") if integ.get_property('serverRunning') else _("Not Running"))
+            )
+            print(self.integration.get_property('serverRunning'))
+        else:
+            self.server_status_el.set_visible(False)
 
         # Url
         self.url_el.set_visible('url' in metadata.get('entries'))
@@ -99,6 +111,17 @@ class LoginPage(Adw.NavigationPage):
     def go_back_clicked(self, button):
         self.integration.terminate_instance()
         GLib.idle_add(self.get_root().main_stack.set_visible_child_name, 'welcome')
+
+    @Gtk.Template.Callback()
+    def server_restart_requested(self, row):
+        row.set_sensitive(False)
+        self.integration.terminate_instance()
+        if self.integration.start_instance():
+            row.set_subtitle(_("Restarted"))
+            GLib.timeout_add(1000, row.set_subtitle, _("Running"))
+        else:
+            row.set_subtitle(_("Error"))
+        row.set_sensitive(True)
 
     @Gtk.Template.Callback()
     def login_button_clicked(self, button=None, skip_password:bool=False):

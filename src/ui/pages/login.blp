@@ -35,6 +35,16 @@ template $NocturneLoginPage: Adw.NavigationPage {
         halign: center;
         selection-mode: none;
 
+        Adw.ActionRow server_status_el {
+          title: _("Server Status");
+          activatable: true;
+          activated => $server_restart_requested();
+          [suffix]
+          Gtk.Image {
+            icon-name: "update-symbolic";
+          }
+        }
+
         Adw.EntryRow url_el {
           title: _("Url");
           [prefix]

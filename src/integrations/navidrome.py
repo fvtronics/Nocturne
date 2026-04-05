@@ -495,7 +495,7 @@ class NavidromeIntegrated(Navidrome):
     login_page_metadata = {
         'icon-name': "music-note-symbolic",
         'title': _("Navidrome Managed"),
-        'entries': ['library-dir', 'user', 'password'],
+        'entries': ['status', 'library-dir', 'user', 'password'],
         'link': 'http://127.0.0.1:4534',
         'link-label': _("Instance Website"),
         'extra-menu': {
@@ -509,6 +509,7 @@ class NavidromeIntegrated(Navidrome):
     }
     library_dir = GObject.Property(type=str)
     trust_server = GObject.Property(type=bool, default=True)
+    serverRunning = GObject.Property(type=bool, default=False)
     process = None
 
     def __init__(self):
@@ -535,13 +536,17 @@ class NavidromeIntegrated(Navidrome):
             if path and env and library_directory:
                 env["ND_MUSICFOLDER"] = library_directory
                 self.process = subprocess.Popen([path], env=env)
+                self.set_property('serverRunning', True)
                 return True
             else:
+                self.set_property('serverRunning', False)
                 return False
         except Exception as e:
+            self.set_property('serverRunning', False)
             return False
 
     def terminate_instance(self):
         if self.process:
             self.process.terminate()
             self.process = None
+        self.set_property('serverRunning', False)
