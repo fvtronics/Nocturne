@@ -96,6 +96,7 @@
         <ul>
           <li>Added loading indicator for local instance</li>
           <li>Added option to change default page on launch (does not apply to Local instances)</li>
+          <li>Added option to restart Navidrome server from login</li>
           <li>Made improvements to general stability</li>
         </ul>
         <p>Fixes</p>
