@@ -16,6 +16,7 @@ class Spectrum(Gtk.DrawingArea):
         self.set_content_width(480)
         self.set_content_height(480)
 
+        self.loaded_magnitudes = {}
         self.target_magnitudes = [0] * SPECTRUM_BARS
         self.current_magnitudes = [0] * SPECTRUM_BARS
 
@@ -25,18 +26,20 @@ class Spectrum(Gtk.DrawingArea):
         self.set_draw_func(self.on_draw)
 
         integration.connect_to_model('currentSong', 'buttonState', self.playback_changed)
+        integration.connect_to_model('currentSong', 'positionSeconds', self.on_timestamp_changed)
         integration.connect_to_model('currentSong', 'magnitudes', self.on_update_magnitudes)
         integration.connect_to_model('currentSong', 'songId', self.song_changed)
 
         GLib.timeout_add(16, self.on_tick)
 
-    def on_update_magnitudes(self, magnitudes):
-        timeout = magnitudes[0]
-        m_left = magnitudes[1][:int(SPECTRUM_BARS/2)]
-        m_right = magnitudes[2][:int(SPECTRUM_BARS/2)]
-        new_magnitudes = m_left + list(reversed(m_right))
-        normalized_magnitudes = [(60-abs(m)) / 60 * self.settings.get_value("volume").unpack() for m in new_magnitudes]
-        GLib.timeout_add(timeout, setattr, self, 'target_magnitudes', normalized_magnitudes)
+    def on_timestamp_changed(self, timestamp:float):
+        if next_timestamp := min((k for k in self.loaded_magnitudes if k >= timestamp), default=None):
+            self.target_magnitudes = self.loaded_magnitudes[next_timestamp]
+
+    def on_update_magnitudes(self, magnitudes:list):
+        m_left = magnitudes[0][:int(SPECTRUM_BARS/2)]
+        m_right = magnitudes[1][:int(SPECTRUM_BARS/2)]
+        self.loaded_magnitudes[magnitudes[2]] = [(60-abs(m)) / 60 * self.settings.get_value("volume").unpack() for m in m_left + list(reversed(m_right))]
 
     def on_tick(self):
         for i in range(len(self.target_magnitudes)):
@@ -86,7 +89,9 @@ class Spectrum(Gtk.DrawingArea):
             threading.Thread(target=set_color, args=(found_model,)).start()
         else:
             self.target_magnitudes = [0] * SPECTRUM_BARS
+            self.loaded_magnitudes = {}
 
     def playback_changed(self, playbackState:str):
         if playbackState == "play":
             self.target_magnitudes = [0] * SPECTRUM_BARS
+            self.loaded_magnitudes = {}

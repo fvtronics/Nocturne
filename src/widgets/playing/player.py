@@ -234,7 +234,7 @@ class Player(EventAdapter):
         self.spectrum.set_property("post-messages", True)
         self.spectrum.set_property("message-magnitude", True)
         self.spectrum.set_property("multi-channel", True)
-        self.spectrum.set_property("interval", 10000000)
+        self.spectrum.set_property("interval", 50000000)
         self.gst.set_property("audio-filter", self.spectrum)
 
         settings.bind(
@@ -258,7 +258,7 @@ class Player(EventAdapter):
             self.mpris_published = True
         except Exception as e:
             print("Failed to publish MPRIS:", e)
-        GLib.timeout_add(500, self.update_stream_progress)
+        GLib.timeout_add(64, self.update_stream_progress)
 
     # ---
 
@@ -356,9 +356,9 @@ class Player(EventAdapter):
                 for c in channels_str:
                     channels.append([float(m.strip()) for m in c.split(', ')])
                 integration = get_current_integration()
-                a1 = integration.loaded_models.get('currentSong').get_property('positionSeconds')
-                a2 = struct.get_uint64('stream-time')[1] / 1000000000
-                integration.loaded_models.get('currentSong').set_property('magnitudes', [a2-a1+1, channels[0], channels[1]])
+                #a1 = integration.loaded_models.get('currentSong').get_property('positionSeconds')
+                timestamp = struct.get_uint64('stream-time')[1] / 1000000000
+                integration.loaded_models.get('currentSong').set_property('magnitudes', [channels[0], channels[1], timestamp])
         else:
             if message.type == Gst.MessageType.STATE_CHANGED:
                 old_state, new_state, pending_state = message.parse_state_changed()
