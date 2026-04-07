@@ -13,7 +13,6 @@ class Spectrum(Gtk.DrawingArea):
         integration = get_current_integration()
         self.settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
 
-        self.loaded_magnitudes = {}
         self.target_magnitudes = [0] * SPECTRUM_BARS
         self.current_magnitudes = [0] * SPECTRUM_BARS
 
@@ -24,7 +23,6 @@ class Spectrum(Gtk.DrawingArea):
 
         integration.connect_to_model('currentSong', 'buttonState', self.playback_changed)
         integration.connect_to_model('currentSong', 'positionSeconds', self.on_timestamp_changed)
-        integration.connect_to_model('currentSong', 'magnitudes', self.on_update_magnitudes)
         integration.connect_to_model('currentSong', 'songId', self.song_changed)
 
         self.settings.bind(
@@ -37,12 +35,10 @@ class Spectrum(Gtk.DrawingArea):
         GLib.timeout_add(16, self.on_tick)
 
     def on_timestamp_changed(self, timestamp:float):
-        if next_timestamp := min((k for k in self.loaded_magnitudes if k >= timestamp), default=None):
-            self.target_magnitudes = self.loaded_magnitudes[next_timestamp]
-
-    def on_update_magnitudes(self, magnitudes:list):
-        if magnitudes:
-            self.loaded_magnitudes[magnitudes[1]] = magnitudes[0]
+        integration = get_current_integration()
+        if magnitudes_dict := integration.loaded_models.get('currentSong').get_property('magnitudes'):
+            if next_timestamp := min((k for k in magnitudes_dict if k >= timestamp), default=None):
+                self.target_magnitudes = magnitudes_dict.get(next_timestamp)
 
     def on_tick(self):
         if self.get_visible():
@@ -94,7 +90,6 @@ class Spectrum(Gtk.DrawingArea):
             threading.Thread(target=set_color, args=(found_model,)).start()
         else:
             self.target_magnitudes = [0] * SPECTRUM_BARS
-            self.loaded_magnitudes = {}
 
     def playback_changed(self, playbackState:str):
         if playbackState == "play":

@@ -312,6 +312,7 @@ class Player(EventAdapter):
 
         id_list = self.control_page.get_root().queue_page.song_list_el.get_all_ids()
 
+        integration.loaded_models.get('currentSong').set_property('magnitudes', {})
         if len(id_list) > 0:
             if not current_song_id: # fallback in case nothing was playing
                 integration.loaded_models.get('currentSong').set_property('songId', id_list[0])
@@ -358,7 +359,11 @@ class Player(EventAdapter):
                 integration = get_current_integration()
                 timestamp = struct.get_uint64('stream-time')[1] / 1000000000
                 magnitudes = [(60-abs(m)) / 60 * self.settings.get_value("volume").unpack() for m in channels[0] + list(reversed(channels[1]))]
-                integration.loaded_models.get('currentSong').set_property('magnitudes', [magnitudes, timestamp])
+                #integration.loaded_models.get('currentSong').set_property('magnitudes', [magnitudes, timestamp])
+                if timestamp and magnitudes:
+                    if not integration.loaded_models.get('currentSong').get_property('magnitudes'):
+                        integration.loaded_models.get('currentSong').set_property('magnitudes', {})
+                    integration.loaded_models.get('currentSong').magnitudes[timestamp] = magnitudes
         else:
             if message.type == Gst.MessageType.STATE_CHANGED:
                 old_state, new_state, pending_state = message.parse_state_changed()
