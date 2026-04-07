@@ -120,6 +120,8 @@ class NocturneWindow(Adw.ApplicationWindow):
     def update_playlist_section_of_sidebar(self):
         integration = get_current_integration()
         integration.connect('notify::loadingMessage', lambda integration, ud: self.update_loading_message(integration))
+        if integration.get_property('loadingMessage'):
+            self.update_loading_message(integration)
 
         settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
         playlist_section = self.main_sidebar.get_sections()[-1]

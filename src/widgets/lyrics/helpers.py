@@ -88,6 +88,13 @@ def get_lyrics(song_id:str, lrclib_download:bool) -> dict:
             if result.get('type') == 'lrc':
                 with open(lrc_path, 'w+') as f:
                     f.write(list_to_lrc_str(result.get('content')))
+            elif result.get('type') == 'lrc-unprepared':
+                with open(lrc_path, 'w+') as f:
+                    f.write(result.get('content'))
+                result = {
+                    'type': 'lrc',
+                    'content': prepare_lrc(result.get('content'))
+                }
             elif result.get('type') == 'plain':
                 with open(plain_lyrics_path, 'w+') as f:
                     f.write(result.get('content'))

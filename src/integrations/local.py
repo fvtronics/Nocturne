@@ -6,7 +6,7 @@ from .base import Base
 from datetime import datetime, timezone
 import requests, random, threading, favicon, io, pathlib, re, json, os, time, uuid, pwd, getpass, time
 from PIL import Image
-from mutagen import File
+from tinytag import TinyTag
 from ..constants import LOCAL_DATA_DIR, get_song_info_from_file
 
 class Local(Base):
@@ -112,18 +112,11 @@ class Local(Base):
                 if not coverArtPath:
                     return None, None
 
-                audio_file = File(coverArtPath)
-                if audio_file is None:
+                tag = TinyTag.get(coverArtPath, image=True)
+                if tag is None:
                     return None, None
 
-                raw_data = None
-                if 'APIC:' in audio_file:
-                    raw_data = audio_file.get('APIC:').data
-                elif hasattr(audio_file, 'pictures') and audio_file.pictures:
-                    raw_data = audio_file.pictures[0].data
-                elif 'covr' in audio_file:
-                    raw_data = audio_file.get('covr')[0]
-
+                raw_data = tag.get_image()
                 if not raw_data:
                     return None, None
 
@@ -302,7 +295,7 @@ class Local(Base):
         final_id_list = []
         for id in id_list:
             if model := self.loaded_models.get(id):
-                if not model.isExternalFile:
+                if not model.get_property('isExternalFile'):
                     final_id_list.append(id)
 
         if current not in final_id_list:
@@ -332,36 +325,12 @@ class Local(Base):
 
     def getLyrics(self, songId:str) -> dict:
         if model := self.loaded_models.get(songId):
-            audio = File(model.get_property('path'))
-            if not audio:
-                return {'type': 'not-found'}
-
-            if model.get_property('path').split('.')[-1].lower == 'mp3':
-                if synced_lyrics := audio.get("SYLT"):
-                    if len(synced_lyrics) > 0 and synced_lyrics[0].lyrics:
-                        lines = []
-                        for content, ms in synced_lyrics[0].lyrics:
-                            lines.append({
-                                'ms': ms,
-                                'content': content
-                            })
-                        if lines:
-                            return {
-                                'type': 'lrc',
-                                'content': lines
-                            }
-                if plain_lyrics := audio_file.get("USLT"):
-                    if content := plain_lyrics[0].text:
-                        return {
-                            'type': 'plain',
-                            'content': content
-                        }
-            else:
-                if lyrics := audio.get('LYRICS') or audio.get('UNSYNCEDLYRICS'):
-                    if lyrics.startwith('['):
-                        return {'type': 'lrc', 'content': lyrics}
-                    else:
-                        return {'type': 'plain', 'content': lyrics}
+            tag = TinyTag.get(model.get_property('path'))
+            if lyrics_str := tag.extra.get('lyrics'):
+                if lyrics_str.startswith('['):
+                    return {'type': 'lrc-unprepared', 'content': lyrics_str}
+                else:
+                    return {'type': 'plain', 'content': lyrics_str}
         return {'type': 'not-found'}
 
     def search(self, query:str, artistCount:int=0, artistOffset:int=0, albumCount:int=0, albumOffset:int=0, songCount:int=0, songOffset:int=0) -> dict:
