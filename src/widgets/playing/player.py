@@ -349,7 +349,7 @@ class Player(EventAdapter):
     def on_message(self, bus, message):
         if message.src == self.spectrum:
             struct = message.get_structure()
-            if struct and struct.get_name() == "spectrum":
+            if struct and struct.get_name() == "spectrum" and self.settings.get_value('show-visualizer').unpack():
                 serialized = struct.serialize_full(Gst.SerializeFlags.NONE)
                 channels_str = serialized.split('< < ')[1].split(' > >;')[0].replace('(float)', '').split(' >, < ')
                 channels = []

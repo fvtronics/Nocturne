@@ -15,6 +15,7 @@ class PlayingControlPage(Adw.NavigationPage):
 
     pop_status_stack = Gtk.Template.Child()
     header_bar = Gtk.Template.Child()
+    spectrum_el = Gtk.Template.Child()
     cover_el = Gtk.Template.Child()
     title_el = Gtk.Template.Child()
     radio_homepage_el = Gtk.Template.Child()
@@ -44,6 +45,7 @@ class PlayingControlPage(Adw.NavigationPage):
         integration.connect_to_model('currentSong', 'positionSeconds', self.update_position)
         integration.connect_to_model('currentSong', 'buttonState', self.state_stack_el.set_visible_child_name)
         integration.connect_to_model('currentSong', 'songId', lambda id: threading.Thread(target=self.song_changed, args=(id,)).start())
+        self.spectrum_el.setup()
         GLib.idle_add(self.setup_sidebar_button_connection)
 
     def update_position(self, positionSeconds:int):

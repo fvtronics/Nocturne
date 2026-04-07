@@ -9,12 +9,9 @@ import io, threading
 class Spectrum(Gtk.DrawingArea):
     __gtype_name__ = 'NocturneSpectrum'
 
-    def __init__(self):
+    def setup(self):
         integration = get_current_integration()
-        super().__init__()
         self.settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-        self.set_content_width(480)
-        self.set_content_height(480)
 
         self.loaded_magnitudes = {}
         self.target_magnitudes = [0] * SPECTRUM_BARS
@@ -30,6 +27,13 @@ class Spectrum(Gtk.DrawingArea):
         integration.connect_to_model('currentSong', 'magnitudes', self.on_update_magnitudes)
         integration.connect_to_model('currentSong', 'songId', self.song_changed)
 
+        self.settings.bind(
+            "show-visualizer",
+            self,
+            "visible",
+            Gio.SettingsBindFlags.DEFAULT
+        )
+
         GLib.timeout_add(16, self.on_tick)
 
     def on_timestamp_changed(self, timestamp:float):
@@ -37,17 +41,18 @@ class Spectrum(Gtk.DrawingArea):
             self.target_magnitudes = self.loaded_magnitudes[next_timestamp]
 
     def on_update_magnitudes(self, magnitudes:list):
-        self.loaded_magnitudes[magnitudes[1]] = magnitudes[0]
+        if magnitudes:
+            self.loaded_magnitudes[magnitudes[1]] = magnitudes[0]
 
     def on_tick(self):
-        for i in range(len(self.target_magnitudes)):
-            speed_modifier = self.speed * max(0.25, min(1, 10*abs(self.target_magnitudes[i] - self.current_magnitudes[i])))
-
-            if self.target_magnitudes[i] >= self.current_magnitudes[i]:
-                self.current_magnitudes[i] = min(self.target_magnitudes[i], self.current_magnitudes[i] + speed_modifier)
-            else:
-                self.current_magnitudes[i] = max(0, self.current_magnitudes[i] - speed_modifier)
-        self.queue_draw()
+        if self.get_visible():
+            for i in range(len(self.target_magnitudes)):
+                speed_modifier = self.speed * max(0.25, min(1, 10*abs(self.target_magnitudes[i] - self.current_magnitudes[i])))
+                if self.target_magnitudes[i] >= self.current_magnitudes[i]:
+                    self.current_magnitudes[i] = min(self.target_magnitudes[i], self.current_magnitudes[i] + speed_modifier)
+                else:
+                    self.current_magnitudes[i] = max(0, self.current_magnitudes[i] - speed_modifier)
+            self.queue_draw()
         return True
 
     def on_draw(self, drawing_area, cr, width, height):
