@@ -10,6 +10,7 @@ widgets = [
   'popout_window.py',
   'volume_button.py',
   'playback_mode_button.py',
+  'spectrum.py',
 ]
 
 install_data(widgets, install_dir: moduledir)

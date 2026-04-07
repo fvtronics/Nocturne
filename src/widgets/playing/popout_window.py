@@ -20,6 +20,7 @@ class PopoutWindow(Adw.ApplicationWindow):
     split_view = Gtk.Template.Child()
 
     bottom_bar = Gtk.Template.Child()
+    fs_spectrum_el = Gtk.Template.Child()
     fs_title_el = Gtk.Template.Child()
     fs_progress_el = Gtk.Template.Child()
     fs_album_el = Gtk.Template.Child()
@@ -77,6 +78,7 @@ class PopoutWindow(Adw.ApplicationWindow):
         )
         fullscreen_btn.connect('clicked', self.toggle_fullscreen)
         self.playing_page.header_bar.pack_start(fullscreen_btn)
+        self.fs_spectrum_el.setup()
 
     @Gtk.Template.Callback()
     def close_request(self, window):

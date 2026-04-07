@@ -135,3 +135,4 @@ class CurrentSong(GObject.Object):
     songId = GObject.Property(type=str)
     positionSeconds = GObject.Property(type=float, default=0.0)
     buttonState = GObject.Property(type=str, default="play") # play, pause (for use in state stacks)
+    magnitudes = GObject.Property(type=GObject.TYPE_PYOBJECT) # list

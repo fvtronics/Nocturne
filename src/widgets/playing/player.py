@@ -1,14 +1,14 @@
 # player.py
 
-from gi.repository import Gtk, Adw, Gdk, GLib, GObject, Gst, Gio
+from gi.repository import Gtk, Adw, Gdk, GLib, GObject, Gst, Gio, Gst
 
 from mpris_server.adapters import MprisAdapter
 from mpris_server.events import EventAdapter
 from mpris_server.server import Server
 from mpris_server import Metadata, ValidMetadata, Track, Position, Volume, Rate, PlayState, DbusObj, MetadataObj, ActivePlaylist, PlaylistEntry, MprisInterface
 
-from ...constants import MPRIS_COVER_PATH
-from ...integrations import get_current_integration
+from ...constants import MPRIS_COVER_PATH, SPECTRUM_BARS
+from ...integrations import get_current_integration, models
 from ..lyrics import LyricsDialog
 from urllib.parse import urlparse
 import threading, os
@@ -132,7 +132,7 @@ class PlayerAdapter(MprisAdapter):
         return False
 
     def is_repeating(self) -> bool:
-        return Gio.Settings(schema_id="com.jeffser.Nocturne").get_value('playback-mode').unpack() == 'repeat-one'
+        return self.player.settings.get_value('playback-mode').unpack() == 'repeat-one'
 
     def next(self):
         self.player.handle_song_change_request("next")
@@ -178,14 +178,14 @@ class PlayerAdapter(MprisAdapter):
         pass
 
     def set_repeating(self, value:bool):
-        Gio.Settings(schema_id="com.jeffser.Nocturne").set_string('playback-mode', 'repeat-one' if value else 'consecutive')
+        self.player.settings.set_string('playback-mode', 'repeat-one' if value else 'consecutive')
 
     def set_shuffle(self, value:bool):
         # TODO not sure how I could implement this
         pass
 
     def set_volume(self, value:Volume):
-        Gio.Settings(schema_id="com.jeffser.Nocturne").set_double('volume', value)
+        self.player.settings.set_double('volume', value)
 
     def stop(self):
         self.player.gst.set_state(Gst.State.NULL)
@@ -223,13 +223,21 @@ class Player(EventAdapter):
     __gtype_name__ = 'NocturnePlayer'
 
     def __init__(self, control_page):
-        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-        volume = max(settings.get_value("volume").unpack(), 0.2)
-        settings.set_double("volume", volume)
+        self.settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
+        volume = max(self.settings.get_value("volume").unpack(), 0.2)
+        self.settings.set_double("volume", volume)
         self.control_page = control_page
         self.gst = Gst.ElementFactory.make("playbin", "music-player")
+        self.spectrum = Gst.ElementFactory.make("spectrum", "spectrum-analyzer")
+        self.spectrum.set_property("bands", SPECTRUM_BARS)
+        self.spectrum.set_property("threshold", -60)
+        self.spectrum.set_property("post-messages", True)
+        self.spectrum.set_property("message-magnitude", True)
+        self.spectrum.set_property("multi-channel", True)
+        self.spectrum.set_property("interval", 50000000)
+        self.gst.set_property("audio-filter", self.spectrum)
 
-        settings.bind(
+        self.settings.bind(
             "volume",
             self.gst,
             "volume",
@@ -250,7 +258,7 @@ class Player(EventAdapter):
             self.mpris_published = True
         except Exception as e:
             print("Failed to publish MPRIS:", e)
-        GLib.timeout_add(500, self.update_stream_progress)
+        GLib.timeout_add(64, self.update_stream_progress)
 
     # ---
 
@@ -288,7 +296,7 @@ class Player(EventAdapter):
         integration = get_current_integration()
         current_song_id = integration.loaded_models.get('currentSong').songId
 
-        mode = Gio.Settings(schema_id="com.jeffser.Nocturne").get_value('playback-mode').unpack()
+        mode = self.settings.get_value('playback-mode').unpack()
 
         if action != "end" and mode == "repeat-one":
             mode = "consecutive"
@@ -319,7 +327,7 @@ class Player(EventAdapter):
                         integration.loaded_models.get('currentSong').set_property('songId', id_list[0])
                     elif next_index < len(id_list):
                         integration.loaded_models.get('currentSong').set_property('songId', id_list[next_index])
-                    elif Gio.Settings(schema_id="com.jeffser.Nocturne").get_value('auto-play').unpack():
+                    elif self.settings.get_value('auto-play').unpack():
                         threading.Thread(target=self.auto_play).start()
                 elif mode == 'repeat-all':
                     if next_index < len(id_list) and next_index >= 0:
@@ -339,21 +347,34 @@ class Player(EventAdapter):
         root.queue_page.replace_queue(root.queue_page.generated_queue)
 
     def on_message(self, bus, message):
-        if message.type == Gst.MessageType.STATE_CHANGED:
-            old_state, new_state, pending_state = message.parse_state_changed()
-            self.handle_new_state(new_state)
-        elif message.type == Gst.MessageType.EOS:
-            self.handle_song_change_request("end")
-        elif message.type == Gst.MessageType.ERROR:
-            err, debug = message.parse_error()
-            print("Error: {}".format(err.message))
-        elif message.type == Gst.MessageType.TAG:
-            taglist = message.parse_tag()
-            for i in range(taglist.n_tags()):
-                name = taglist.nth_tag_name(i)
-                value = taglist.get_value_index(name, 0)
-                if name == 'title' and value:
-                    self.set_dynamic_title(value)
+        if message.src == self.spectrum:
+            struct = message.get_structure()
+            if struct and struct.get_name() == "spectrum" and self.settings.get_value('show-visualizer').unpack():
+                serialized = struct.serialize_full(Gst.SerializeFlags.NONE)
+                channels_str = serialized.split('< < ')[1].split(' > >;')[0].replace('(float)', '').split(' >, < ')
+                channels = []
+                for c in channels_str:
+                    channels.append([float(m.strip()) for m in c.split(', ')[:int(SPECTRUM_BARS/2)]])
+                integration = get_current_integration()
+                timestamp = struct.get_uint64('stream-time')[1] / 1000000000
+                magnitudes = [(60-abs(m)) / 60 * self.settings.get_value("volume").unpack() for m in channels[0] + list(reversed(channels[1]))]
+                integration.loaded_models.get('currentSong').set_property('magnitudes', [magnitudes, timestamp])
+        else:
+            if message.type == Gst.MessageType.STATE_CHANGED:
+                old_state, new_state, pending_state = message.parse_state_changed()
+                self.handle_new_state(new_state)
+            elif message.type == Gst.MessageType.EOS:
+                self.handle_song_change_request("end")
+            elif message.type == Gst.MessageType.ERROR:
+                err, debug = message.parse_error()
+                print("Error: {}".format(err.message))
+            elif message.type == Gst.MessageType.TAG:
+                taglist = message.parse_tag()
+                for i in range(taglist.n_tags()):
+                    name = taglist.nth_tag_name(i)
+                    value = taglist.get_value_index(name, 0)
+                    if name == 'title' and value:
+                        self.set_dynamic_title(value)
 
     def update_stream_progress(self):
         if self.control_page.is_seeking:

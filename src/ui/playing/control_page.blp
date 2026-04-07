@@ -34,19 +34,27 @@ template $NocturnePlayingControlPage: Adw.NavigationPage {
             "p10"
           ]
 
-          Gtk.Picture cover_el {
+          Gtk.Overlay {
+            halign: center;
+            overflow: hidden;
             styles [
               "card"
             ]
-            overflow: hidden;
-            halign: center;
             margin-bottom: 10;
-            paintable: Adw.SpinnerPaintable {
-              widget: cover_el;
-            };
-            accessibility {
-              label: _("Song Cover");
+            [overlay]
+            $NocturneSpectrum spectrum_el {
+              hexpand: true;
+              vexpand: true;
+              overflow: hidden;
             }
+            child: Gtk.Picture cover_el {
+              paintable: Adw.SpinnerPaintable {
+                widget: cover_el;
+              };
+              accessibility {
+                label: _("Song Cover");
+              }
+            };
           }
 
           Gtk.Box {

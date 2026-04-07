@@ -17,7 +17,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject
+from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject, Pango
 
 from . import actions
 from .integrations import get_current_integration
@@ -231,19 +231,7 @@ class NocturneWindow(Adw.ApplicationWindow):
 
         GLib.idle_add(self.setup_sidebar)
 
-        self.global_settings = Gtk.Settings.get_default()
-        self.global_settings.connect("notify::gtk-decoration-layout", self.update_sidebar_title_visibility)
-        self.update_sidebar_title_visibility(self.global_settings)
-
-    def update_sidebar_title_visibility(self, settings, gparam=None):
-        layout = settings.get_property("gtk-decoration-layout")
-        if not layout:
-            self.sidebar_headerbar.set_show_title(True)
-            return
-
-        parts = layout.split(':')
-        buttons = ['close', 'minimize', 'maximize', 'icon']
-        self.sidebar_headerbar.set_show_title(len([btn for btn in buttons if btn in parts[0]]) <= 1)
+        list(list(self.sidebar_headerbar)[0])[0].get_center_widget().get_child().set_ellipsize(Pango.EllipsizeMode.NONE)
 
     @Gtk.Template.Callback()
     def on_drop(self, drop_target, file, x, y):
