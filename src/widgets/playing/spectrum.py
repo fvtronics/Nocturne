@@ -2,9 +2,8 @@
 
 from gi.repository import Gtk, Gdk, GObject, GLib, Gio
 from ...integrations import get_current_integration
-from ...constants import SPECTRUM_BARS
 from colorthief import ColorThief
-import io, threading
+import io, threading, math
 
 class Spectrum(Gtk.DrawingArea):
     __gtype_name__ = 'NocturneSpectrum'
@@ -13,11 +12,13 @@ class Spectrum(Gtk.DrawingArea):
         integration = get_current_integration()
         self.settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
 
-        self.target_magnitudes = [0] * SPECTRUM_BARS
-        self.current_magnitudes = [0] * SPECTRUM_BARS
+        default_bar_n = self.settings.get_value('visualizer-bar-n').unpack()
+        self.target_magnitudes = [0] * default_bar_n
+        self.current_magnitudes = [0] * default_bar_n
 
-        self.color = [0.2, 0.6, 0.9]
-        self.speed = 0.02
+        self.stopped = False
+        self.accent_color = [0.2, 0.6, 0.9]
+        self.speed = 0.03
 
         self.set_draw_func(self.on_draw)
 
@@ -35,13 +36,17 @@ class Spectrum(Gtk.DrawingArea):
         GLib.timeout_add(16, self.on_tick)
 
     def on_timestamp_changed(self, timestamp:float):
-        integration = get_current_integration()
-        if magnitudes_dict := integration.loaded_models.get('currentSong').get_property('magnitudes'):
-            if next_timestamp := min((k for k in magnitudes_dict if k >= timestamp), default=None):
-                self.target_magnitudes = magnitudes_dict.get(next_timestamp)
+        if self.stopped:
+            self.target_magnitudes = [0] * self.settings.get_value('visualizer-bar-n').unpack()
+        elif integration := get_current_integration():
+            if magnitudes_dict := integration.loaded_models.get('currentSong').get_property('magnitudes'):
+                if next_timestamp := min((k for k in magnitudes_dict if k >= timestamp), default=None):
+                    self.target_magnitudes = magnitudes_dict.get(next_timestamp)
 
     def on_tick(self):
         if self.get_visible():
+            if len(self.target_magnitudes) != len(self.current_magnitudes):
+                self.current_magnitudes = [0] * len(self.target_magnitudes)
             for i in range(len(self.target_magnitudes)):
                 speed_modifier = self.speed * max(0.25, min(1, 10*abs(self.target_magnitudes[i] - self.current_magnitudes[i])))
                 if self.target_magnitudes[i] >= self.current_magnitudes[i]:
@@ -57,41 +62,75 @@ class Spectrum(Gtk.DrawingArea):
 
         n = len(self.current_magnitudes)
         dx = width / (n - 1)
-
         cr.move_to(0, height)
 
-        cr.line_to(0, height * (1 - self.current_magnitudes[0]))
+        if self.settings.get_value("visualizer-auto-color").unpack():
+            if self.settings.get_value("visualizer-auto-color-invert").unpack():
+                cr.set_source_rgba(*[1-c for c in self.accent_color], 0.75)
+            else:
+                cr.set_source_rgba(*self.accent_color, 0.75)
+        else:
+            try:
+                rgb_str = self.settings.get_value("visualizer-manual-color").unpack()
+                cr.set_source_rgba(*[float(c) for c in rgb_str.split(',')], 0.75)
+            except:
+                cr.set_source_rgba(*self.accent_color, 0.75)
 
-        for i in range(n - 1):
-            x1 = i * dx
-            y1 = height * (1 - self.current_magnitudes[i])
-            x2 = (i + 1) * dx
-            y2 = height * (1 - self.current_magnitudes[i + 1])
+        visualizer_type = self.settings.get_value('visualizer-type').unpack()
+        if visualizer_type == "wave":
+            cr.line_to(0, height * (1 - self.current_magnitudes[0]))
 
-            # Control points for smoothness
-            xc = (x1 + x2) / 2
-            cr.curve_to(xc, y1, xc, y2, x2, y2)
+            for i in range(n - 1):
+                x1 = i * dx
+                y1 = height * (1 - self.current_magnitudes[i])
+                x2 = (i + 1) * dx
+                y2 = height * (1 - self.current_magnitudes[i + 1])
 
-        cr.line_to(width, height)
-        cr.close_path()
+                # Control points for smoothness
+                xc = (x1 + x2) / 2
+                cr.curve_to(xc, y1, xc, y2, x2, y2)
 
-        cr.set_source_rgba(*self.color, 0.75)
-        cr.fill_preserve()
+            cr.line_to(width, height)
+            cr.close_path()
+
+            cr.fill_preserve()
+        elif visualizer_type in ("bars", "particles"):
+            gap = 2
+            bar_w = dx - gap
+            radius = 6 if visualizer_type == "bars" else bar_w
+            for i in range(n):
+                bar_x = (i * dx) - (bar_w / 2)
+                if visualizer_type == "particles":
+                    bar_h = bar_w
+                    bar_y = max(0, min(height * (1 - self.current_magnitudes[i]), height - bar_h))
+                else:
+                    bar_h = self.current_magnitudes[i] * height
+                    bar_y = height - bar_h
+                if bar_h > 1:
+                    r = min(radius, bar_w / 2, bar_h / 2)
+                    cr.new_sub_path()
+                    cr.arc(bar_x + bar_w - r, bar_y + r, r, -math.pi/2, 0)
+                    cr.arc(bar_x + bar_w - r, bar_y + bar_h - r, r, 0, math.pi/2)
+                    cr.arc(bar_x + r, bar_y + bar_h - r, r, math.pi/2, math.pi)
+                    cr.arc(bar_x + r, bar_y + r, r, math.pi, 3*math.pi/2)
+                    cr.close_path()
+                    cr.fill()
 
     def song_changed(self, songId:str):
         def set_color(model):
             if gbytes := model.get_property('gdkPaintableBytes'):
                 raw_bytes = bytes(gbytes.get_data())
                 img_io = io.BytesIO(raw_bytes)
-                self.color = [min((255-c)/255, 1) for c in ColorThief(img_io).get_color(quality=10)]
+                self.accent_color = [min(c/255, 1) for c in ColorThief(img_io).get_color(quality=10)]
 
         integration = get_current_integration()
         if found_model := integration.loaded_models.get(songId):
             threading.Thread(target=set_color, args=(found_model,)).start()
         else:
-            self.target_magnitudes = [0] * SPECTRUM_BARS
+            self.stopped = True
 
     def playback_changed(self, playbackState:str):
         if playbackState == "play":
-            self.target_magnitudes = [0] * SPECTRUM_BARS
-
+            self.stopped = True
+        else:
+            self.stopped = False

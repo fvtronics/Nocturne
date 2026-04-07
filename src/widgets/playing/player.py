@@ -7,7 +7,7 @@ from mpris_server.events import EventAdapter
 from mpris_server.server import Server
 from mpris_server import Metadata, ValidMetadata, Track, Position, Volume, Rate, PlayState, DbusObj, MetadataObj, ActivePlaylist, PlaylistEntry, MprisInterface
 
-from ...constants import MPRIS_COVER_PATH, SPECTRUM_BARS
+from ...constants import MPRIS_COVER_PATH
 from ...integrations import get_current_integration, models
 from ..lyrics import LyricsDialog
 from urllib.parse import urlparse
@@ -229,7 +229,12 @@ class Player(EventAdapter):
         self.control_page = control_page
         self.gst = Gst.ElementFactory.make("playbin", "music-player")
         self.spectrum = Gst.ElementFactory.make("spectrum", "spectrum-analyzer")
-        self.spectrum.set_property("bands", SPECTRUM_BARS)
+        self.settings.bind(
+            "visualizer-bar-n",
+            self.spectrum,
+            "bands",
+            Gio.SettingsBindFlags.DEFAULT
+        )
         self.spectrum.set_property("threshold", -60)
         self.spectrum.set_property("post-messages", True)
         self.spectrum.set_property("message-magnitude", True)
@@ -355,11 +360,10 @@ class Player(EventAdapter):
                 channels_str = serialized.split('< < ')[1].split(' > >;')[0].replace('(float)', '').split(' >, < ')
                 channels = []
                 for c in channels_str:
-                    channels.append([float(m.strip()) for m in c.split(', ')[:int(SPECTRUM_BARS/2)]])
+                    channels.append([float(m.strip()) for m in c.split(', ')[:int(self.spectrum.get_property('bands')/2)]])
                 integration = get_current_integration()
                 timestamp = struct.get_uint64('stream-time')[1] / 1000000000
                 magnitudes = [(60-abs(m)) / 60 * self.settings.get_value("volume").unpack() for m in channels[0] + list(reversed(channels[1]))]
-                #integration.loaded_models.get('currentSong').set_property('magnitudes', [magnitudes, timestamp])
                 if timestamp and magnitudes:
                     if not integration.loaded_models.get('currentSong').get_property('magnitudes'):
                         integration.loaded_models.get('currentSong').set_property('magnitudes', {})

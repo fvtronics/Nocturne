@@ -44,8 +44,6 @@ NAVIDROME_ENV = {
     "ND_ENABLEINSIGHTSCOLLECTOR": "false"
 }
 
-SPECTRUM_BARS=18
-
 def get_navidrome_path() -> str | None:
     NAVIDROME_PATH = os.path.join(BASE_NAVIDROME_DIR, 'navidrome')
     if os.path.isfile(NAVIDROME_PATH):

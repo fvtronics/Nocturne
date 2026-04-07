@@ -1,6 +1,6 @@
 # preferences.py
 
-from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject
+from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject, Gdk
 
 from .integrations import get_current_integration
 from .constants import SIDEBAR_MENU
@@ -14,26 +14,33 @@ class NocturnePreferences(Adw.PreferencesDialog):
     show_playlists_sidebar_el = Gtk.Template.Child()
     dynamic_bg_el = Gtk.Template.Child()
     blur_bg_el = Gtk.Template.Child()
-    visualizer_el = Gtk.Template.Child()
     default_page_el = Gtk.Template.Child()
 
     restore_el = Gtk.Template.Child()
     hide_on_close_el = Gtk.Template.Child()
-
-    hp_songs_el = Gtk.Template.Child()
-    hp_albums_el = Gtk.Template.Child()
-    hp_artists_el = Gtk.Template.Child()
-    hp_playlists_el = Gtk.Template.Child()
 
     session_group_el = Gtk.Template.Child()
     instance_avatar_el = Gtk.Template.Child()
     instance_icon_el = Gtk.Template.Child()
     instance_el = Gtk.Template.Child()
 
+    hp_songs_el = Gtk.Template.Child()
+    hp_albums_el = Gtk.Template.Child()
+    hp_artists_el = Gtk.Template.Child()
+    hp_playlists_el = Gtk.Template.Child()
+
+    visualizer_el = Gtk.Template.Child()
+    visualizer_bar_n_el = Gtk.Template.Child()
+    visualizer_type_el = Gtk.Template.Child()
+
+    visualizer_auto_color_el = Gtk.Template.Child()
+    visualizer_invert_auto_color_el = Gtk.Template.Child()
+    visualizer_manual_color_el = Gtk.Template.Child()
+
     def __init__(self):
         super().__init__()
 
-        settings = Gio.Settings.new("com.jeffser.Nocturne")
+        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
 
         settings.bind(
             "show-context-button",
@@ -56,12 +63,6 @@ class NocturnePreferences(Adw.PreferencesDialog):
         settings.bind(
             "player-blur-bg",
             self.blur_bg_el,
-            "active",
-            Gio.SettingsBindFlags.DEFAULT
-        )
-        settings.bind(
-            "show-visualizer",
-            self.visualizer_el,
             "active",
             Gio.SettingsBindFlags.DEFAULT
         )
@@ -136,6 +137,51 @@ class NocturnePreferences(Adw.PreferencesDialog):
         else:
             self.session_group_el.set_visible(False)
 
+        # Visualizer
+
+        settings.bind(
+            "show-visualizer",
+            self.visualizer_el,
+            "active",
+            Gio.SettingsBindFlags.DEFAULT
+        )
+        settings.bind(
+            "visualizer-bar-n",
+            self.visualizer_bar_n_el,
+            "value",
+            Gio.SettingsBindFlags.DEFAULT
+        )
+        settings.bind(
+            "visualizer-type",
+            self.visualizer_type_el,
+            "active-name",
+            Gio.SettingsBindFlags.DEFAULT
+        )
+        settings.bind(
+            "visualizer-auto-color",
+            self.visualizer_auto_color_el,
+            "active",
+            Gio.SettingsBindFlags.DEFAULT
+        )
+        settings.bind(
+            "visualizer-auto-color-invert",
+            self.visualizer_invert_auto_color_el,
+            "active",
+            Gio.SettingsBindFlags.DEFAULT
+        )
+
+        try:
+            rgb_str = settings.get_value('visualizer-manual-color').unpack()
+            rgb_list = [float(c) for c in rgb_str.split(',')]
+        except:
+            rgb_list = [0.11, 0.44, 0.85]
+        self.visualizer_manual_color_el.set_rgba(Gdk.RGBA(
+            red=rgb_list[0],
+            green=rgb_list[1],
+            blue=rgb_list[2],
+            alpha=1
+        ))
+
     @Gtk.Template.Callback()
     def on_dynamic_bg_toggled(self, row, gparam):
         if self.get_root():
@@ -163,5 +209,10 @@ class NocturnePreferences(Adw.PreferencesDialog):
     @Gtk.Template.Callback()
     def default_page_changed(self, combo_row, ud):
         page_tag = self.default_page_dict.get(combo_row.get_selected_item().get_string(), 'home')
-        Gio.Settings.new("com.jeffser.Nocturne").set_string('default-page-tag', page_tag)
+        Gio.Settings(schema_id="com.jeffser.Nocturne").set_string('default-page-tag', page_tag)
+
+    @Gtk.Template.Callback()
+    def visualizer_manual_color_changed(self, btn, ud):
+        rgb = ','.join([str(round(c, 3)) for c in list(btn.get_rgba())[:-1]])
+        Gio.Settings(schema_id="com.jeffser.Nocturne").set_string('visualizer-manual-color', rgb)
 

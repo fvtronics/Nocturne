@@ -27,10 +27,6 @@ template $NocturnePreferencesDialog: Adw.PreferencesDialog {
         subtitle: _("Make background of player slightly transparent and blur the backdrop");
         notify::active => $on_blur_bg_toggled();
       }
-      Adw.SwitchRow visualizer_el {
-        title: _("Show Visualizer in Player (Experimental)");
-        subtitle: _("Show an audio spectrum visualizer on top of the album art in the player");
-      }
       Adw.ComboRow default_page_el {
         title: _("Default Page on Login");
         subtitle: _("Which page is shown by default");
@@ -127,4 +123,84 @@ template $NocturnePreferencesDialog: Adw.PreferencesDialog {
       }
     }
   }
+  Adw.PreferencesPage {
+    title: _("Visualizer");
+    icon-name: "sound-symbolic";
+
+    Adw.PreferencesGroup {
+      title: _("Preferences");
+      Adw.SwitchRow visualizer_el {
+        title: _("Show Visualizer in Player");
+        subtitle: _("Show an audio spectrum visualizer on top of the album art in the player");
+      }
+    }
+
+    Adw.PreferencesGroup {
+      title: _("Appearance");
+      sensitive: bind visualizer_el.active;
+
+      Adw.SpinRow visualizer_bar_n_el {
+        title: _("Number of Bars");
+        adjustment: Gtk.Adjustment {
+          lower: 4;
+          upper: 64;
+          step-increment: 2;
+        };
+        snap-to-ticks: true;
+        digits: 0;
+      }
+
+      Adw.ActionRow {
+        title: _("Visualizer Type");
+
+        [suffix]
+        Adw.ToggleGroup visualizer_type_el {
+          valign: center;
+          Adw.Toggle {
+            tooltip: _("Wave");
+            label: _("Wave");
+            name: "wave";
+          }
+          Adw.Toggle {
+            tooltip: _("Bars");
+            label: _("Bars");
+            name: "bars";
+          }
+          Adw.Toggle {
+            tooltip: _("Particles");
+            label: _("Particles");
+            name: "particles";
+          }
+        }
+      }
+    }
+
+    Adw.PreferencesGroup {
+      title: _("Color");
+      sensitive: bind visualizer_el.active;
+
+      Adw.SwitchRow visualizer_auto_color_el {
+        title: _("Automatically Set Color");
+      }
+      Adw.SwitchRow visualizer_invert_auto_color_el {
+        title: _("Invert Color");
+        visible: bind visualizer_auto_color_el.active;
+      }
+      Adw.ActionRow {
+        title: _("Manual Color");
+        visible: bind visualizer_auto_color_el.active inverted;
+        [suffix]
+        Gtk.ColorDialogButton visualizer_manual_color_el {
+          valign: center;
+          dialog: Gtk.ColorDialog {
+            title: _("Visualizer Color");
+            with-alpha: false;
+          };
+          notify::rgba => $visualizer_manual_color_changed();
+        }
+      }
+
+    }
+  }
 }
+

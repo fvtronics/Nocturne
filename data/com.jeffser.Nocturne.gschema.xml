@@ -52,6 +52,22 @@
 	  <key name="show-visualizer" type="b">
 	    <default>false</default>
 	  </key>
+	  <key name="visualizer-bar-n" type="i">
+	    <default>18</default>
+	  </key>
+	  <key name="visualizer-type" type="s">
+	    <default>'wave'</default>
+	  </key>
+	  <key name="visualizer-auto-color" type="b">
+	    <default>true</default>
+	  </key>
+	  <key name="visualizer-auto-color-invert" type="b">
+	    <default>true</default>
+	  </key>
+	  <key name="visualizer-manual-color" type="s">
+	    <default>'0.11,0.44,0.85'</default>
+	  </key>
+
 	  <key name="restore-session" type="b">
 	    <default>true</default>
 	  </key>
