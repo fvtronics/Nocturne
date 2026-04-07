@@ -1,9 +1,10 @@
 # spectrum.py
 
-from gi.repository import Gtk, Gdk, GObject, GLib
+from gi.repository import Gtk, Gdk, GObject, GLib, Gio
 from ...integrations import get_current_integration
+from ...constants import SPECTRUM_BARS
 from colorthief import ColorThief
-import io
+import io, threading
 
 class Spectrum(Gtk.DrawingArea):
     __gtype_name__ = 'NocturneSpectrum'
@@ -11,12 +12,15 @@ class Spectrum(Gtk.DrawingArea):
     def __init__(self):
         integration = get_current_integration()
         super().__init__()
+        self.settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
         self.set_content_width(480)
-        self.set_content_height(360)
-        self.target_magnitudes = [0] * 32
-        self.current_magnitudes = [0] * 32
+        self.set_content_height(480)
+
+        self.target_magnitudes = [0] * SPECTRUM_BARS
+        self.current_magnitudes = [0] * SPECTRUM_BARS
+
         self.color = [0.2, 0.6, 0.9]
-        self.fall_speed = 0.01
+        self.speed = 0.01
 
         self.set_draw_func(self.on_draw)
 
@@ -26,15 +30,20 @@ class Spectrum(Gtk.DrawingArea):
 
         GLib.timeout_add(16, self.on_tick)
 
-    def on_update_magnitudes(self, new_magnitudes):
-        self.target_magnitudes = [max(0.0, (m + 80) / 80) for m in new_magnitudes]
+    def on_update_magnitudes(self, magnitudes):
+        timeout = magnitudes[0]
+        m_left = magnitudes[1][:int(SPECTRUM_BARS/2)]
+        m_right = magnitudes[2][:int(SPECTRUM_BARS/2)]
+        new_magnitudes = m_left + list(reversed(m_right))
+        normalized_magnitudes = [(60-abs(m)) / 60 * self.settings.get_value("volume").unpack() for m in new_magnitudes]
+        GLib.timeout_add(timeout, setattr, self, 'target_magnitudes', normalized_magnitudes)
 
     def on_tick(self):
         for i in range(len(self.target_magnitudes)):
             if self.target_magnitudes[i] >= self.current_magnitudes[i]:
-                self.current_magnitudes[i] = min(self.target_magnitudes[i], self.fall_speed + self.current_magnitudes[i])
+                self.current_magnitudes[i] = min(self.target_magnitudes[i], self.current_magnitudes[i] + self.speed * 1.25)
             else:
-                self.current_magnitudes[i] = max(0, self.current_magnitudes[i] - self.fall_speed)
+                self.current_magnitudes[i] = max(0, self.current_magnitudes[i] - self.speed)
         self.queue_draw()
         return True
 
@@ -57,7 +66,7 @@ class Spectrum(Gtk.DrawingArea):
 
             # Control points for smoothness
             xc = (x1 + x2) / 2
-            cr.curve_to(xc, y1, xc, (y1 + y2) / 2, x2, (y1 +y2) / 2)
+            cr.curve_to(xc, y1, xc, y2, x2, y2)
 
         cr.line_to(width, height)
         cr.close_path()
@@ -66,15 +75,18 @@ class Spectrum(Gtk.DrawingArea):
         cr.fill_preserve()
 
     def song_changed(self, songId:str):
-        integration = get_current_integration()
-        if model := integration.loaded_models.get(songId):
+        def set_color(model):
             if gbytes := model.get_property('gdkPaintableBytes'):
                 raw_bytes = bytes(gbytes.get_data())
                 img_io = io.BytesIO(raw_bytes)
-                self.color = [min(c/255, 1) for c in ColorThief(img_io).get_color(quality=10)]
+                self.color = [min((255-c)/255, 1) for c in ColorThief(img_io).get_color(quality=10)]
+
+        integration = get_current_integration()
+        if found_model := integration.loaded_models.get(songId):
+            threading.Thread(target=set_color, args=(found_model,)).start()
         else:
-            self.target_magnitudes = [0] * 32
+            self.target_magnitudes = [0] * SPECTRUM_BARS
 
     def playback_changed(self, playbackState:str):
         if playbackState == "play":
-            self.target_magnitudes = [0] * 32
+            self.target_magnitudes = [0] * SPECTRUM_BARS

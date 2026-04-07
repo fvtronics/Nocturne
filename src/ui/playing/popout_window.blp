@@ -261,18 +261,21 @@ template $NocturnePopoutWindow: Adw.ApplicationWindow {
                       Adw.Clamp {
                         maximum-size: 720;
                         child: Gtk.Overlay {
+                          halign: center;
+                          overflow: hidden;
+                          styles [
+                            "card"
+                          ]
+
                           [overlay]
                           $NocturneSpectrum {
                             hexpand: true;
-                            valign: end;
+                            vexpand: true;
                             overflow: hidden;
                           }
                           child: Gtk.Picture cover_el {
-                            styles [
-                              "card"
-                            ]
                             overflow: hidden;
-                            halign: center;
+
                             paintable: Adw.SpinnerPaintable {
                               widget: cover_el;
                             };

@@ -1,14 +1,14 @@
 # player.py
 
-from gi.repository import Gtk, Adw, Gdk, GLib, GObject, Gst, Gio
+from gi.repository import Gtk, Adw, Gdk, GLib, GObject, Gst, Gio, Gst
 
 from mpris_server.adapters import MprisAdapter
 from mpris_server.events import EventAdapter
 from mpris_server.server import Server
 from mpris_server import Metadata, ValidMetadata, Track, Position, Volume, Rate, PlayState, DbusObj, MetadataObj, ActivePlaylist, PlaylistEntry, MprisInterface
 
-from ...constants import MPRIS_COVER_PATH
-from ...integrations import get_current_integration
+from ...constants import MPRIS_COVER_PATH, SPECTRUM_BARS
+from ...integrations import get_current_integration, models
 from ..lyrics import LyricsDialog
 from urllib.parse import urlparse
 import threading, os
@@ -229,10 +229,11 @@ class Player(EventAdapter):
         self.control_page = control_page
         self.gst = Gst.ElementFactory.make("playbin", "music-player")
         self.spectrum = Gst.ElementFactory.make("spectrum", "spectrum-analyzer")
-        self.spectrum.set_property("bands", 32)
-        self.spectrum.set_property("threshold", -80)
+        self.spectrum.set_property("bands", SPECTRUM_BARS)
+        self.spectrum.set_property("threshold", -60)
         self.spectrum.set_property("post-messages", True)
         self.spectrum.set_property("message-magnitude", True)
+        self.spectrum.set_property("multi-channel", True)
         self.spectrum.set_property("interval", 10000000)
         self.gst.set_property("audio-filter", self.spectrum)
 
@@ -349,9 +350,15 @@ class Player(EventAdapter):
         if message.src == self.spectrum:
             struct = message.get_structure()
             if struct and struct.get_name() == "spectrum":
-                if magnitudes := struct.get_list("magnitude"):
-                    integration = get_current_integration()
-                    integration.loaded_models.get('currentSong').set_property('magnitudes', magnitudes[1])
+                serialized = struct.serialize_full(Gst.SerializeFlags.NONE)
+                channels_str = serialized.split('< < ')[1].split(' > >;')[0].replace('(float)', '').split(' >, < ')
+                channels = []
+                for c in channels_str:
+                    channels.append([float(m.strip()) for m in c.split(', ')])
+                integration = get_current_integration()
+                a1 = integration.loaded_models.get('currentSong').get_property('positionSeconds')
+                a2 = struct.get_uint64('stream-time')[1] / 1000000000
+                integration.loaded_models.get('currentSong').set_property('magnitudes', [a2-a1+1, channels[0], channels[1]])
         else:
             if message.type == Gst.MessageType.STATE_CHANGED:
                 old_state, new_state, pending_state = message.parse_state_changed()
