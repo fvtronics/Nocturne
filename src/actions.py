@@ -160,18 +160,19 @@ def toggle_fullscreen(window):
             open_popout_window(window, True)
 
 def close_popout_window(window):
-    if popoutwindow := window.get_application().popout_window:
-        try:
-            popoutwindow.close()
-        except Exception as e: # might fail if already closed
-            print(e)
-            pass
+    if application := window.get_application():
+        if popoutwindow := application.popout_window:
+            try:
+                popoutwindow.close()
+            except Exception as e: # might fail if already closed
+                print(e)
+                pass
 
-        GLib.idle_add(window.queue_page.replace_list_element, popoutwindow.queue_page.song_list_el)
-        window.sheet_status_stack.set_visible_child_name("content")
-        if len(window.queue_page.song_list_el.get_all_ids()) > 0:
-            window.main_bottom_sheet.set_open(True)
-        window.get_application().popout_window = None
+            GLib.idle_add(window.queue_page.replace_list_element, popoutwindow.queue_page.song_list_el)
+            window.sheet_status_stack.set_visible_child_name("content")
+            if len(window.queue_page.song_list_el.get_all_ids()) > 0:
+                window.main_bottom_sheet.set_open(True)
+            window.get_application().popout_window = None
 
 
 # -- PLAYER --
