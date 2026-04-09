@@ -164,6 +164,12 @@ template $NocturneWindow: Adw.ApplicationWindow {
                         icon-name: "text-justify-center-symbolic";
                         child: $NocturnePlayingLyricsPage lyrics_page {};
                       }
+                      Adw.ViewStackPage {
+                        name: "equalizer";
+                        title: _("Equalizer");
+                        icon-name: "sound-symbolic";
+                        child: $NocturneEqualizerPage equalizer_page {};
+                      }
                     }
                   };
                 };

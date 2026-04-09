@@ -159,6 +159,7 @@ class NocturneWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.create_action(actions.set_equalizer_preset)
         self.create_action(actions.replace_root_page)
         self.create_action(actions.visit_url)
         self.create_action(actions.toggle_star)

@@ -11,6 +11,7 @@ widgets = [
   'volume_button.py',
   'playback_mode_button.py',
   'spectrum.py',
+  'equalizer_page.py',
 ]
 
 install_data(widgets, install_dir: moduledir)

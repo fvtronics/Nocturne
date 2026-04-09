@@ -57,6 +57,20 @@ def __show_custom_toast(window, model_id:str, title_property:str, subtitle:str, 
 
 # -- MISC --
 
+def set_equalizer_preset(window, preset_name:str):
+    preset = {
+        "flat": [0.0] * 6,
+        "clarity": [-2.0, -4.0, 2.0, 5.0, 3.0, 1.0],
+        "jazz": [4.0, 2.0, 1.0, -2.0, -5.0, -8.0],
+        "rock": [5.0, 2.0, -2.0, 3.0, 2.0, 0.0],
+        "classic": [2.0, -2.0, 0.0, 1.0, 2.0, 4.0],
+        "acoustic": [-2.0, 3.0, 1.0, -2.0, 4.0, 2.0]
+    }.get(preset_name, [0.0] * 6)
+
+    settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
+    for i, value in enumerate(preset):
+        settings.set_double("eq-band-{}".format(i), value)
+
 def replace_root_page(window, page_tag:str):
     try:
         index = [i for i, item in enumerate(list(window.main_sidebar.get_items())) if item.get_visible() and item.page_tag == page_tag][0]

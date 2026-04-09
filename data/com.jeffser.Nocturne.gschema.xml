@@ -85,5 +85,23 @@
 	  <key name="n-playlists-home" type="i">
 	    <default>12</default>
 	  </key>
+	  <key name="eq-band-0" type="d">
+	    <default>0.0</default>
+	  </key>
+	  <key name="eq-band-1" type="d">
+	    <default>0.0</default>
+	  </key>
+	  <key name="eq-band-2" type="d">
+	    <default>0.0</default>
+	  </key>
+	  <key name="eq-band-3" type="d">
+	    <default>0.0</default>
+	  </key>
+	  <key name="eq-band-4" type="d">
+	    <default>0.0</default>
+	  </key>
+	  <key name="eq-band-5" type="d">
+	    <default>0.0</default>
+	  </key>
 	</schema>
 </schemalist>

@@ -71,6 +71,7 @@
     <file alias="playing/popout_window.ui">ui/playing/popout_window.ui</file>
     <file alias="playing/volume_button.ui">ui/playing/volume_button.ui</file>
     <file alias="playing/playback_mode_button.ui">ui/playing/playback_mode_button.ui</file>
+    <file alias="playing/equalizer_page.ui">ui/playing/equalizer_page.ui</file>
 
     <file alias="pages/home.ui">ui/pages/home.ui</file>
     <file alias="pages/login.ui">ui/pages/login.ui</file>

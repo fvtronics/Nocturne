@@ -228,7 +228,23 @@ class Player(EventAdapter):
         self.settings.set_double("volume", volume)
         self.control_page = control_page
         self.gst = Gst.ElementFactory.make("playbin", "music-player")
+
+        self.bin = Gst.Bin.new("audio-filter-bin")
+
+        self.equalizer = Gst.ElementFactory.make("equalizer-nbands", "equalizer")
+        self.bin.add(self.equalizer)
+        self.equalizer.set_property("num-bands", 6)
+        for i in range(self.equalizer.get_property("num-bands")):
+            band = self.equalizer.get_child_by_index(i)
+            self.settings.bind(
+                "eq-band-{}".format(i),
+                band,
+                "gain",
+                GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE
+            )
+
         self.spectrum = Gst.ElementFactory.make("spectrum", "spectrum-analyzer")
+        self.bin.add(self.spectrum)
         self.settings.bind(
             "visualizer-bar-n",
             self.spectrum,
@@ -240,7 +256,13 @@ class Player(EventAdapter):
         self.spectrum.set_property("message-magnitude", True)
         self.spectrum.set_property("multi-channel", True)
         self.spectrum.set_property("interval", 50000000)
-        self.gst.set_property("audio-filter", self.spectrum)
+
+        self.equalizer.link(self.spectrum)
+        sink_pad = Gst.GhostPad.new("sink", self.equalizer.get_static_pad("sink"))
+        src_pad = Gst.GhostPad.new("src", self.spectrum.get_static_pad("src"))
+        self.bin.add_pad(sink_pad)
+        self.bin.add_pad(src_pad)
+        self.gst.set_property("audio-filter", self.bin)
 
         self.settings.bind(
             "volume",
