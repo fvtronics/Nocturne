@@ -198,15 +198,15 @@ class PlayingControlPage(Adw.NavigationPage):
         window.dynamic-accent-bg bottom-sheet#main-bottom-sheet sheet > stack {{
             background-image: linear-gradient(
                 to bottom,
-                rgba({','.join([str(c) for c in palette[0]])},0.3),
-                rgba({','.join([str(c) for c in palette[1]])},0.3)
+                rgba({','.join([str(c) for c in palette[0]])},0.4),
+                rgba({','.join([str(c) for c in palette[1]])},0.4)
             );
         }}
         window.popout-window {{
             background-image: linear-gradient(
                 to bottom,
-                rgba({','.join([str(c) for c in palette[0]])},0.6),
-                rgba({','.join([str(c) for c in palette[1]])},0.6)
+                rgba({','.join([str(c) for c in palette[0]])},0.4),
+                rgba({','.join([str(c) for c in palette[1]])},0.4)
             );
         }}
         .dynamic-accent-bg {{
