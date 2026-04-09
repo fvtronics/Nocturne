@@ -112,6 +112,9 @@ def logout(window):
     dialogs = window.get_dialogs()
     if len(dialogs) > 0:
         dialogs[0].close()
+    for page in list(window.main_navigationview):
+        if isinstance(page, Adw.NavigationPage):
+            GLib.idle_add(page.reset)
 
 def show_external_file_warning(window):
     dialog = Adw.AlertDialog(

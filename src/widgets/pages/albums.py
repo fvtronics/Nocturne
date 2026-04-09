@@ -28,12 +28,12 @@ class AlbumsPage(Adw.NavigationPage):
         GLib.idle_add(self.main_stack.set_visible_child_name, 'loading')
         self.offset = 0
         self.loading = False
-        self.reset()
+        GLib.idle_add(self.reset)
         GLib.idle_add(self.end_stack.set_visible_child_name, 'loading')
         threading.Thread(target=self.load_albums).start()
 
     def reset(self):
-        GLib.idle_add(self.list_el.remove_all)
+        self.list_el.remove_all()
 
     def load_albums(self):
         if self.loading:
