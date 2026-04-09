@@ -9,6 +9,7 @@ template $NocturneRadiosPage: Adw.NavigationPage {
     Adw.HeaderBar {
       title-widget: Gtk.SearchEntry {
         hexpand: true;
+        key-capture-widget: main_stack;
         placeholder-text: _("Radios");
         search-changed => $on_search();
         accessibility {

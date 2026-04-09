@@ -24,6 +24,7 @@ template $NocturneSongsAllPage: Adw.NavigationPage {
 
       title-widget: Gtk.SearchEntry search_entry {
         hexpand: true;
+        key-capture-widget: main_stack;
         placeholder-text: _("Songs");
         search-changed => $on_search();
         accessibility {
