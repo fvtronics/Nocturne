@@ -18,8 +18,13 @@ def prepare_lrc(lrc_str:str) -> list:
     for line in lrc_str.split('\n'):
         if line.startswith('['):
             timestamp, content = line[1:].split(']')[:2]
-            minutes_str, rest = timestamp.split(':')
-            seconds_str, ms_str = rest.split('.')
+            minutes_str, rest = timestamp.split(':')[:2]
+            diveded_second = rest.split('.')
+            if len(diveded_second) == 1:
+                seconds_str = diveded_second[0]
+                ms_str = "0"
+            else:
+                seconds_str, ms_str = diveded_second[:2]
             minutes = int(minutes_str)
             seconds = int(seconds_str)
             ms = int(ms_str)
