@@ -90,6 +90,28 @@
   </keywords>
 
   <releases>
+    <release version="0.9.5" date="2026-04--11">
+      <url type="details">https://github.com/Jeffser/Nocturne/releases/tag/0.9.5</url>
+      <description translate="no">
+        <p>New</p>
+        <ul>
+          <li>Redesigned login dialog</li>
+          <li>Redesigned preferences dialog</li>
+          <li>Added option to show progressbar in player footer</li>
+          <li>Added smooth transitions between color / blur changes</li>
+          <li>Added 'Top Songs' section to artist page</li>
+          <li>Added additional customization preferences</li>
+        </ul>
+        <p>Fixes</p>
+        <ul>
+          <li>Fixed Simplified Chinese translation not being included</li>
+          <li>Added error handling for edge cases in lyrics</li>
+          <li>Fixed errors with fullscreen actions</li>
+          <li>Fixed playback mode 'repeat-one' not working as expected</li>
+          <li>Fixed playback mode 'repeat-all' not working when the queue has only one item</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.9.0" date="2026-04-09">
       <url type="details">https://github.com/Jeffser/Nocturne/releases/tag/0.9.0</url>
       <description translate="no">
