@@ -22,8 +22,6 @@ template $NocturneWindow: Adw.ApplicationWindow {
 
   content: Adw.ToastOverlay toast_overlay {
     Gtk.Stack main_stack {
-      transition-type: crossfade;
-
       Gtk.StackPage {
         name: "loading";
         child: Adw.Spinner {};
@@ -35,10 +33,6 @@ template $NocturneWindow: Adw.ApplicationWindow {
       Gtk.StackPage {
         name: "setup";
         child: $NocturneSetupPage setup_page {};
-      }
-      Gtk.StackPage {
-        name: "login";
-        child: $NocturneLoginPage login_page {};
       }
       Gtk.StackPage {
         name: "content";

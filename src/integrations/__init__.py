@@ -39,10 +39,8 @@ def set_current_integration(new_integration):
     integration = new_integration
     settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
     settings.set_string('selected-instance-type', integration.__gtype_name__)
-    if integration.find_property('url'):
-        settings.set_string('integration-ip', integration.get_property('url'))
-    if integration.find_property('user'):
-        settings.set_string('integration-user', integration.get_property('user'))
-    if integration.find_property('library_dir'):
-        settings.set_string("integration-library-dir", integration.get_property('library_dir'))
+    settings.set_string('integration-ip', integration.get_property('url'))
+    settings.set_string('integration-user', integration.get_property('user'))
+    settings.set_string("integration-library-dir", integration.get_property('libraryDir'))
+    settings.set_boolean("integration-trust-server", integration.get_property('trustServer'))
 

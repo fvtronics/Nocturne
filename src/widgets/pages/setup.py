@@ -2,6 +2,7 @@
 
 from gi.repository import Gtk, Adw, Gio, GLib
 from ...constants import BASE_NAVIDROME_DIR, CACHE_DIR, get_navidrome_path, get_navidrome_env
+from . import LoginDialog
 
 import os, requests, tarfile, threading, subprocess, platform
 
@@ -82,5 +83,5 @@ class SetupPage(Adw.NavigationPage):
 
     @Gtk.Template.Callback()
     def continue_clicked(self, button):
-        self.get_root().main_stack.set_visible_child_name('login')
-        self.get_root().login_page.setup_page(self.integration)
+        self.get_root().main_stack.set_visible_child_name('welcome')
+        LoginDialog(self.integration).present(self.get_root())

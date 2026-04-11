@@ -8,9 +8,10 @@ from ..containers import ContextContainer
 import threading, subprocess
 
 @Gtk.Template(resource_path='/com/jeffser/Nocturne/pages/login.ui')
-class LoginPage(Adw.NavigationPage):
-    __gtype_name__ = 'NocturneLoginPage'
+class LoginDialog(Adw.Dialog):
+    __gtype_name__ = 'NocturneLoginDialog'
 
+    toast_overlay = Gtk.Template.Child()
     server_status_el = Gtk.Template.Child()
     extra_menu_el = Gtk.Template.Child()
     status_page = Gtk.Template.Child()
@@ -23,13 +24,9 @@ class LoginPage(Adw.NavigationPage):
 
     login_button_el = Gtk.Template.Child()
 
-    def setup_page(self, integration):
+    def __init__(self, integration):
+        super().__init__()
         self.integration = integration
-        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-        saved_user = settings.get_value('integration-user').unpack()
-        saved_directory = settings.get_value('integration-library-dir').unpack()
-        saved_ip = settings.get_value('integration-ip').unpack()
-        selected_instance_type = settings.get_value('selected-instance-type').unpack()
 
         # Metadata
         metadata = self.integration.login_page_metadata
@@ -49,10 +46,7 @@ class LoginPage(Adw.NavigationPage):
 
         # Url
         self.url_el.set_visible('url' in metadata.get('entries'))
-        if self.integration.__gtype_name__ == selected_instance_type:
-            self.url_el.set_text(saved_ip or metadata.get("default-url", ""))
-        else:
-            self.url_el.set_text(metadata.get("default-url", ""))
+        self.url_el.set_text(self.integration.get_property('url'))
 
         # Url Extra Options
         self.url_options_el.set_visible('trust-server' in metadata.get('entries')) # Change line if more options are added
@@ -60,7 +54,7 @@ class LoginPage(Adw.NavigationPage):
 
         # User
         self.user_el.set_visible('user' in metadata.get('entries'))
-        self.user_el.set_text(saved_user)
+        self.user_el.set_text(self.integration.get_property('user'))
 
         # Password
         self.password_el.set_visible('password' in metadata.get('entries'))
@@ -68,10 +62,7 @@ class LoginPage(Adw.NavigationPage):
 
         # Directory
         self.directory_el.set_visible('library-dir' in metadata.get('entries'))
-        if Gio.File.new_for_path(saved_directory).query_exists():
-            self.directory_el.set_subtitle(saved_directory)
-        else:
-            self.directory_el.set_subtitle("")
+        self.directory_el.set_subtitle(self.integration.get_property('libraryDir'))
 
         # Login Button
         self.login_button_el.set_label(metadata.get('login-label') or _("Login"))
@@ -85,7 +76,7 @@ class LoginPage(Adw.NavigationPage):
     @Gtk.Template.Callback()
     def library_changed(self, row, gparam):
         if row.get_visible() and 'library-dir' in self.integration.login_page_metadata.get('entries'):
-            self.integration.set_property('library_dir', row.get_subtitle())
+            self.integration.set_property('libraryDir', row.get_subtitle())
             self.integration.terminate_instance()
             threading.Thread(target=self.integration.start_instance).start()
 
@@ -103,11 +94,6 @@ class LoginPage(Adw.NavigationPage):
         dialog.select_folder(self.get_root(), None, response)
 
     @Gtk.Template.Callback()
-    def go_back_clicked(self, button):
-        self.integration.terminate_instance()
-        GLib.idle_add(self.get_root().main_stack.set_visible_child_name, 'welcome')
-
-    @Gtk.Template.Callback()
     def server_restart_requested(self, row):
         row.set_sensitive(False)
         self.integration.terminate_instance()
@@ -119,52 +105,11 @@ class LoginPage(Adw.NavigationPage):
         row.set_sensitive(True)
 
     @Gtk.Template.Callback()
-    def login_button_clicked(self, button=None, skip_password:bool=False):
+    def login_button_clicked(self, button=None):
         self.login_button_el.set_sensitive(False)
-        if self.url_el.get_visible():
-            self.integration.set_property('url', self.url_el.get_text())
-        if self.url_options_el.get_visible():
-            if self.trust_server_el.get_visible():
-                self.integration.set_property('trust_server', self.trust_server_el.get_active())
-        if self.user_el.get_visible():
-            self.integration.set_property('user', self.user_el.get_text())
-        if self.password_el.get_visible() and not skip_password:
-            secret.store_password(self.password_el.get_text())
-        if self.directory_el.get_visible():
-            self.integration.set_property('library_dir', self.directory_el.get_subtitle())
-
-        def verify_login():
-            if self.integration.ping():
-                set_current_integration(self.integration)
-                self.integration.on_login()
-                GLib.idle_add(self.login_success)
-            else:
-                toast = Adw.Toast(title=_("Login Failed"))
-                GLib.idle_add(self.get_ancestor(Adw.ToastOverlay).add_toast, toast)
-                GLib.idle_add(self.get_root().main_stack.set_visible_child_name, 'login')
-            if button:
-                GLib.idle_add(button.set_sensitive, True)
-        threading.Thread(target=verify_login).start()
-
-    def login_success(self):
-        root = self.get_root()
-        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-
-        root.main_stack.set_visible_child_name('content')
-
-        root.playing_page.setup()
-        root.footer.setup()
-        root.lyrics_page.setup()
-        root.queue_page.setup()
-
-        application = root.get_application()
-        if not application.player:
-            application.player = Player(application)
-
-        default_page = settings.get_value('default-page-tag').unpack() or 'home'
-
-        root.activate_action("app.replace_root_page", GLib.Variant('s', default_page))
-        threading.Thread(target=root.update_playlist_section_of_sidebar).start()
-        if settings.get_value("restore-session").unpack():
-            threading.Thread(target=application.player.restore_play_queue).start()
-
+        self.integration.set_property('url', self.url_el.get_text())
+        self.integration.set_property('trustServer', self.trust_server_el.get_active())
+        self.integration.set_property('user', self.user_el.get_text())
+        secret.store_password(self.password_el.get_text())
+        self.integration.set_property('libraryDir', self.directory_el.get_subtitle())
+        threading.Thread(target=self.get_root().get_application().try_login, args=(self.integration,)).start()

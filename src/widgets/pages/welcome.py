@@ -1,9 +1,8 @@
 # welcome.py
 
 from gi.repository import Gtk, Adw, Gio, GLib
-from ...constants import get_navidrome_path, DEFAULT_MUSIC_DIR
-from ...integrations import set_current_integration, get_available_integrations, Local, Navidrome, NavidromeIntegrated, Jellyfin
-import threading
+from . import LoginDialog
+from ...integrations import Local, Navidrome, NavidromeIntegrated, Jellyfin
 
 @Gtk.Template(resource_path='/com/jeffser/Nocturne/pages/welcome.ui')
 class WelcomePage(Adw.NavigationPage):
@@ -13,14 +12,6 @@ class WelcomePage(Adw.NavigationPage):
 
     def __init__(self):
         super().__init__()
-        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-        selected_local_folder = settings.get_value("integration-library-dir").unpack()
-        if not selected_local_folder:
-            settings.set_string("integration-library-dir", DEFAULT_MUSIC_DIR)
-
-        GLib.idle_add(self.check_auto_login)
-
-    def setup_page(self):
         integrations = [Navidrome, NavidromeIntegrated, Jellyfin, Local]
         for integration in integrations:
             metadata = integration.button_metadata
@@ -35,21 +26,12 @@ class WelcomePage(Adw.NavigationPage):
                 valign=Gtk.Align.CENTER
             ))
             row.connect('activated', self.option_selected, integration)
-            GLib.idle_add(self.listbox_el.append, row)
-
-    def check_auto_login(self):
-        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
-        selected_instance = settings.get_value("selected-instance-type").unpack()
-        if not selected_instance:
-            self.get_root().main_stack.set_visible_child_name('welcome')
-        elif integration := get_available_integrations().get(selected_instance):
-            self.get_root().login_page.setup_page(integration())
-            self.get_root().login_page.login_button_clicked(skip_password=True)
-        threading.Thread(target=self.setup_page).start()
+            self.listbox_el.append(row)
 
     def option_selected(self, row, integration):
         integration = integration()
         if integration.check_if_ready(row):
-            self.get_root().main_stack.set_visible_child_name('login')
-            self.get_root().login_page.setup_page(integration)
+            dialog = LoginDialog(integration)
+            dialog.present(self.get_root())
+
 

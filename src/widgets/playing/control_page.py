@@ -29,10 +29,8 @@ class PlayingControlPage(Adw.NavigationPage):
     state_stack_el = Gtk.Template.Child()
     rating_container = Gtk.Template.Child()
 
-    def __init__(self):
-        # Used to disconnect star_el when song changes
-        self.starred_connection = None
-        super().__init__()
+    # Used to disconnect star_el when song changes
+    starred_connection = None
 
     def setup(self):
         integration = get_current_integration()
@@ -40,7 +38,7 @@ class PlayingControlPage(Adw.NavigationPage):
         integration.connect_to_model('currentSong', 'buttonState', self.state_stack_el.set_visible_child_name)
         integration.connect_to_model('currentSong', 'songId', self.song_changed)
         self.spectrum_el.setup()
-        GLib.idle_add(self.setup_sidebar_button_connection)
+        self.setup_sidebar_button_connection()
 
     def update_position(self, positionSeconds:int):
         integration = get_current_integration()

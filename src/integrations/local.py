@@ -23,7 +23,6 @@ class Local(Base):
         'title': _("Local Files"),
         'subtitle': _("Limited functionality")
     }
-    library_dir = GObject.Property(type=str)
 
     def open_json(self, filename:str, is_list:bool=False) -> dict | list:
         try:
@@ -42,7 +41,7 @@ class Local(Base):
     def on_login(self):
         # Goes through the whole directory retrieving all the metadata
         audio_data_list = []
-        path_obj = pathlib.Path(self.get_property('library_dir'))
+        path_obj = pathlib.Path(self.get_property('libraryDir'))
 
         def load_songs():
             # load songs, albums, artists
@@ -492,7 +491,7 @@ class Local(Base):
 
     def getServerInformation(self) -> dict:
         server_information = {
-            'link': 'file://{}'.format(self.get_property('library_dir')),
+            'link': 'file://{}'.format(self.get_property('libraryDir')),
             'title': _("Local Files")
         }
         try:

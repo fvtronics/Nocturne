@@ -14,7 +14,6 @@ class Jellyfin(Base):
         'title': "Jellyfin",
         'description': _("Connect to a Jellyfin server."),
         'entries': ["url", "user", "password", "trust-server"],
-        'default-url': "http://127.0.0.1:8096"
     }
     button_metadata = {
         'title': _("Jellyfin"),
@@ -24,11 +23,10 @@ class Jellyfin(Base):
     cache_actions = {
         'deleted-radios': []
     }
-    url = GObject.Property(type=str)
-    trust_server = GObject.Property(type=bool, default=False)
-    user = GObject.Property(type=str)
 
     AUTH_HEADER = 'MediaBrowser Client="Nocturne", Device="{}", DeviceId="{}", Version="1.0.0"'.format(platform.node(), str(abs(hash(platform.node()))))
+
+    url = GObject.Property(type=str, default="http://127.0.0.1:8096")
 
     # Loaded by API
     accessToken = GObject.Property(type=str)
@@ -61,7 +59,7 @@ class Jellyfin(Base):
                     params=params,
                     json=json,
                     headers=headers,
-                    verify=not self.get_property('trust_server')
+                    verify=not self.get_property('trustServer')
                 )
             elif mode == 'POST':
                 response = requests.post(
@@ -69,7 +67,7 @@ class Jellyfin(Base):
                     params=params,
                     json=json,
                     headers=headers,
-                    verify=not self.get_property('trust_server')
+                    verify=not self.get_property('trustServer')
                 )
             elif mode == 'DELETE':
                 response = requests.delete(
@@ -77,7 +75,7 @@ class Jellyfin(Base):
                     params=params,
                     json=json,
                     headers=headers,
-                    verify=not self.get_property('trust_server')
+                    verify=not self.get_property('trustServer')
                 )
             if response.status_code in (200, 201):
                 return response.json()
@@ -120,7 +118,7 @@ class Jellyfin(Base):
                         self.get_url('Items/{id}/Images/Primary', id=id),
                         headers=self.get_base_header(),
                         params=params,
-                        verify=not self.get_property('trust_server'),
+                        verify=not self.get_property('trustServer'),
                         timeout=10
                     )
                     # Treat non-200 responses as empty content to avoid
@@ -814,7 +812,7 @@ class Jellyfin(Base):
             response = requests.get(
                 self.get_url('Users/{userId}/Images/Primary'),
                 params=params,
-                verify=not self.get_property('trust_server')
+                verify=not self.get_property('trustServer')
             )
             response_bytes = response.content if response.status_code == 200 else b''
             if response_bytes and len(response_bytes) > 0:

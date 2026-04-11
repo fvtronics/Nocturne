@@ -2,7 +2,7 @@
 
 from gi.repository import Gtk, GLib, GObject, Gdk
 from . import models, secret
-from ..constants import get_nocturne_version
+from ..constants import get_nocturne_version, DEFAULT_MUSIC_DIR
 import requests, favicon, io, urllib3, time
 from PIL import Image
 from urllib.parse import urlparse
@@ -21,6 +21,11 @@ class Base(GObject.Object):
 
     # Always have a currentSong inside loaded_models
     loaded_models = {'currentSong': models.CurrentSong()}
+
+    url = GObject.Property(type=str)
+    trustServer = GObject.Property(type=bool, default=False)
+    user = GObject.Property(type=str)
+    libraryDir = GObject.Property(type=str, default=DEFAULT_MUSIC_DIR)
 
     # Show spinner in sidebar with message as tooltip text if set
     loadingMessage = GObject.Property(type=str)

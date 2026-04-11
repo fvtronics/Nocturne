@@ -213,6 +213,8 @@ def show_external_file_warning(window):
 
 def update_navidrome_server(window):
     window.main_stack.set_visible_child_name('setup')
+    if dialog := window.get_visible_dialog():
+        dialog.close()
 
 def delete_navidrome_server(window):
     def response(dialog, task):
@@ -230,6 +232,8 @@ def delete_navidrome_server(window):
         GLib.idle_add(window.toast_overlay.add_toast, toast)
         GLib.idle_add(window.main_stack.set_visible_child_name, 'welcome')
 
+    if dialog := window.get_visible_dialog():
+        dialog.close()
     dialog = Adw.AlertDialog(
         heading=_("Delete Navidrome Server"),
         body=_("Are you sure you want to delete the integrated Navidrome server?")

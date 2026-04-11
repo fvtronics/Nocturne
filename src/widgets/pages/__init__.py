@@ -1,7 +1,7 @@
 # __init__.py
 
 from .home import HomePage
-from .login import LoginPage
+from .login import LoginDialog
 from .artists import ArtistsPage
 from .playlists import PlaylistsPage
 from .songs_starred import SongsStarredPage

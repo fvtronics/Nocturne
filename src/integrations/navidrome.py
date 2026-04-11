@@ -16,16 +16,14 @@ class Navidrome(Base):
         'icon-name': "network-server-symbolic",
         'title': "External Server",
         'description': _("Connect to an OpenSubsonic server like Navidrome."),
-        'entries': ['url', 'user', 'password', 'trust-server'],
-        'default-url': "http://127.0.0.1:4533"
+        'entries': ['url', 'user', 'password', 'trust-server']
     }
     button_metadata = {
         'title': _("External Server"),
         'subtitle': _("Use an existing OpenSubsonic / Navidrome instance")
     }
-    url = GObject.Property(type=str)
-    trust_server = GObject.Property(type=bool, default=False)
-    user = GObject.Property(type=str)
+
+    url = GObject.Property(type=str, default="http://127.0.0.1:4533")
 
     def get_base_params(self) -> dict:
         params = {
@@ -49,7 +47,7 @@ class Navidrome(Base):
         return requests.get(
             self.get_url(action),
             params={**self.get_base_params(), **params},
-            verify=not self.get_property('trust_server')
+            verify=not self.get_property('trustServer')
         )
 
     def make_request(self, action:str, params:dict={}) -> dict:
@@ -105,7 +103,7 @@ class Navidrome(Base):
                 response = requests.get(
                     self.get_url('getCoverArt'),
                     params=params,
-                    verify=not self.get_property('trust_server')
+                    verify=not self.get_property('trustServer')
                 )
                 response_bytes = response.content if response.status_code == 200 else b''
 
@@ -464,7 +462,7 @@ class Navidrome(Base):
             response = requests.get(
                 self.get_url('ping'),
                 params=self.get_base_params(),
-                verify=not self.get_property('trust_server')
+                verify=not self.get_property('trustServer')
             )
             if response.status_code == 200:
                 data = response.json().get('subsonic-response', {})
@@ -480,7 +478,7 @@ class Navidrome(Base):
             response = requests.get(
                 self.get_url('getAvatar'),
                 params=params,
-                verify=not self.get_property('trust_server')
+                verify=not self.get_property('trustServer')
             )
             response_bytes = response.content if response.status_code == 200 else b''
             if response_bytes and len(response_bytes) > 0:
@@ -508,15 +506,10 @@ class NavidromeIntegrated(Navidrome):
         'title': _("Managed Server"),
         'subtitle': _("Create and use a Navidrome instance")
     }
-    library_dir = GObject.Property(type=str)
-    trust_server = GObject.Property(type=bool, default=True)
+
+    url = GObject.Property(type=str, default="http://127.0.0.1:4534")
     serverRunning = GObject.Property(type=bool, default=False)
     process = None
-
-    def __init__(self):
-        super().__init__()
-        self.set_property('url', 'http://127.0.0.1:4534')
-        self.set_property('library_dir', Gio.Settings(schema_id="com.jeffser.Nocturne").get_value("integration-library-dir").unpack())
 
     def check_if_ready(self, row) -> bool:
         if get_navidrome_path():
@@ -529,7 +522,7 @@ class NavidromeIntegrated(Navidrome):
     def start_instance(self) -> bool:
         path = get_navidrome_path()
         env = get_navidrome_env()
-        library_directory = self.get_property('library_dir')
+        library_directory = self.get_property('libraryDir')
         if self.process:
             return True
 

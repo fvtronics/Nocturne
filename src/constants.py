@@ -37,7 +37,6 @@ FALLBACK_PASSWORD_PATH = os.path.join(CONFIG_DIR, 'pass.txt')
 BASE_NAVIDROME_DIR = os.path.join(DATA_DIR, "navidrome")
 os.makedirs(BASE_NAVIDROME_DIR, exist_ok=True)
 NAVIDROME_ENV = {
-    "ND_MUSICFOLDER": DEFAULT_MUSIC_DIR,
     "ND_DATAFOLDER": BASE_NAVIDROME_DIR,
     "ND_PORT": "4534",
     "ND_LOGLEVEL": "ERROR",

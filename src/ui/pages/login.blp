@@ -1,114 +1,109 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $NocturneLoginPage: Adw.NavigationPage {
+template $NocturneLoginDialog: Adw.Dialog {
   title: _("Login");
-  child: Adw.ToolbarView {
-    extend-content-to-top-edge: true;
+  child: Adw.ToastOverlay toast_overlay {
+    child: Adw.ToolbarView {
+      extend-content-to-top-edge: true;
 
-    [top]
-    Adw.HeaderBar {
-      [start]
-      Gtk.Button {
-        icon-name: "user-home-symbolic";
-        tooltip-text: _("Go to Welcome Page");
-        clicked => $go_back_clicked();
+      [top]
+      Adw.HeaderBar {
+        show-title: false;
       }
 
-      show-title: false;
-    }
-
-    content: Adw.StatusPage status_page {
-      title: _("Login");
-      child: Gtk.Box {
-        spacing: 20;
-        orientation: vertical;
-        halign: center;
-        width-request: 320;
-
-        Gtk.ListBox {
-          styles [
-            "boxed-list"
-          ]
-          hexpand: true;
-          selection-mode: none;
-
-          Adw.ActionRow server_status_el {
-            title: _("Server Status");
-            subtitle: _("Not Running");
-            tooltip-text: _("Restart Instance");
-            activatable: true;
-            activated => $server_restart_requested();
-
-            [prefix]
-            Gtk.Image {
-              icon-name: "update-symbolic";
-            }
-
-            [suffix]
-            Gtk.MenuButton extra_menu_el {
-              icon-name: "preferences-system-symbolic";
-              tooltip-text: _("Manage Navidrome Server");
-              popover: Gtk.Popover {};
-              valign: center;
-              styles [
-                "flat"
-              ]
-            }
-          }
-
-          Adw.EntryRow url_el {
-            title: _("Url");
-            [suffix]
-            Gtk.MenuButton url_options_el {
-              styles [
-                "flat"
-              ]
-              icon-name: "view-more-symbolic";
-              tooltip-text: _("More Options");
-              valign: center;
-              popover: Gtk.Popover {
-                child: Gtk.ListBox {
-                  selection-mode: none;
-                  Adw.SwitchRow trust_server_el {
-                    title: _("Trust Server Certificates");
-                  }
-                };
-              };
-            }
-          }
-
-          Adw.ActionRow directory_el {
-            title: _("Library Directory");
-            notify::subtitle => $library_changed();
-            activated => $open_local_directory();
-            activatable: true;
-            [prefix]
-            Gtk.Image {
-              icon-name: "folder-open-symbolic";
-              valign: center;
-            }
-          }
-
-          Adw.EntryRow user_el {
-            title: _("Username");
-          }
-
-          Adw.PasswordEntryRow password_el {
-            title: _("Password");
-            entry-activated => $login_button_clicked();
-          }
-        }
-
-        Gtk.Button login_button_el {
-          styles [
-            "suggested-action",
-            "pill"
-          ]
-          label: _("Login");
-          clicked => $login_button_clicked();
+      content: Adw.StatusPage status_page {
+        title: _("Login");
+        child: Gtk.Box {
+          spacing: 20;
+          orientation: vertical;
           halign: center;
-        }
+          width-request: 320;
+
+          Gtk.ListBox {
+            styles [
+              "boxed-list"
+            ]
+            hexpand: true;
+            selection-mode: none;
+
+            Adw.ActionRow server_status_el {
+              title: _("Server Status");
+              subtitle: _("Not Running");
+              tooltip-text: _("Restart Instance");
+              activatable: true;
+              activated => $server_restart_requested();
+
+              [prefix]
+              Gtk.Image {
+                icon-name: "update-symbolic";
+              }
+
+              [suffix]
+              Gtk.MenuButton extra_menu_el {
+                icon-name: "preferences-system-symbolic";
+                tooltip-text: _("Manage Navidrome Server");
+                popover: Gtk.Popover {};
+                valign: center;
+                styles [
+                  "flat"
+                ]
+              }
+            }
+
+            Adw.EntryRow url_el {
+              title: _("Url");
+              [suffix]
+              Gtk.MenuButton url_options_el {
+                styles [
+                  "flat"
+                ]
+                icon-name: "view-more-symbolic";
+                tooltip-text: _("More Options");
+                valign: center;
+                popover: Gtk.Popover {
+                  child: Gtk.ListBox {
+                    selection-mode: none;
+                    Adw.SwitchRow trust_server_el {
+                      title: _("Trust Server Certificates");
+                    }
+                  };
+                };
+              }
+            }
+
+            Adw.ActionRow directory_el {
+              title: _("Library Directory");
+              notify::subtitle => $library_changed();
+              activated => $open_local_directory();
+              activatable: true;
+              [prefix]
+              Gtk.Image {
+                icon-name: "folder-open-symbolic";
+                valign: center;
+              }
+            }
+
+            Adw.EntryRow user_el {
+              title: _("Username");
+            }
+
+            Adw.PasswordEntryRow password_el {
+              title: _("Password");
+              entry-activated => $login_button_clicked();
+            }
+          }
+
+          Gtk.Button login_button_el {
+            styles [
+              "suggested-action",
+              "pill"
+            ]
+            label: _("Login");
+            clicked => $login_button_clicked();
+            halign: center;
+          }
+        };
       };
     };
   };

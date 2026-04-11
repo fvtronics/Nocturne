@@ -17,7 +17,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import sys, pathlib
+import sys, pathlib, threading
 import gi
 
 gi.require_version('Gtk', '4.0')
@@ -28,8 +28,10 @@ gi.require_version('Gst', '1.0')
 from gi.repository import Gtk, Gdk, Gio, Adw, GLib
 from .window import NocturneWindow
 from .preferences import NocturnePreferences
-from .constants import get_song_info_from_file, TRANSLATORS, set_version
-from .integrations import get_current_integration, models
+from .constants import get_song_info_from_file, TRANSLATORS, DEFAULT_MUSIC_DIR, set_version
+from .integrations import get_current_integration, set_current_integration, get_available_integrations, models
+from .widgets.playing import Player
+from .widgets.pages import LoginDialog
 
 GLib.set_prgname('com.jeffser.Nocturne')
 GLib.set_application_name("Nocturne")
@@ -57,11 +59,63 @@ class NocturneApplication(Adw.Application):
         self.create_action('about', self.on_about_action)
         self.create_action('preferences', self.on_preferences_action, ['<control>comma'])
 
+    def load_default_integration(self):
+        settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
+        selected_local_folder = settings.get_value("integration-library-dir").unpack()
+        if not selected_local_folder:
+            settings.set_string("integration-library-dir", DEFAULT_MUSIC_DIR)
+
+        if selected_instance := settings.get_value("selected-instance-type").unpack():
+            if integration_type := get_available_integrations().get(selected_instance):
+                integration = integration_type(
+                    url=settings.get_value('integration-ip').unpack(),
+                    user=settings.get_value('integration-user').unpack(),
+                    trustServer=settings.get_value('integration-trust-server').unpack()
+                )
+                directory = settings.get_value('integration-library-dir').unpack()
+                if Gio.File.new_for_path(directory).query_exists():
+                    integration.set_property('libraryDir', directory)
+                threading.Thread(target=self.try_login, args=(integration,)).start()
+                return
+        self.props.active_window.main_stack.set_visible_child_name('welcome')
+
+    def try_login(self, integration):
+        # call on different thread
+        main_win = self.props.active_window
+        if integration.ping():
+            set_current_integration(integration)
+            integration.on_login()
+            GLib.idle_add(main_win.main_stack.set_visible_child_name, "content")
+            GLib.idle_add(main_win.playing_page.setup)
+            GLib.idle_add(main_win.footer.setup)
+            GLib.idle_add(main_win.lyrics_page.setup)
+            GLib.idle_add(main_win.queue_page.setup)
+            if not self.player:
+                self.player = Player(self)
+            settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
+            default_page = settings.get_value('default-page-tag').unpack() or 'home'
+            main_win.activate_action("app.replace_root_page", GLib.Variant('s', default_page))
+            threading.Thread(target=main_win.update_playlist_section_of_sidebar).start()
+            if settings.get_value("restore-session").unpack():
+                threading.Thread(target=self.player.restore_play_queue).start()
+            if dialog := main_win.get_visible_dialog():
+                dialog.close()
+        else:
+            main_win.main_stack.set_visible_child_name('welcome')
+            toast = Adw.Toast(title=_("Login Failed"))
+            dialog = main_win.get_visible_dialog()
+            if not isinstance(dialog, LoginDialog):
+                dialog = LoginDialog(integration)
+                GLib.idle_add(dialog.present, main_win)
+            GLib.idle_add(dialog.toast_overlay.add_toast, toast)
+            GLib.idle_add(dialog.login_button_el.set_sensitive, True)
+
     def do_activate(self):
         win = self.props.active_window
         if not win:
             win = NocturneWindow(application=self)
         win.present()
+        self.load_default_integration()
 
     def do_open(self, files, n_files=None, hint=None):
         self.external_songs = []
