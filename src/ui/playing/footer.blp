@@ -3,7 +3,7 @@ using Adw 1;
 
 template $NocturnePlayingFooter: Gtk.Overlay {
   [overlay]
-  Gtk.ProgressBar progress_el {
+  Gtk.ProgressBar ro_progress_el {
     valign: end;
     styles [
       "osd"
@@ -63,6 +63,19 @@ template $NocturnePlayingFooter: Gtk.Overlay {
           xalign: 0;
           halign: start;
           ellipsize: end;
+        }
+
+        Gtk.Scale progress_el {
+          styles [
+            "p0"
+          ]
+          adjustment: Gtk.Adjustment {
+            lower: 0;
+            upper: 1;
+            value: 0;
+          };
+          visible: false;
+          change-value => $progress_bar_changed();
         }
       }
     }

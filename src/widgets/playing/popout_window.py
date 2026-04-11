@@ -52,23 +52,7 @@ class PopoutWindow(Adw.ApplicationWindow):
         self.playing_page.header_bar.set_show_start_title_buttons(True)
         self.playing_page.header_bar.set_show_end_title_buttons(True)
 
-        self.footer.cover_el.set_size_request(100, 100)
-        self.footer.cover_el.set_pixel_size(100)
-        self.footer.title_el.set_wrap(True)
-        self.footer.title_el.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        self.footer.title_el.set_lines(2)
-        self.footer.title_el.get_ancestor(Gtk.Box).set_spacing(10)
-        self.footer.progress_el.set_visible(False)
-        self.footer_scale = Gtk.Scale(
-            adjustment=Gtk.Adjustment(
-                lower=0,
-                upper=1,
-                value=0
-            ),
-            css_classes=["p0"]
-        )
-        self.footer_scale.connect("change-value", self.playing_page.progress_bar_changed)
-        self.footer.detail_container.append(self.footer_scale)
+        self.footer.set_property('forceHugeMode', True)
         integration.connect_to_model('currentSong', 'songId', self.song_changed)
         integration.connect_to_model('currentSong', 'positionSeconds', self.song_position_changed)
         integration.connect_to_model('currentSong', 'buttonState', self.state_stack_el.set_visible_child_name)
@@ -92,7 +76,6 @@ class PopoutWindow(Adw.ApplicationWindow):
         if model := integration.loaded_models.get(songId):
             duration = model.get_property('duration')
             self.fs_timestamp_el.set_label('-{}'.format(get_display_time(duration - positionSeconds)))
-        self.footer_scale.set_value(positionSeconds)
         self.fs_progress_el.set_value(positionSeconds)
 
     @Gtk.Template.Callback()
@@ -105,7 +88,6 @@ class PopoutWindow(Adw.ApplicationWindow):
     def song_changed(self, id:str):
         integration = get_current_integration()
         if model := integration.loaded_models.get(id):
-            self.footer_scale.get_adjustment().set_upper(model.get_property('duration'))
             self.fs_progress_el.get_adjustment().set_upper(model.get_property('duration'))
             self.set_title(model.get_property('title'))
             self.fs_title_el.set_label(model.get_property('title'))

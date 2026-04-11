@@ -14,6 +14,7 @@ class NocturnePreferences(Adw.PreferencesDialog):
     show_playlists_sidebar_el = Gtk.Template.Child()
     dynamic_bg_el = Gtk.Template.Child()
     blur_bg_el = Gtk.Template.Child()
+    footer_big_mode_el = Gtk.Template.Child()
     default_page_el = Gtk.Template.Child()
 
     restore_el = Gtk.Template.Child()
@@ -65,6 +66,12 @@ class NocturnePreferences(Adw.PreferencesDialog):
         settings.bind(
             "player-blur-bg",
             self.blur_bg_el,
+            "active",
+            Gio.SettingsBindFlags.DEFAULT
+        )
+        settings.bind(
+            "use-big-footer",
+            self.footer_big_mode_el,
             "active",
             Gio.SettingsBindFlags.DEFAULT
         )

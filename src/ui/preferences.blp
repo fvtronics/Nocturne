@@ -27,6 +27,10 @@ template $NocturnePreferencesDialog: Adw.PreferencesDialog {
         subtitle: _("Make background of player slightly transparent and blur the backdrop");
         notify::active => $on_blur_bg_toggled();
       }
+      Adw.SwitchRow footer_big_mode_el {
+        title: _("Show Progressbar in Player Footer");
+        subtitle: _("Makes the footer bigger");
+      }
       Adw.ComboRow default_page_el {
         title: _("Default Page on Login");
         subtitle: _("Which page is shown by default");
