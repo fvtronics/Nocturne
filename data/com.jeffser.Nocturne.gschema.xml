@@ -46,25 +46,19 @@
 	  <key name="show-context-button" type="b">
 	    <default>true</default>
 	  </key>
-
-
 	  <key name="use-dynamic-accent" type="b">
 	    <default>true</default>
 	  </key>
-
 	  <key name="player-dynamic-bg-mode" type="s">
 	    <default>'gradient'</default>
 	  </key>
 	  <key name="popout-dynamic-bg-mode" type="s">
 	    <default>'gradient'</default>
 	  </key>
-
 	  <key name="use-big-footer" type="b">
 	    <default>false</default>
 	  </key>
-
-
-	  <key name="player-blur-bg" type="b">
+	  <key name="player-blur-bg" type="b"> <!--This is translucent mode-->
 	    <default>false</default>
 	  </key>
 	  <key name="show-visualizer" type="b">

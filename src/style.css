@@ -150,9 +150,9 @@ window:not(.popout-window) bottom-sheet#main-bottom-sheet sheet.background {
   backdrop-filter 0.5s ease-in-out;
 }
 
-window.player-blur:not(.popout-window) bottom-sheet#main-bottom-sheet sheet.background {
+window.player-translucent:not(.popout-window) bottom-sheet#main-bottom-sheet sheet.background {
   backdrop-filter: blur(10px);
-  background: color-mix(in srgb, var(--window-bg-color) 85%, transparent);
+  background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
 }
 
 window.popout-window.big-mode navigation-split-view > .sidebar-pane {

@@ -235,7 +235,7 @@ class NocturneWindow(Adw.ApplicationWindow):
 
         css_settings = {
             'use-dynamic-accent': 'dynamic-accent',
-            'player-blur-bg': 'player-blur'
+            'player-blur-bg': 'player-translucent'
         }
         for key, class_name in css_settings.items():
             self.settings.connect('changed::{}'.format(key), self.css_toggled, class_name)
