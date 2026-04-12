@@ -2,7 +2,7 @@
 
 from gi.repository import Gtk, Adw, Gdk, GLib, GObject, Gst, Gio
 from ...integrations import get_current_integration
-from ...constants import MPRIS_COVER_PATH, BLUR_COVER_PATH, get_display_time
+from ...constants import MPRIS_COVER_PATH, get_display_time
 import threading, random, io, colorsys, os, base64
 from PIL import Image, ImageFilter
 from colorthief import ColorThief
@@ -194,9 +194,8 @@ class PlayingControlPage(Adw.NavigationPage):
 
         # Blur Image
         with Image.open(img_io) as img:
-            original_size = img.size
             small_img = img.resize((24, 24))
-            blurred_img = small_img.filter(ImageFilter.GaussianBlur(radius=8 / 4))
+            blurred_img = small_img.filter(ImageFilter.GaussianBlur(radius=2))
             if blurred_img.mode != "RGBA":
                 blurred_img = blurred_img.convert("RGBA")
             blurred_img.putalpha(int(255 * 0.4))
