@@ -50,10 +50,10 @@
 	    <default>true</default>
 	  </key>
 	  <key name="player-dynamic-bg-mode" type="s">
-	    <default>'gradient'</default>
+	    <default>'blur'</default>
 	  </key>
 	  <key name="popout-dynamic-bg-mode" type="s">
-	    <default>'gradient'</default>
+	    <default>'blur'</default>
 	  </key>
 	  <key name="use-big-footer" type="b">
 	    <default>false</default>
