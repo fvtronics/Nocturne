@@ -57,6 +57,8 @@ class SongSmallRow(Gtk.Button):
         del context_dict["delete"]
         del context_dict["remove"]
         del context_dict["select"]
+        if 'no-downloads' in get_current_integration().limitations:
+            del context_dict["download"]
         return ContextContainer(context_dict, self.id)
 
     @Gtk.Template.Callback()

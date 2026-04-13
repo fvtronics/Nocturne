@@ -71,6 +71,9 @@ class SongRow(Adw.ActionRow):
         if "edit" in context_dict and 'no-edit-radio' in integration.limitations:
             del context_dict["edit"]
 
+        if 'no-downloads' in integration.limitations:
+            del context_dict["download"]
+
         if not model or model.get_property('isRadio') or model.get_property('isExternalFile'):
             del context_dict["add-to-playlist"]
             del context_dict["edit-lyrics"]

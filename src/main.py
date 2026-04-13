@@ -90,6 +90,7 @@ class NocturneApplication(Adw.Application):
             GLib.idle_add(main_win.footer.setup)
             GLib.idle_add(main_win.lyrics_page.setup)
             GLib.idle_add(main_win.queue_page.setup)
+            GLib.idle_add(main_win.downloads_button_el.setup)
             if not self.player:
                 self.player = Player(self)
             settings = Gio.Settings(schema_id="com.jeffser.Nocturne")

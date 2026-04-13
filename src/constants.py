@@ -1,6 +1,6 @@
 # constants.py
 
-import os, subprocess, json
+import os, subprocess, json, shutil
 from tinytag import TinyTag
 
 IN_FLATPAK = bool(os.getenv("FLATPAK_ID"))
@@ -38,8 +38,21 @@ if os.path.isdir(OLD_LOCAL_DATA_DIR) and not os.path.isdir(os.path.join(INTEGRAT
 # ----------
 
 MPRIS_COVER_PATH = os.path.join(CACHE_DIR, 'cover.png')
+DOWNLOAD_QUEUE_DIR = os.path.join(DATA_DIR, 'downloading')
+if os.path.isdir(DOWNLOAD_QUEUE_DIR):
+    shutil.rmtree(DOWNLOAD_QUEUE_DIR)
+os.makedirs(DOWNLOAD_QUEUE_DIR, exist_ok=True)
 DOWNLOADS_DIR = os.path.join(DATA_DIR, 'downloads')
 os.makedirs(DOWNLOADS_DIR, exist_ok=True)
+DOWNLOAD_MIME_MAP = {
+    "audio/mpeg": ".mp3",
+    "audio/flac": ".flac",
+    "audio/x-flac": ".flac",
+    "audio/ogg": ".ogg",
+    "audio/wav": ".wav",
+    "audio/mp4": ".m4a",
+    "audio/x-m4a": ".m4a"
+}
 
 # Fallback only used if the system does not have a keyring
 FALLBACK_PASSWORD_PATH = os.path.join(CONFIG_DIR, 'pass.txt')
@@ -338,6 +351,11 @@ CONTEXT_SONG = {
         "name": _("Add To Playlist"),
         "icon-name": "playlist-symbolic",
         "action-name": "app.prompt_add_song_to_playlist"
+    },
+    "download": {
+        "name": _("Download"),
+        "icon-name": "folder-download-symbolic",
+        "action-name": "app.download_song"
     },
     "show-album": {
         "name": _("Show Album"),

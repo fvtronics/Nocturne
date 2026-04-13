@@ -1,5 +1,4 @@
 using Gtk 4.0;
-using Adw 1;
 
 template $NocturneDownloadRow: Gtk.ListBoxRow {
   styles [
@@ -21,13 +20,16 @@ template $NocturneDownloadRow: Gtk.ListBoxRow {
         hexpand: true;
         halign: start;
         xalign: 0;
+        vexpand: true;
+        valign: center;
       }
       Gtk.ProgressBar progressbar {
         hexpand: true;
+        notify::fraction => $progressbar_frac_changed();
       }
     }
 
-    Gtk.Stack {
+    Gtk.Stack suffix_stack {
       transition-type: crossfade;
       Gtk.StackPage {
         name: "cancel";
@@ -39,6 +41,13 @@ template $NocturneDownloadRow: Gtk.ListBoxRow {
           valign: center;
           tooltip-text: _("Cancel");
           icon-name: "cross-large-circle-filled-symbolic";
+        };
+      }
+      Gtk.StackPage {
+        name: "done";
+        child: Gtk.Image {
+          icon-name: "check-plain-symbolic";
+          tooltip-text: _("Done");
         };
       }
     }

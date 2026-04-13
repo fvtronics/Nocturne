@@ -48,6 +48,7 @@ class NocturneWindow(Adw.ApplicationWindow):
     main_stack = Gtk.Template.Child()
     footer = Gtk.Template.Child()
     toast_overlay = Gtk.Template.Child()
+    downloads_button_el = Gtk.Template.Child()
 
     @Gtk.Template.Callback()
     def close_request(self, window):
@@ -218,6 +219,8 @@ class NocturneWindow(Adw.ApplicationWindow):
         self.create_action(actions.show_artist_from_album)
         self.create_action(actions.play_shuffle_artist)
         self.create_action(actions.play_radio_artist)
+
+        self.create_action(actions.download_song)
 
         self.settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
         self.set_property('default-width', self.settings.get_value('default-width').unpack())

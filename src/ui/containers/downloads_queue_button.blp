@@ -7,7 +7,7 @@ template $NocturneDownloadsQueueButton: Gtk.MenuButton {
     child: Adw.PreferencesGroup {
       title: _("Downloads Queue");
       description: _("Downloaded songs are available in offline mode");
-      Gtk.ListBox {
+      Gtk.ListBox download_list_el {
         styles [
           "boxed-list"
         ]

@@ -525,6 +525,7 @@ class Offline(Local):
         'title': _("Offline Mode"),
         'subtitle': _("Access your downloads")
     }
+    limitations = ('no-downloads',)
 
     libraryDir = GObject.Property(type=str, default=DOWNLOADS_DIR)
 
@@ -541,3 +542,4 @@ class Offline(Local):
             pass
 
         return server_information
+

@@ -1,6 +1,6 @@
 # actions.py
 
-from .integrations import get_current_integration
+from .integrations import get_current_integration, models
 import random, threading, os, shutil
 from datetime import datetime, UTC
 from . import widgets as Widgets
@@ -851,3 +851,22 @@ def play_radio_artist(window, model_id:str):
             GLib.idle_add(window.toast_overlay.add_toast, toast)
     threading.Thread(target=run).start()
 
+# -- DOWNLOADS --
+
+def download_song(window, model_id:str):
+    integration = get_current_integration()
+    download_queue = integration.loaded_models.get('currentSong').get_property('downloadQueueModel')
+
+    download_model = models.SongDownload(songId=model_id)
+    found, position = download_queue.find_with_equal_func(
+        download_model,
+        lambda item_a, item_b, ud: item_a.get_property('songId') == item_b.get_property('songId'),
+        0
+    )
+    if not found:
+        download_queue.insert(0, download_model)
+        callback = lambda frac, md=download_model: md.set_property('progress', frac)
+        threading.Thread(target=integration.downloadSong, args=(model_id, callback)).start()
+    else:
+        pass
+        # TODO show skip message
