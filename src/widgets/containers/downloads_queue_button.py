@@ -1,6 +1,6 @@
 # downloads_queue_button.py
 
-from gi.repository import Gtk, Adw, Gio
+from gi.repository import Gtk, Adw, Gio, GLib
 from ...integrations import get_current_integration
 from .download_row import DownloadRow
 
@@ -20,6 +20,17 @@ class DownloadsQueueButton(Gtk.MenuButton):
         model.connect('notify::n-items', lambda model, ud: self.downloadQueueModelChanged(model))
         self.downloadQueueModelChanged(model)
 
-
     def downloadQueueModelChanged(self, model):
         self.set_visible(len(model) > 0)
+        if len(model) > 0:
+            self.add_css_class('accent')
+
+    @Gtk.Template.Callback()
+    def clear_done_downloads(self, button):
+        for row in list(self.download_list_el):
+            if row.done_button.get_visible():
+                GLib.idle_add(row.remove_from_queue, row.done_button)
+
+    @Gtk.Template.Callback()
+    def button_activated(self, button, ud):
+        self.remove_css_class('accent')
