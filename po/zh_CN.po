@@ -267,20 +267,20 @@ msgstr "歌曲删掉了"
 #: src/actions.py:629 src/actions.py:652
 #, python-brace-format
 msgid "{} Songs Added"
-msgstr "{} 歌曲添加了"
+msgstr "{} 个歌曲添加了"
 
 #: src/actions.py:631 src/actions.py:650
 msgid "1 Song Added"
-msgstr "1 歌曲添加了"
+msgstr "1 个歌曲添加了"
 
 #: src/actions.py:657
 msgid "1 Song Skipped"
-msgstr "1 歌曲跳过了"
+msgstr "1 个歌曲跳过了"
 
 #: src/actions.py:659
 #, python-brace-format
 msgid "{} Songs Skipped"
-msgstr "{} 歌曲跳过了"
+msgstr "{} 个歌曲跳过了"
 
 #: src/actions.py:671
 msgid "Playlist Deleted"
@@ -786,6 +786,34 @@ msgstr "关闭弹出窗口"
 #: src/ui/playing/control_page.blp:260
 msgid "Show Sidebar"
 msgstr "显示侧边栏"
+
+#: src/ui/playing/equalizer_page.blp:15
+msgid "Presets"
+msgstr "预设"
+
+#: src/ui/playing/equalizer_page.blp:20
+msgid "Flat"
+msgstr "平"
+
+#: src/ui/playing/equalizer_page.blp:27
+msgid "Vocal Clarity"
+msgstr "人声"
+
+#: src/ui/playing/equalizer_page.blp:32
+msgid "Smooth Jazz"
+msgstr "时尚爵士"
+
+#: src/ui/playing/equalizer_page.blp:37
+msgid "Rock"
+msgstr "摇滚乐"
+
+#: src/ui/playing/equalizer_page.blp:42
+msgid "Classic"
+msgstr "经典"
+
+#: src/ui/playing/equalizer_page.blp:47
+msgid "Acoustic"
+msgstr "原声"
 
 #: src/ui/playing/footer.blp:12
 msgid "Current song progress indicator"
