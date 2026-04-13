@@ -268,6 +268,11 @@ CONTEXT_ALBUM = {
         "icon-name": "playlist-symbolic",
         "action-name": "app.prompt_add_album_to_playlist"
     },
+    "download": {
+        "name": _("Download"),
+        "icon-name": "folder-download-symbolic",
+        "action-name": "app.download_album"
+    },
     "show-artist": {
         "name": _("Show Artist"),
         "icon-name": "music-artist-symbolic",

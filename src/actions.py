@@ -895,3 +895,41 @@ def download_song(window, model_id:str):
                 _("Already Downloaded")
             )
     threading.Thread(target=run, args=(model_id,)).start()
+
+def download_album(window, model_id:str):
+    def run(albumId):
+        integration = get_current_integration()
+        integration.verifyAlbum(albumId, force_update=True, use_threading=False)
+        if model := integration.loaded_models.get(albumId):
+            song_ids = [song.get('id') for song in model.get_property('song')]
+            successful_starts = 0
+            for songId in song_ids:
+                successful_starts += 1 if __request_song_download(songId) else 0
+
+            if len(song_ids) == successful_starts:
+                __show_custom_toast(
+                    window,
+                    albumId,
+                    'name',
+                    _("Download Started")
+                )
+            elif successful_starts > 0:
+                skipped_songs = len(song_ids) - successful_starts
+                message = _("Download Started ({} Songs Skipped)") if skipped_songs > 1 else _("Download Started (1 Song Skipped)")
+                __show_custom_toast(
+                    window,
+                    albumId,
+                    'name',
+                    message
+                )
+            else:
+                __show_custom_toast(
+                    window,
+                    albumId,
+                    'name',
+                    _("Already Downloaded")
+                )
+
+
+    threading.Thread(target=run, args=(model_id,)).start()
+

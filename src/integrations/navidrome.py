@@ -459,7 +459,6 @@ class Navidrome(Base):
             **self.get_base_params(),
             'id': id
         }
-        self.verifySong(id, use_threading=False)
         try:
             with requests.get(self.get_url('download'), params=params, stream=True) as r:
                 r.raise_for_status()
