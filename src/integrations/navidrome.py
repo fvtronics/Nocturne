@@ -97,7 +97,7 @@ class Navidrome(Base):
 
                 params = {
                     **self.get_base_params(),
-                    'id': model.get_property('coverArt') or model.id,
+                    'id': model.get_property('coverArt') or model.get_property('id'),
                     'size': 720
                 }
                 response = requests.get(
@@ -229,7 +229,7 @@ class Navidrome(Base):
             else:
                 update()
 
-        threading.Thread(target=self.getCoverArt, args=(id,)).start()
+        threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
 
     def verifyPlaylist(self, model_id:str, force_update:bool=False, use_threading:bool=True):
         def update():
@@ -579,3 +579,4 @@ class NavidromeIntegrated(Navidrome):
             self.process.terminate()
             self.process = None
         self.set_property('serverRunning', False)
+
