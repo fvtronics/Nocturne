@@ -142,7 +142,7 @@ class Local(Base):
         elif list_type == "newest":
             albums = {} # id : creation_time
             for model in [self.loaded_models.get(model_id) for model_id in list(self.loaded_models) if model_id.startswith('ALBUM:')]:
-                albums[model.id] = pathlib.Path(model.get_property('coverArt')).stat().st_ctime
+                albums[model.get_property('id')] = pathlib.Path(model.get_property('coverArt')).stat().st_ctime
             album_list = sorted(albums, key=lambda x: albums.get(x), reverse=True)
         elif list_type in ("frequent", "recent"):
             try:
@@ -281,7 +281,7 @@ class Local(Base):
     def getPlayQueue(self) -> tuple:
         queue_dict = self.open_json('queue.json')
 
-        song_list = [model_id for model_id in queue_dict.get('id', []) if id in self.loaded_models]
+        song_list = [model_id for model_id in queue_dict.get('id', []) if model_id in self.loaded_models]
         current = queue_dict.get('current', "")
         if current not in song_list:
             if len(song_list) > 0:
