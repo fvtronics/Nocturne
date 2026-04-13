@@ -1,11 +1,11 @@
 # actions.py
 
 from .integrations import get_current_integration, models
-import random, threading, os, shutil
+import random, threading, os, shutil, pathlib
 from datetime import datetime, UTC
 from . import widgets as Widgets
 from gi.repository import Gio, Adw, Gtk, GLib, Gst
-from .constants import DATA_DIR, BASE_NAVIDROME_DIR
+from .constants import DATA_DIR, BASE_NAVIDROME_DIR, DOWNLOADS_DIR
 
 # -- HELPER --
 
@@ -853,20 +853,45 @@ def play_radio_artist(window, model_id:str):
 
 # -- DOWNLOADS --
 
-def download_song(window, model_id:str):
+def __request_song_download(model_id:str) -> bool:
+    # returns true if download is started (not finished)
+    # should be called in different thread (cause of verifySong)
     integration = get_current_integration()
-    download_queue = integration.loaded_models.get('currentSong').get_property('downloadQueueModel')
-
-    download_model = models.SongDownload(songId=model_id)
-    found, position = download_queue.find_with_equal_func(
-        download_model,
-        lambda item_a, item_b, ud: item_a.get_property('songId') == item_b.get_property('songId'),
-        0
-    )
-    if not found:
+    integration.verifySong(model_id, use_threading=False)
+    if song_model := integration.loaded_models.get(model_id):
+        download_queue = integration.loaded_models.get('currentSong').get_property('downloadQueueModel')
+        download_model = models.SongDownload(songId=model_id)
+        file_title = '{} - {}'.format(song_model.get_property('title'), song_model.get_property('id'))
+        if any(pathlib.Path(DOWNLOADS_DIR).glob('{}.*'.format(file_title))):
+            return False
+        found, position = download_queue.find_with_equal_func(
+            download_model,
+            lambda item_a, item_b, ud: item_a.get_property('songId') == item_b.get_property('songId'),
+            0
+        )
+        if found:
+            return False
         download_queue.insert(0, download_model)
         callback = lambda frac, md=download_model: md.set_property('progress', frac)
-        threading.Thread(target=integration.downloadSong, args=(model_id, callback)).start()
-    else:
-        pass
-        # TODO show skip message
+        threading.Thread(target=integration.downloadSong, args=(model_id, file_title, callback)).start()
+        return True
+    return False
+
+def download_song(window, model_id:str):
+    def run(songId):
+        is_downloading = __request_song_download(songId)
+        if is_downloading:
+            __show_custom_toast(
+                window,
+                songId,
+                'title',
+                _("Download Started")
+            )
+        else:
+            __show_custom_toast(
+                window,
+                songId,
+                'title',
+                _("Already Downloaded")
+            )
+    threading.Thread(target=run, args=(model_id,)).start()

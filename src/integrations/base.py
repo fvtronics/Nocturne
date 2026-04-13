@@ -232,8 +232,9 @@ class Base(GObject.Object):
         print('WARNING', 'getTopSongs', 'not implemented')
         return []
 
-    def downloadSong(self, id:str, progress_callback:callable):
+    def downloadSong(self, id:str, file_title:str, progress_callback:callable):
         # from constants.py
+        # file_title does NOT include extension (.mp3, .flac, etc)
         # download into DOWNLOAD_QUEUE_DIR
         # on finish move file to DOWNLOADS_DIR
         # see navidrome.py for example

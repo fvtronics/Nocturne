@@ -8,8 +8,9 @@ class DownloadRow(Gtk.ListBoxRow):
     __gtype_name__ = 'NocturneDownloadRow'
 
     title_label = Gtk.Template.Child()
+    done_label = Gtk.Template.Child()
     progressbar = Gtk.Template.Child()
-    suffix_stack = Gtk.Template.Child()
+    done_button = Gtk.Template.Child()
 
     def __init__(self, model):
         self.model = model
@@ -29,5 +30,19 @@ class DownloadRow(Gtk.ListBoxRow):
     @Gtk.Template.Callback()
     def progressbar_frac_changed(self, progressbar, ud):
         if progressbar.get_fraction() == 1:
-            self.suffix_stack.set_visible_child_name('done')
+            self.done_button.set_visible(True)
+            self.done_label.set_visible(True)
             progressbar.set_visible(False)
+
+    @Gtk.Template.Callback()
+    def remove_from_queue(self, button):
+        integration = get_current_integration()
+        download_queue = integration.loaded_models.get('currentSong').get_property('downloadQueueModel')
+        found, position = download_queue.find_with_equal_func(
+            self.model,
+            lambda item_a, item_b, ud: item_a.get_property('songId') == item_b.get_property('songId'),
+            0
+        )
+        if found and position >= 0:
+            download_queue.remove(position)
+

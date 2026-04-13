@@ -454,35 +454,31 @@ class Navidrome(Base):
         }).get('topSongs', {}).get('song', [])
         return [song.get('id') for song in top_songs if song.get('id')]
 
-    def downloadSong(self, id:str, progress_callback:callable):
+    def downloadSong(self, id:str, file_title:str, progress_callback:callable):
         params = {
             **self.get_base_params(),
             'id': id
         }
         self.verifySong(id, use_threading=False)
-        song_title = ""
-        if model := self.loaded_models.get(id):
-            song_title = model.get_property('title')
-            try:
-                file_name = 'song.mp3'
-                with requests.get(self.get_url('download'), params=params, stream=True) as r:
-                    r.raise_for_status()
-                    total_size = int(r.headers.get('content-length', 0))
-                    downloaded_size = 0
-                    extension = DOWNLOAD_MIME_MAP.get(r.headers.get('Content-Type'), '.mp3')
-                    file_name = '{}{}'.format(song_title, extension)
-                    file_path = os.path.join(DOWNLOAD_QUEUE_DIR, file_name)
+        try:
+            with requests.get(self.get_url('download'), params=params, stream=True) as r:
+                r.raise_for_status()
+                total_size = int(r.headers.get('content-length', 0))
+                downloaded_size = 0
+                extension = DOWNLOAD_MIME_MAP.get(r.headers.get('Content-Type'), '.mp3')
+                file_name = '{}{}'.format(file_title, extension)
+                file_path = os.path.join(DOWNLOAD_QUEUE_DIR, file_name)
 
-                    with open(file_path, 'wb') as f:
-                        for chunk in r.iter_content(chunk_size=8192):
-                            if chunk:
-                                f.write(chunk)
-                                downloaded_size += len(chunk)
-                                if total_size > 0:
-                                    progress_callback(downloaded_size / total_size)
-                    os.replace(file_path, os.path.join(DOWNLOADS_DIR, file_name))
-            except:
-                pass
+                with open(file_path, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        if chunk:
+                            f.write(chunk)
+                            downloaded_size += len(chunk)
+                            if total_size > 0:
+                                progress_callback(downloaded_size / total_size)
+                os.replace(file_path, os.path.join(DOWNLOADS_DIR, file_name))
+        except:
+            pass
 
     def scrobble(self, id:str):
         # Registers the song as played, useful for keeping track of "most played" albums and the sorts
