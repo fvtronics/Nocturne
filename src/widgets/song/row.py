@@ -66,9 +66,9 @@ class SongRow(Adw.ActionRow):
         model = integration.loaded_models.get(self.id)
         context_dict = CONTEXT_SONG.copy()
         context_dict["select"]["connection"] = self.select_clicked
-        if not self.draggable:
-            context_dict["play-next"]["sensitive"] = integration.loaded_models.get('currentSong').get_property('songId') != self.id
-            context_dict["play-later"]["sensitive"] = integration.loaded_models.get('currentSong').get_property('songId') != self.id
+
+        context_dict["play-next"]["sensitive"] = integration.loaded_models.get('currentSong').get_property('songId') != self.id
+        context_dict["play-later"]["sensitive"] = integration.loaded_models.get('currentSong').get_property('songId') != self.id
 
         if not model or not (model.get_property('isRadio') and not self.draggable):
             del context_dict["edit-radio"]
@@ -277,6 +277,7 @@ class SongRow(Adw.ActionRow):
         )
         popover.set_parent(self)
         popover.popup()
+
 
 
 

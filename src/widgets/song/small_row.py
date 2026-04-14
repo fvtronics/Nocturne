@@ -64,9 +64,12 @@ class SongSmallRow(Gtk.Button):
         del context_dict["delete-radio"]
         del context_dict["remove"]
         del context_dict["select"]
+
+        context_dict["play-next"]["sensitive"] = integration.loaded_models.get('currentSong').get_property('songId') != self.id
+        context_dict["play-later"]["sensitive"] = integration.loaded_models.get('currentSong').get_property('songId') != self.id
+
         if integration.__gtype_name__ == 'NocturneIntegrationOffline':
-            if integration.loaded_models.get('currentSong').get_property('songId') == self.id:
-                context_dict["delete-download"]["sensitive"] = False
+            context_dict["delete-download"]["sensitive"] = integration.loaded_models.get('currentSong').get_property('songId') != self.id
         else:
             del context_dict["delete-download"]
         if 'no-downloads' in integration.limitations:
