@@ -148,6 +148,7 @@ class PlayingControlPage(Adw.NavigationPage):
             self.artist_el.get_child().set_label(artists[0].get('name'))
             self.artist_el.set_tooltip_text(artists[0].get('name'))
             self.artist_el.set_action_target_value(GLib.Variant.new_string(artists[0].get('id')))
+            self.artist_el.set_action_name("app.show_artist")
         else:
             self.artist_el.get_child().set_label("")
         self.artist_el.set_visible(self.artist_el.get_child().get_label())
@@ -156,6 +157,7 @@ class PlayingControlPage(Adw.NavigationPage):
         self.album_el.get_child().set_label(model.get_property('album'))
         self.album_el.set_tooltip_text(model.get_property('album'))
         self.album_el.set_action_target_value(GLib.Variant.new_string(model.get_property('albumId')))
+        self.album_el.set_action_name("app.show_album")
         self.album_el.set_visible(self.album_el.get_child().get_label())
 
         # External File

@@ -114,10 +114,12 @@ class PopoutWindow(Adw.ApplicationWindow):
             self.fs_album_el.get_child().set_label(model.get_property('album'))
             self.fs_album_el.set_tooltip_text(model.get_property('album'))
             self.fs_album_el.set_action_target_value(GLib.Variant.new_string(model.get_property('albumId')))
+            self.fs_album_el.set_action_name("app.show_album")
             artist = model.get_property('artists')[0] if len(model.get_property('artists')) > 0 else {'name': model.get_property('artist'), 'id': model.get_property('artistId')}
             self.fs_artist_el.get_child().set_label(artist.get('name'))
             self.fs_artist_el.set_tooltip_text(artist.get('name'))
             self.fs_artist_el.set_action_target_value(GLib.Variant.new_string(artist.get('id')))
+            self.fs_artist_el.set_action_name("app.show_artist")
 
             # Paintable
             paintable = model.get_property('gdkPaintable')
