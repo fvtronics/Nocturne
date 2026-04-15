@@ -329,9 +329,9 @@ class Jellyfin(Base):
                 similarArtists=[{"id": art.get("Id"), "name": art.get("Name")} for art in artist.get("SimilarItems", [])]
             )
 
-        if id not in self.loaded_models or force_update:
-            if id not in self.loaded_models:
-                self.loaded_models[id] = models.Artist(id=id)
+        if model_id not in self.loaded_models or force_update:
+            if model_id not in self.loaded_models:
+                self.loaded_models[model_id] = models.Artist(id=model_id)
             if use_threading:
                 threading.Thread(target=run).start()
             else:
@@ -491,7 +491,7 @@ class Jellyfin(Base):
         except Exception:
             queue_dict = {}
 
-        song_list = [id for id in queue_dict.get('id', [])]
+        song_list = [model_id for model_id in queue_dict.get('id', [])]
         current = queue_dict.get('current', "")
         if current not in song_list:
             if len(song_list) > 0:
@@ -505,10 +505,10 @@ class Jellyfin(Base):
         QUEUEFILE = os.path.join(self.getIntegrationDir(), 'queue.json')
 
         final_id_list = []
-        for id in id_list:
-            if model := self.loaded_models.get(id):
+        for model_id in id_list:
+            if model := self.loaded_models.get(model_id):
                 if not model.isExternalFile:
-                    final_id_list.append(id)
+                    final_id_list.append(model_id)
 
         if current not in final_id_list:
             if len(final_id_list) > 0:
