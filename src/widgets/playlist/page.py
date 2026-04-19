@@ -106,7 +106,7 @@ class PlaylistPage(Adw.NavigationPage):
         self.song_list_el.list_el.remove_all()
         self.song_list_el.main_stack.set_visible_child_name('content' if len(song_list) > 0 else 'no-content')
         self.song_ids = [s.get('id') for s in song_list]
-        self.current_offset = 50
+        self.current_offset = 0
         threading.Thread(target=self.load_song_rows).start()
 
     @Gtk.Template.Callback()
