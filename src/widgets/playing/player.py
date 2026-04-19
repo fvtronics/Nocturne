@@ -437,6 +437,8 @@ class Player(EventAdapter):
             current_id = song_list[0]
         else:
             current_id, song_list = integration.getPlayQueue()
+            for song in song_list:
+                integration.verifySong(song)
         if len(song_list) > 0:
             if len(self.application.external_songs) == 0:
                self.pause_next_change = True
