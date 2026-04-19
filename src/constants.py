@@ -143,6 +143,7 @@ TRANSLATORS = [
     "Jeffry Samuel (Spanish) https://jeffser.com",
     "Martin Prokoph (German) https://github.com/Motschen",
     "Aleksandr Shamaraev (Russian) https://github.com/AlexanderShad",
+    "Muhammed Emin Akalan (Turkish) https://github.com/muhammedeminakalan",
     "Saul Gman (Simplified Chinese) https://github.com/Ja4e"
 ]
 
