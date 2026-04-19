@@ -57,7 +57,7 @@ class Spectrum(Gtk.DrawingArea):
         return True
 
     def on_draw(self, drawing_area, cr, width, height):
-        if not self.current_magnitudes:
+        if not self.current_magnitudes or min(width, height) < 24:
             return
 
         n = len(self.current_magnitudes)
