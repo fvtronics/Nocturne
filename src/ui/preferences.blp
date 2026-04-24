@@ -19,6 +19,11 @@ template $NocturnePreferencesDialog: Adw.PreferencesDialog {
         model: Gtk.StringList {};
         notify::selected => $default_page_changed();
       }
+      Adw.ComboRow bitrate_el {
+        title: _("Maximum Bitrate");
+        model: Gtk.StringList {};
+        notify:: selected => $max_bitrate_changed();
+      }
     }
     Adw.PreferencesGroup session_group_el {
       title: _("Session");

@@ -79,8 +79,11 @@ class Navidrome(Base):
             return model.get_property('streamUrl')
         elif model.get_property('isExternalFile'):
             return 'file://{}'.format(model.get_property('path'))
+        max_bitrate = Gio.Settings(schema_id="com.jeffser.Nocturne").get_value('max-bitrate').unpack()
         params = self.get_base_params()
         params['id'] = song_id
+        if max_bitrate != 0:
+            params['maxBitRate'] = max_bitrate
         query_string = "&".join([f"{k}={v}" for k, v in params.items()])
         return '{}/rest/stream?{}'.format(self.get_property('url').strip('/'), query_string)
 

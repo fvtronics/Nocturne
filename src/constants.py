@@ -162,6 +162,14 @@ PLAYBACK_MODES = {
     }
 }
 
+BITRATE_OPTIONS = {
+    _("Low ({})"): 64,
+    _("Medium ({})"): 128,
+    _("High ({})"): 192,
+    _("Ultra ({})"): 320,
+    _("Original File"): 0
+}
+
 SIDEBAR_MENU = [
     { # Section
         'items': [

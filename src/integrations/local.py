@@ -23,6 +23,7 @@ class Local(Base):
         'title': _("Local Files"),
         'subtitle': _("Limited functionality")
     }
+    limitations = ('no-max-bitrate',)
 
     def open_json(self, filename:str, is_list:bool=False) -> dict | list:
         try:
@@ -532,7 +533,7 @@ class Offline(Local):
         'title': _("Offline Mode"),
         'subtitle': _("Access your downloads")
     }
-    limitations = ('no-downloads',)
+    limitations = ('no-downloads', 'no-max-bitrate')
 
     libraryDir = GObject.Property(type=str, default=DOWNLOADS_DIR)
 

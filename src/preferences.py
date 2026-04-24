@@ -3,7 +3,7 @@
 from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject, Gdk
 
 from .integrations import get_current_integration, secret
-from .constants import SIDEBAR_MENU
+from .constants import SIDEBAR_MENU, BITRATE_OPTIONS
 import threading
 
 @Gtk.Template(resource_path='/com/jeffser/Nocturne/preferences.ui')
@@ -15,6 +15,7 @@ class NocturnePreferences(Adw.PreferencesDialog):
     restore_el = Gtk.Template.Child()
     hide_on_close_el = Gtk.Template.Child()
     default_page_el = Gtk.Template.Child()
+    bitrate_el = Gtk.Template.Child()
 
     ## Session
     session_group_el = Gtk.Template.Child()
@@ -58,6 +59,7 @@ class NocturnePreferences(Adw.PreferencesDialog):
     def __init__(self):
         super().__init__()
         settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
+        integration = get_current_integration()
 
         # General
         ## Behavior
@@ -85,10 +87,23 @@ class NocturnePreferences(Adw.PreferencesDialog):
                 self.default_page_el.get_model().append(title)
                 if item.get('page-tag') == selected_page:
                     self.default_page_el.set_selected(len(self.default_page_dict) - 1)
+        self.max_bitrate_dict = {}
+        selected_bitrate = settings.get_value('max-bitrate').unpack()
+        for title, kbps in BITRATE_OPTIONS.items():
+            if kbps != 0:
+                title = title.format('{} kbps'.format(kbps))
+            self.max_bitrate_dict[title] = kbps
+            self.bitrate_el.get_model().append(title)
+            if kbps == selected_bitrate:
+                self.bitrate_el.set_selected(len(self.max_bitrate_dict) - 1)
+        if integration:
+            self.bitrate_el.set_visible('no-max-bitrate' not in integration.limitations)
+        else:
+            self.bitrate_el.set_visible(False)
 
         ## Session
         self.listenbrainz_stack_el.set_visible_child_name("unlink" if secret.get_plain_password(schema_type="listenbrainz") else "link")
-        if integration := get_current_integration():
+        if integration:
             data = integration.getServerInformation()
             self.instance_el.set_title(data.get('username', ""))
 
@@ -237,6 +252,11 @@ class NocturnePreferences(Adw.PreferencesDialog):
     def default_page_changed(self, combo_row, ud):
         page_tag = self.default_page_dict.get(combo_row.get_selected_item().get_string(), 'home')
         Gio.Settings(schema_id="com.jeffser.Nocturne").set_string('default-page-tag', page_tag)
+
+    @Gtk.Template.Callback()
+    def max_bitrate_changed(self, combo_row, ud):
+        bitrate = self.max_bitrate_dict.get(combo_row.get_selected_item().get_string(), 0)
+        Gio.Settings(schema_id="com.jeffser.Nocturne").set_int('max-bitrate', bitrate)
 
     @Gtk.Template.Callback()
     def visualizer_manual_color_changed(self, btn, ud):

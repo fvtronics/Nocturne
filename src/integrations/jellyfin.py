@@ -97,9 +97,22 @@ class Jellyfin(Base):
         pass
 
     def get_stream_url(self, song_id:str) -> str:
+        model = self.loaded_models.get(song_id)
+        if model.get_property('isExternalFile'):
+            return 'file://{}'.format(model.get_property('path'))
         base_url = self.get_url('Audio/{}/stream'.format(song_id))
-        url = '{}?static=true&api_key={}'.format(base_url, self.get_property('accessToken'))
-        return url
+        max_bitrate = Gio.Settings(schema_id="com.jeffser.Nocturne").get_value('max-bitrate').unpack()
+        if max_bitrate == 0:
+            return '{}?static=true&api_key={}'.format(
+                base_url,
+                self.get_property('accessToken')
+            )
+        else:
+            return '{}?static=true&audioBitrate={}&api_key={}'.format(
+                base_url,
+                max_bitrate*1000,
+                self.get_property('accessToken')
+            )
 
     def getCoverArt(self, model_id:str=None) -> tuple:
         if model_id:
