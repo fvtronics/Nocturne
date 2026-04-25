@@ -228,6 +228,7 @@ class Player(EventAdapter):
         self.settings.set_double("volume", volume)
         self.application = application
         self.gst = Gst.ElementFactory.make("playbin", "music-player")
+        self.gst.connect("about-to-finish", lambda playbin: self.handle_song_change_request("end"))
 
         self.bin = Gst.Bin.new("audio-filter-bin")
 
@@ -263,6 +264,8 @@ class Player(EventAdapter):
         self.bin.add_pad(sink_pad)
         self.bin.add_pad(src_pad)
         self.gst.set_property("audio-filter", self.bin)
+        self.gst.set_property("buffer-duration", 5 * Gst.SECOND)
+        self.gst.set_property("buffer-size", 10 * 1024 * 1024) # 10MB I think
 
         self.settings.bind(
             "volume",
@@ -310,7 +313,6 @@ class Player(EventAdapter):
 
     def handle_song_change_request(self, action:str):
         # action can be next, previous or end (song ended)
-        self.gst.set_state(Gst.State.READY)
         integration = get_current_integration()
         current_song_id = integration.loaded_models.get('currentSong').songId
 
@@ -325,7 +327,6 @@ class Player(EventAdapter):
                 Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
                 0
             )
-            self.gst.set_state(Gst.State.PLAYING)
             return
 
         id_list = [so.get_string() for so in integration.loaded_models.get('currentSong').get_property('queueModel')]
@@ -358,7 +359,6 @@ class Player(EventAdapter):
                             Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
                             0
                         )
-                        self.gst.set_state(Gst.State.PLAYING)
 
             elif mode == 'repeat-one':
                 self.gst.seek_simple(
@@ -366,7 +366,6 @@ class Player(EventAdapter):
                     Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
                     0
                 )
-                self.gst.set_state(Gst.State.PLAYING)
         else:
             integration.loaded_models.get('currentSong').set_property('songId', None)
 
@@ -409,8 +408,6 @@ class Player(EventAdapter):
                 if new_state != self.last_gst_state_type:
                     self.handle_new_state(new_state)
                     self.last_gst_state_type = new_state
-            elif message.type == Gst.MessageType.EOS:
-                self.handle_song_change_request("end")
             elif message.type == Gst.MessageType.ERROR:
                 err, debug = message.parse_error()
                 print("Error: {}".format(err.message))
