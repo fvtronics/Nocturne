@@ -211,28 +211,32 @@ class Base(GObject.Object):
         # see navidrome.py for example
         print('WARNING', 'downloadSong', 'not implemented')
 
-    def scrobble(self, model_id:str):
+    def scrobble(self, model_id:str, submission:bool=True):
         # the id is for a Song, this is how views are stored
         # called when a song is played
         # if you need to inherit this, also call super().scrobble(id) so that listenbrainz can also get the scrobble
 
-        if model := self.loaded_models.get(id):
+        if model := self.loaded_models.get(model_id):
             if token := secret.get_plain_password("listenbrainz"):
-                payload = {
-                    "listen_type": "single",
-                    "payload": [{
-                        "listened_at": int(time.time()),
-                        "track_metadata": {
-                            "artist_name": model.get_property("artist"),
-                            "track_name": model.get_property("title"),
-                            "release_name": model.get_property("album"),
-                            "additional_info": {
-                                "submission_client": "com.jeffser.Nocturne",
-                                "submission_client_version": get_nocturne_version(),
-                                "media_player": "Nocturne"
-                            }
+                listen_payload = {
+                    "track_metadata": {
+                        "artist_name": model.get_property("artist"),
+                        "track_name": model.get_property("title"),
+                        "release_name": model.get_property("album"),
+                        "additional_info": {
+                            "submission_client": "com.jeffser.Nocturne",
+                            "submission_client_version": get_nocturne_version(),
+                            "media_player": "Nocturne"
                         }
-                    }]
+                    }
+                }
+                
+                if submission:
+                    listen_payload["listened_at"] = int(time.time() - (self.loaded_models.get('currentSong').get_property('positionSeconds') or 0))
+
+                payload = {
+                    "listen_type": "single" if submission else "playing_now",
+                    "payload": [listen_payload]
                 }
                 headers = {
                     "Authorization": f"Token {token}",

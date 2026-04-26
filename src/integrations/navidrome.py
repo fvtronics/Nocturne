@@ -487,14 +487,15 @@ class Navidrome(Base):
         except:
             pass
 
-    def scrobble(self, model_id:str):
+    def scrobble(self, model_id:str, submission:bool = True):
         # Registers the song as played, useful for keeping track of "most played" albums and the sorts
         if model := self.loaded_models.get(model_id) :
             if not model.isExternalFile:
                 self.make_request('scrobble', {
-                    'id': model_id
+                    'id': model_id,
+                    'submission': submission
                 })
-        super().scrobble(model_id)
+        super().scrobble(model_id, submission)
 
     def getServerInformation(self) -> dict:
         server_information = {

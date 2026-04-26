@@ -478,30 +478,32 @@ class Local(Base):
             shutil.copy2(source_path, os.path.join(DOWNLOADS_DIR, '{}{}'.format(file_title, extension)))
             progress_callback(1)
 
-    def scrobble(self, model_id:str):
+    def scrobble(self, model_id:str, submission:bool=True):
         if not model_id:
             return
         if model := self.loaded_models.get(model_id):
             if model.get_property('isExternalFile') or model.get_property('isRadio'):
                 return
-            scrobble_dict = self.open_json('scrobble.json')
+            
+            if submission:
+                scrobble_dict = self.open_json('scrobble.json')
 
-            if model_id in scrobble_dict:
-                scrobble_dict[model_id]['plays'] += 1
-                scrobble_dict[model_id]['last_play'] = int(time.time())
-                scrobble_dict[model_id]['album'] = model.get_property('albumId')
-                scrobble_dict[model_id]['artist'] = model.get_property('artistId')
-            else:
-                scrobble_dict[model_id] = {
-                    'plays': 1,
-                    'last_play': int(time.time()),
-                    'album': model.get_property('albumId'),
-                    'artist': model.get_property('artistId')
-                }
+                if model_id in scrobble_dict:
+                    scrobble_dict[model_id]['plays'] += 1
+                    scrobble_dict[model_id]['last_play'] = int(time.time())
+                    scrobble_dict[model_id]['album'] = model.get_property('albumId')
+                    scrobble_dict[model_id]['artist'] = model.get_property('artistId')
+                else:
+                    scrobble_dict[model_id] = {
+                        'plays': 1,
+                        'last_play': int(time.time()),
+                        'album': model.get_property('albumId'),
+                        'artist': model.get_property('artistId')
+                    }
 
-            with open(os.path.join(self.getIntegrationDir(), 'scrobble.json'), 'w') as f:
-                json.dump(scrobble_dict, f, ensure_ascii=False)
-        super().scrobble(model_id)
+                with open(os.path.join(self.getIntegrationDir(), 'scrobble.json'), 'w') as f:
+                    json.dump(scrobble_dict, f, ensure_ascii=False)
+        super().scrobble(model_id, submission=submission)
 
     def setRating(self, model_id:str, rating:int=0) -> bool:
         ratings = self.open_json('ratings.json')
@@ -549,4 +551,3 @@ class Offline(Local):
             pass
 
         return server_information
-

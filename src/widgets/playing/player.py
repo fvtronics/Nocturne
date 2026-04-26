@@ -335,6 +335,14 @@ class Player(EventAdapter):
         integration = get_current_integration()
         current_song_id = integration.loaded_models.get('currentSong').songId
 
+        if current_song_id:
+            position = integration.loaded_models.get('currentSong').get_property('positionSeconds')
+            song = integration.loaded_models.get(current_song_id)
+            duration = song.get_property('duration') if song else 0
+
+            if action == "end" or (duration > 0 and position >= (duration / 2)):
+                threading.Thread(target=integration.scrobble, args=(current_song_id,)).start()
+
         mode = self.settings.get_value('playback-mode').unpack()
 
         if action != "end" and mode == "repeat-one":
@@ -514,9 +522,7 @@ class Player(EventAdapter):
                     self.pause_next_change = False
                 else:
                     self.gst.set_state(Gst.State.PLAYING)
-                threading.Thread(target=integration.scrobble, args=(song_id,)).start()
+                threading.Thread(target=integration.scrobble, args=(song_id,), kwargs={'submission': False}).start()
                 threading.Thread(target=update_default_metadata, args=(song_id,)).start()
         else:
             self.gst.set_state(Gst.State.NULL)
-
-
