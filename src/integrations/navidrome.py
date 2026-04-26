@@ -259,7 +259,7 @@ class Navidrome(Base):
         def update():
             response = self.make_request('getSong', {'id': model_id})
             song_dict = response.get('song', {})
-            gains = song_dict.get('replayGain')
+            gains = song_dict.get('replayGain') or {}
             self.loaded_models[model_id].update_data(**song_dict, albumGain=gains.get('albumGain', 0.0), trackGain=gains.get('trackGain', 0.0))
             threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
 
