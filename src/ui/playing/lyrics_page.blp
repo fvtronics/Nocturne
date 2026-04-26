@@ -139,28 +139,17 @@ template $NocturnePlayingLyricsPage: Gtk.Stack {
         spacing: 10;
         halign: center;
 
-        Gtk.Box {
+        Gtk.Button {
           styles [
-            "linked"
+            "accent"
           ]
-          Gtk.Button {
-            styles [
-              "accent"
-            ]
-            halign: center;
-            tooltip-text: _("Download");
-            child: Adw.ButtonContent {
-              icon-name: "folder-download-symbolic";
-              label: _("Download");
-            };
-            clicked => $lyric_download_requested();
-          }
-          Gtk.Button {
-            icon-name: "globe-symbolic";
-            action-name: "app.visit_url";
-            action-target: "'https://lrclib.net'";
-            tooltip-text: _("Lyrics are Provided by LRCLIB");
-          }
+          halign: center;
+          tooltip-text: _("Download");
+          child: Adw.ButtonContent {
+            icon-name: "folder-download-symbolic";
+            label: _("Download");
+          };
+          clicked => $lyric_download_requested();
         }
 
         Gtk.Button {

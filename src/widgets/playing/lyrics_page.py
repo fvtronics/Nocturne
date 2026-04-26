@@ -5,7 +5,7 @@ from ..song import SongRow
 from ...integrations import models, get_current_integration
 from ..lyrics.helpers import get_lyrics
 from ...constants import DATA_DIR
-import threading, os
+import threading, os, re
 
 class LyricRow(Gtk.ListBoxRow):
     __gtype_name__ = 'NocturneLyricRow'
@@ -20,10 +20,53 @@ class LyricRow(Gtk.ListBoxRow):
                 wrap_mode=Pango.WrapMode.WORD_CHAR,
                 justify=Gtk.Justification.CENTER,
                 halign=Gtk.Align.CENTER,
-                valign=Gtk.Align.CENTER,
-                label=content or "🎶"
+                valign=Gtk.Align.CENTER
             )
         )
+
+        pattern = r"<(\d{2}):(\d{2})\.(\d{2,3})>\s*([^<]*)"
+        matches = re.findall(pattern, content)
+        self.cues = {}
+        if len(matches) > 0:
+            for m, s, ms_part, text in matches:
+                if clean_text := text.strip():
+                    minutes = int(m)
+                    seconds = int(s)
+                    fraction = int(ms_part)
+                    if len(ms_part) == 2:
+                        fraction *= 10
+                    total_ms = (minutes * 60000) + (seconds * 1000) + fraction
+                    self.cues[total_ms] = clean_text
+        if len(self.cues) == 0:
+            self.cues = {ms: content or "🎵"}
+
+        self.sorted_ts = sorted(self.cues.keys())
+        self.alphas = {ts: 0.3 for ts in self.sorted_ts}
+        self.last_ms = 0
+        self.add_tick_callback(self.on_frame_tick)
+        self.on_frame_tick(self, None, True)
+
+    def on_frame_tick(self, widget, frame_clock, force:bool=False):
+        lerp_speed = 0.1
+        changed = False
+        parts = []
+
+        for ts in self.sorted_ts:
+            word = GLib.markup_escape_text(self.cues[ts])
+            target = 1.0 if self.last_ms >= ts else 0.3
+            current = self.alphas[ts]
+
+            if abs(current - target) > 0.001:
+                self.alphas[ts] = current + (target - current) * lerp_speed
+                changed = True
+
+            alpha_val = int(self.alphas[ts] * 65536) # Pango uses that number as max for some reason
+            parts.append(f"<span fgalpha='{alpha_val}'>{word}</span>")
+
+        if changed or force:
+            self.get_child().set_markup(" ".join(parts))
+        return self.get_root()
+
 
 @Gtk.Template(resource_path='/com/jeffser/Nocturne/playing/lyrics_page.ui')
 class PlayingLyricsPage(Gtk.Stack):
@@ -33,6 +76,7 @@ class PlayingLyricsPage(Gtk.Stack):
     lrc_list_el = Gtk.Template.Child()
     scrolledwindow = Gtk.Template.Child()
     code_is_selecting = False # used so that `on_lrc_selection` is only executed when manually selecting
+    last_best_match = None
 
     def setup(self):
         # Called after login
@@ -70,14 +114,20 @@ class PlayingLyricsPage(Gtk.Stack):
                     best_match = row
                 else:
                     break
-            if best_match and best_match != self.lrc_list_el.get_selected_row():
-                self.code_is_selecting = True
-                self.lrc_list_el.select_row(best_match)
-                self.code_is_selecting = False
+            if best_match:
+                if best_match == self.lrc_list_el.get_selected_row():
+                    best_match.last_ms = ms
+                else:
+                    self.code_is_selecting = True
+                    self.lrc_list_el.select_row(best_match)
+                    self.code_is_selecting = False
 
     @Gtk.Template.Callback()
     def on_lrc_selection(self, list_el, position):
         row = list_el.get_selected_row()
+        if self.last_best_match:
+            self.last_best_match.last_ms = -1
+        self.last_best_match = row
         if row:
             if not self.code_is_selecting:
                 self.get_root().get_application().player.gst.seek_simple(
@@ -104,47 +154,55 @@ class PlayingLyricsPage(Gtk.Stack):
         integration = get_current_integration()
         self.song_changed(integration.loaded_models.get('currentSong').get_property('songId'), True)
 
-    def copy_lyrics_lrc(self, dialog, task, model):
-        if model:
-            if source_file := dialog.open_finish(task):
-                lyrics_dir = os.path.join(DATA_DIR, 'lyrics')
-                os.makedirs(lyrics_dir, exist_ok=True)
-                file_name_without_ext = '{}|{}|{}|{}'.format(
-                    model.get_property('title'),
-                    model.get_property('artist'),
-                    model.get_property('album') or model.get_property('title'),
-                    model.get_property('duration')
-                )
-                lrc_path = os.path.join(lyrics_dir, file_name_without_ext+'.lrc')
-                destination_file = Gio.File.new_for_path(lrc_path)
+    def get_lrc_path(self) -> str:
+        integration = get_current_integration()
+        song_id = integration.loaded_models.get('currentSong').get_property('songId')
+        model = integration.loaded_models.get(song_id)
+        lyrics_dir = os.path.join(DATA_DIR, 'lyrics')
+        os.makedirs(lyrics_dir, exist_ok=True)
+        file_name_without_ext = '{}|{}|{}|{}'.format(
+            model.get_property('title'),
+            model.get_property('artist'),
+            model.get_property('album') or model.get_property('title'),
+            model.get_property('duration')
+        )
+        return os.path.join(lyrics_dir, file_name_without_ext+'.lrc')
 
-                source_file.copy_async(
-                    destination_file,
-                    Gio.FileCopyFlags.OVERWRITE,
-                    GLib.PRIORITY_DEFAULT,
-                    None,
-                    None,
-                    lambda *_: self.song_changed(model.get_property('id'), False)
-                )
+    def copy_lyrics_lrc(self, dialog, task):
+        if source_file := dialog.open_finish(task):
+            lrc_path = self.get_lrc_path()
+            destination_file = Gio.File.new_for_path(lrc_path)
+            integration = get_current_integration()
+            song_id = integration.loaded_models.get('currentSong').get_property('songId')
+            source_file.copy_async(
+                destination_file,
+                Gio.FileCopyFlags.OVERWRITE,
+                GLib.PRIORITY_DEFAULT,
+                None,
+                None,
+                lambda *_: self.song_changed(song_id, False)
+            )
 
 
     @Gtk.Template.Callback()
     def lyric_load_requested(self, button):
         integration = get_current_integration()
-        if model := integration.loaded_models.get(integration.loaded_models.get('currentSong').get_property('songId')):
-            file_filter = Gtk.FileFilter(
-                name=_("LRC File")
-            )
-            file_filter.add_mime_type('text/x-lrc')
-            file_filter.add_mime_type('application/x-lrc')
-            file_filter.add_suffix('lrc')
-            file_filter_list = Gio.ListStore.new(Gtk.FileFilter)
-            file_filter_list.append(file_filter)
+        file_filter = Gtk.FileFilter(
+            name=_("LRC File")
+        )
+        file_filter.add_mime_type('text/x-lrc')
+        file_filter.add_mime_type('application/x-lrc')
+        file_filter.add_suffix('lrc')
+        file_filter_list = Gio.ListStore.new(Gtk.FileFilter)
+        file_filter_list.append(file_filter)
 
-            Gtk.FileDialog(
-                filters=file_filter_list
-            ).open(self.get_root(), None, self.copy_lyrics_lrc, model)
+        Gtk.FileDialog(
+            filters=file_filter_list
+        ).open(self.get_root(), None, self.copy_lyrics_lrc)
 
     @Gtk.Template.Callback()
     def go_to_main(self, button):
         self.set_visible_child_name('not-found-locally')
+        if existing_path := self.get_lrc_path():
+            if os.path.isfile(existing_path):
+                os.remove(existing_path)

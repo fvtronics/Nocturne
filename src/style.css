@@ -24,7 +24,7 @@
 
 .lrc_list row > label {
   transition: opacity .2s, color .2s;
-  opacity: 30%;
+  opacity: 50%;
   font-size: 20px;
   margin: 5px;
   font-weight: bold;

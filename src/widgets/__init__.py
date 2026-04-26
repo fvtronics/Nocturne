@@ -7,4 +7,4 @@ from .artist import ArtistButton, ArtistPage, ArtistRow
 from .playlist import PlaylistButton, PlaylistPage, PlaylistRow, PlaylistDialog, PlaylistSelectorRow
 from .song import SongRow, SongQueue, SongSmallRow
 from .containers import Carousel, Wrapbox, PageDialog
-from .lyrics import LyricsDialog, lrclib_get, prepare_lrc, get_lyrics
+from .lyrics import LyricsDialog, prepare_lrc, get_lyrics

@@ -2,16 +2,15 @@
 
 from ...constants import DATA_DIR
 from ...integrations import get_current_integration
-import requests, os
+import syncedlyrics, os
 
-def lrclib_get(track_name:str, artist_name:str, album_name:str, duration:float):
-    response = requests.get('https://lrclib.net/api/get', params={
-        'track_name': track_name,
-        'artist_name': artist_name,
-        'album_name': album_name,
-        'duration': duration
-    })
-    return response.json()
+def online_get(track_name:str, artist_name:str, lrc_path):
+    return syncedlyrics.search(
+        "[{}] [{}]".format(track_name, artist_name),
+        enhanced=True,
+        synced_only=True,
+        save_path=lrc_path
+    )
 
 def prepare_lrc(lrc_str:str) -> list:
     lrc_lines = []
@@ -46,7 +45,7 @@ def list_to_lrc_str(lrc_list:list) -> str:
         lrc_lines.append(f"{timestamp} {item.get('content').strip()}")
     return '\n'.join(lrc_lines)
 
-def get_lyrics(song_id:str, lrclib_download:bool) -> dict:
+def get_lyrics(song_id:str, online_download:bool) -> dict:
     # returns these keys:
     # type (instrumental, lrc, plain, not-found, not-found-locally, radio)
     # content (none (instrumental/not-found/not-found-locally/radio), list (lrc), str (plain))
@@ -88,7 +87,7 @@ def get_lyrics(song_id:str, lrclib_download:bool) -> dict:
             else:
                 return {'type': 'plain', 'content': content}
 
-    if not lrclib_download:
+    if not online_download:
         result = integration.getLyrics(song_id)
         if result.get('type') != 'not-found':
             if result.get('type') == 'lrc':
@@ -106,32 +105,17 @@ def get_lyrics(song_id:str, lrclib_download:bool) -> dict:
                     f.write(result.get('content'))
             return result
 
-    if not lrclib_download:
+    if not online_download:
         return {'type': 'not-found-locally', 'content': None}
 
-    lyrics = lrclib_get(
+    lyrics = online_get(
         track_name=model.get_property('title'),
         artist_name=model.get_property('artist'),
-        album_name=model.get_property('album') or model.get_property('title'),
-        duration=model.get_property('duration')
+        lrc_path=lrc_path
     )
 
-    if lyrics.get('statusCode') == '404':
+    if not lyrics:
         return {'type': 'not-found', 'content': None}
 
-    if lyrics.get('instrumental'):
-        with open(plain_lyrics_path, 'w+') as f:
-            f.write('[instrumental]')
-        return {'type': 'instrumental', 'content': None}
+    return {'type': 'lrc', 'content': prepare_lrc(lyrics)}
 
-    if lyrics.get('syncedLyrics'):
-        with open(lrc_path, 'w+') as f:
-            f.write(lyrics.get('syncedLyrics'))
-        return {'type': 'lrc', 'content': prepare_lrc(lyrics.get('syncedLyrics'))}
-
-    if lyrics.get('plainLyrics'):
-        with open(plain_lyrics_path, 'w+') as f:
-            f.write(lyrics.get('plainLyrics'))
-        return {'type': 'plain', 'content': lyrics.get('plainLyrics')}
-
-    return {'type': 'not-found', 'content': None}
