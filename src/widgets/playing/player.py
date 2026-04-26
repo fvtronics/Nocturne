@@ -476,7 +476,6 @@ class Player(EventAdapter):
         if song_id:
             if song_id != self.last_song_id:
                 stream_url = integration.get_stream_url(song_id)
-                print(stream_url)
                 self.gst.set_state(Gst.State.READY)
                 self.gst.set_property('uri', stream_url)
                 if self.pause_next_change:
