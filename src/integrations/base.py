@@ -211,12 +211,12 @@ class Base(GObject.Object):
         # see navidrome.py for example
         print('WARNING', 'downloadSong', 'not implemented')
 
-    def scrobble(self, model_id:str):
+    def scrobble(self, model_id:str, submission:bool=True):
         # the id is for a Song, this is how views are stored
         # called when a song is played
         # if you need to inherit this, also call super().scrobble(id) so that listenbrainz can also get the scrobble
 
-        if model := self.loaded_models.get(id):
+        if submission and (model := self.loaded_models.get(model_id)):
             if token := secret.get_plain_password("listenbrainz"):
                 payload = {
                     "listen_type": "single",

@@ -478,8 +478,8 @@ class Local(Base):
             shutil.copy2(source_path, os.path.join(DOWNLOADS_DIR, '{}{}'.format(file_title, extension)))
             progress_callback(1)
 
-    def scrobble(self, model_id:str):
-        if not model_id:
+    def scrobble(self, model_id:str, submission:bool=True):
+        if not model_id or not submission:
             return
         if model := self.loaded_models.get(model_id):
             if model.get_property('isExternalFile') or model.get_property('isRadio'):
@@ -501,7 +501,7 @@ class Local(Base):
 
             with open(os.path.join(self.getIntegrationDir(), 'scrobble.json'), 'w') as f:
                 json.dump(scrobble_dict, f, ensure_ascii=False)
-        super().scrobble(model_id)
+        super().scrobble(model_id, submission=submission)
 
     def setRating(self, model_id:str, rating:int=0) -> bool:
         ratings = self.open_json('ratings.json')
@@ -549,4 +549,3 @@ class Offline(Local):
             pass
 
         return server_information
-
