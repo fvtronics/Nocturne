@@ -331,7 +331,8 @@ class Navidrome(Base):
         return [s.get('id') for s in songs if s.get('id')]
 
     def getLyrics(self, songId:str) -> dict:
-        lyrics = self.make_request('getLyricsBySongId', {'id': songId}).get('lyricsList', {}).get('structuredLyrics', [{}])[0]
+        lyrics_data = self.make_request('getLyricsBySongId', {'id': songId}).get('lyricsList') or {}
+        lyrics = (lyrics_data.get('structuredLyrics') or [{}])[0]
 
         if lyrics.get('synced', False):
             lrc_lines = []
