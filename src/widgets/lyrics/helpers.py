@@ -72,6 +72,7 @@ def get_lyrics(song_id:str, lrclib_download:bool) -> dict:
         model.get_property('album') or model.get_property('title'),
         model.get_property('duration')
     )
+    file_name_without_ext = file_name_without_ext.replace('/', '-')
     lrc_path = os.path.join(lyrics_dir, file_name_without_ext+'.lrc')
     plain_lyrics_path = os.path.join(lyrics_dir, file_name_without_ext+'.txt')
 
