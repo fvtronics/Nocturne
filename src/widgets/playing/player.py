@@ -444,11 +444,12 @@ class Player(EventAdapter):
                             current_title = model.get_property('displaySongTitle')
                             if current_title != title:
                                 model.set_property('displaySongTitle', title)
-                        success, artist = tag_list.get_string(Gst.TAG_ARTIST)
-                        if success and artist:
-                            current_artist = model.get_property('displaySongArtist')
-                            if current_artist != artist:
-                                model.set_property('displaySongArtist', artist)
+                        if integration.loaded_models.get(model.get_property('songId')).get_property('isRadio'):
+                            success, artist = tag_list.get_string(Gst.TAG_ARTIST)
+                            if success and artist:
+                                current_artist = model.get_property('displaySongArtist')
+                                if current_artist != artist:
+                                    model.set_property('displaySongArtist', artist)
 
             elif message.type == Gst.MessageType.ERROR:
                 err, debug = message.parse_error()

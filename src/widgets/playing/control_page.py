@@ -145,6 +145,8 @@ class PlayingControlPage(Adw.NavigationPage):
             self.artist_el.set_visible(True)
             self.artist_el.set_action_target_value(GLib.Variant.new_string(artists[0].get('id')))
             self.artist_el.set_action_name("app.show_artist")
+            self.artist_el.get_child().set_label(artists[0].get('name'))
+            self.artist_el.set_tooltip_text(artists[0].get('name'))
         else:
             self.artist_el.set_visible(False)
 
@@ -185,8 +187,6 @@ class PlayingControlPage(Adw.NavigationPage):
 
     def display_artist_changed(self, display_artist:str):
         self.radio_homepage_el.get_child().set_label(display_artist)
-        self.artist_el.get_child().set_label(display_artist)
-        self.artist_el.set_tooltip_text(display_artist)
 
     def song_changed(self, song_id:str):
         integration = get_current_integration()
