@@ -168,21 +168,32 @@ class AlbumPage(Adw.NavigationPage):
                 if discNumber > 0 and discNumber not in discs:
                     discs.append(discNumber)
 
-                row = SongRow(song_id)
-                row.set_action_name('app.play_song_from_list')
-                row.set_action_target_value(GLib.Variant('a{sv}', {
-                    'songId': GLib.Variant('s', song_id),
-                    'songs': GLib.Variant('as', song_ids)
-                }))
-                GLib.idle_add(self.song_list_el.list_el.append, row)
+                GLib.idle_add(self.song_list_el.list_el.append, SongRow(song_id))
             for disc in discs:
-                row = DiscIndicator(disc)
-                GLib.idle_add(self.song_list_el.list_el.append, row)
+                GLib.idle_add(self.song_list_el.list_el.append, DiscIndicator(disc))
 
             GLib.idle_add(self.song_list_el.list_el.invalidate_sort)
+            GLib.idle_add(self.connect_rows)
         if len(list(self.song_list_el.list_el)) != song_list:
             threading.Thread(target=run).start()
 
+    def connect_rows(self):
+        song_ids = []
+
+        def set_action(row):
+            row.set_action_name(None)
+            row.set_action_target_value(GLib.Variant('a{sv}', {
+                'songId': GLib.Variant('s', row.id),
+                'songs': GLib.Variant('as', song_ids)
+            }))
+            row.set_action_name('app.play_song_from_list')
+
+        for row in list(self.song_list_el.list_el):
+            if isinstance(row, SongRow):
+                song_ids.append(row.id)
+        for row in list(self.song_list_el.list_el):
+            if isinstance(row, SongRow):
+                GLib.idle_add(set_action, row)
 
     @Gtk.Template.Callback()
     def change_rating(self, button):
