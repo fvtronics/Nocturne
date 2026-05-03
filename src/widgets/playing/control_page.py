@@ -244,9 +244,9 @@ class PlayingControlPage(Adw.NavigationPage):
         integration = get_current_integration()
         song_id = integration.loaded_models.get('currentSong').get_property('songId')
         if song_id:
-            mpris_path = f"{MPRIS_COVER_PATH}_{song_id.replace('/', '_')}.png"
-
-            for old_file in glob.glob(f"{MPRIS_COVER_PATH}_*.png"):
+            mpris_path = os.path.join(MPRIS_COVER_PATH, "{}.png".format(song_id))
+            for old_file in glob.glob(f"{MPRIS_COVER_PATH}/*.png"):
+                print('old_file', old_file)
                 os.remove(old_file)
 
             gbytes, paintable = integration.getCoverArt(song_id)
@@ -256,6 +256,7 @@ class PlayingControlPage(Adw.NavigationPage):
                 GLib.idle_add(self.cover_el.set_paintable, paintable)
                 GLib.idle_add(self.cover_el.set_visible, True)
                 paintable.save_to_png(mpris_path)
+                print(mpris_path)
             else:
                 GLib.idle_add(self.cover_el.set_paintable, None)
                 GLib.idle_add(self.cover_el.set_visible, False)
