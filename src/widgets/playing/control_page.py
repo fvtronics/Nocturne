@@ -3,7 +3,7 @@
 from gi.repository import Gtk, Adw, Gdk, GLib, GObject, Gst, Gio
 from ...integrations import get_current_integration
 from ...constants import MPRIS_COVER_PATH, get_display_time
-import threading, random, io, colorsys, os, base64
+import threading, random, io, colorsys, os, base64, glob
 from PIL import Image, ImageFilter
 from colorthief import ColorThief
 from urllib.parse import urlparse
@@ -244,18 +244,21 @@ class PlayingControlPage(Adw.NavigationPage):
         integration = get_current_integration()
         song_id = integration.loaded_models.get('currentSong').get_property('songId')
         if song_id:
+            mpris_path = f"{MPRIS_COVER_PATH}_{song_id.replace('/', '_')}.png"
+
+            for old_file in glob.glob(f"{MPRIS_COVER_PATH}_*.png"):
+                os.remove(old_file)
+
             gbytes, paintable = integration.getCoverArt(song_id)
             if gbytes:
                 threading.Thread(target=self.update_palette, args=(bytes(gbytes.get_data()),)).start()
             if paintable:
                 GLib.idle_add(self.cover_el.set_paintable, paintable)
                 GLib.idle_add(self.cover_el.set_visible, True)
-                paintable.save_to_png(MPRIS_COVER_PATH)
+                paintable.save_to_png(mpris_path)
             else:
                 GLib.idle_add(self.cover_el.set_paintable, None)
                 GLib.idle_add(self.cover_el.set_visible, False)
-                if os.path.isfile(MPRIS_COVER_PATH):
-                    os.remove(MPRIS_COVER_PATH)
 
     def update_starred(self, starred:bool):
         if starred:
