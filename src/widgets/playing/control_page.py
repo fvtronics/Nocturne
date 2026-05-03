@@ -246,7 +246,6 @@ class PlayingControlPage(Adw.NavigationPage):
         if song_id:
             mpris_path = os.path.join(MPRIS_COVER_PATH, "{}.png".format(song_id))
             for old_file in glob.glob(f"{MPRIS_COVER_PATH}/*.png"):
-                print('old_file', old_file)
                 os.remove(old_file)
 
             gbytes, paintable = integration.getCoverArt(song_id)
