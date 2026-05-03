@@ -64,6 +64,7 @@ class NocturneWindow(Adw.ApplicationWindow):
             settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
             settings.set_int('default-width', self.get_width())
             settings.set_int('default-height', self.get_height())
+            self.get_application().quit()
 
     @Gtk.Template.Callback()
     def on_sidebar_activated(self, sidebar, index):

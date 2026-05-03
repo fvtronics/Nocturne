@@ -43,6 +43,7 @@ class NocturneApplication(Adw.Application):
     def __init__(self, version):
         self.version = version
         self.external_songs = []
+        self.main_window = None
         self.popout_window = None
         self.player = None
         self.inhibit_cookie = None
@@ -91,41 +92,39 @@ class NocturneApplication(Adw.Application):
                     integration.set_property('libraryDir', directory)
                 threading.Thread(target=self.try_login, args=(integration,)).start()
                 return
-        self.props.active_window.main_stack.set_visible_child_name('welcome')
+        self.main_window.main_stack.set_visible_child_name('welcome')
 
     def try_login(self, integration):
         # call on different thread
-        main_win = self.props.active_window
         if integration.ping():
             set_current_integration(integration)
             integration.on_login()
-            GLib.idle_add(main_win.main_stack.set_visible_child_name, "content")
-            GLib.idle_add(main_win.setup)
+            GLib.idle_add(self.main_window.main_stack.set_visible_child_name, "content")
+            GLib.idle_add(self.main_window.setup)
             if not self.player:
                 self.player = Player(self)
             settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
             default_page = settings.get_value('default-page-tag').unpack() or 'home'
-            main_win.activate_action("app.replace_root_page", GLib.Variant('s', default_page))
-            GLib.idle_add(threading.Thread(target=main_win.update_playlist_section_of_sidebar).start)
+            self.main_window.activate_action("app.replace_root_page", GLib.Variant('s', default_page))
+            GLib.idle_add(threading.Thread(target=self.main_window.update_playlist_section_of_sidebar).start)
             if settings.get_value("restore-session").unpack():
                 threading.Thread(target=self.player.restore_play_queue).start()
-            if dialog := main_win.get_visible_dialog():
+            if dialog := self.main_window.get_visible_dialog():
                 dialog.close()
         else:
-            main_win.main_stack.set_visible_child_name('welcome')
+            self.main_window.main_stack.set_visible_child_name('welcome')
             toast = Adw.Toast(title=_("Login Failed"))
-            dialog = main_win.get_visible_dialog()
+            dialog = self.main_window.get_visible_dialog()
             if not isinstance(dialog, LoginDialog):
                 dialog = LoginDialog(integration)
-                GLib.idle_add(dialog.present, main_win)
+                GLib.idle_add(dialog.present, self.main_window)
             GLib.idle_add(dialog.toast_overlay.add_toast, toast)
             GLib.idle_add(dialog.login_button_el.set_sensitive, True)
 
     def do_activate(self):
-        win = self.props.active_window
-        if not win:
-            win = NocturneWindow(application=self)
-        win.present()
+        if not self.main_window:
+            self.main_window = NocturneWindow(application=self)
+        self.main_window.present()
         self.load_default_integration()
 
     def do_open(self, files, n_files=None, hint=None):
@@ -140,10 +139,9 @@ class NocturneApplication(Adw.Application):
                 if integration:
                     integration.loaded_models[audio_info.get('id')] = self.external_songs[-1]
 
-        win = self.props.active_window
-        if win and integration:
+        if self.main_window and integration:
             target_value = GLib.Variant('as', [a.id for a in self.external_songs])
-            win.activate_action('app.play_songs', target_value)
+            self.main_window.activate_action('app.play_songs', target_value)
             self.external_songs = []
         else:
             self.do_activate()

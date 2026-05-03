@@ -96,6 +96,11 @@ class PopoutWindow(Adw.ApplicationWindow):
         self.fs_progress_el.set_value(positionSeconds)
 
     @Gtk.Template.Callback()
+    def close_request(self, window):
+        if self.get_application().main_window.get_hide_on_close():
+            self.get_application().main_window.present()
+
+    @Gtk.Template.Callback()
     def toggle_fullscreen(self, button):
         if self.is_fullscreen():
             self.unfullscreen()
