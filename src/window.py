@@ -162,7 +162,6 @@ class NocturneWindow(Adw.ApplicationWindow):
 
     def setup(self):
         # call using glib_add
-        self.setup_sidebar()
         self.footer.setup()
         self.playing_page.setup()
         self.lyrics_page.setup()
@@ -281,6 +280,7 @@ class NocturneWindow(Adw.ApplicationWindow):
         self.settings.connect('changed::player-dynamic-bg-mode', self.dynamic_bg_mode_changed, '')
         self.dynamic_bg_mode_changed(self.settings, 'player-dynamic-bg-mode', '')
         self.settings.connect('changed::use-sidebar-player', lambda *_: self.big_breakpoint_toggled())
+        GLib.idle_add(self.setup_sidebar)
 
     def css_toggled(self, settings, key, css_class):
         if settings.get_value(key).unpack():
