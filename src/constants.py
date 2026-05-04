@@ -118,13 +118,14 @@ def get_song_info_from_file(file_path:str, star_dict:dict={}, is_external_file:b
     tag = TinyTag.get(file_path)
     if not tag:
         return None
+    album_artist = (tag.albumartist or tag.artist or "").split(';')[0].strip()
     song = {
         'path': file_path,
         'coverArt': file_path,
         'duration': tag.duration or 0,
         'title': tag.title or os.path.basename(file_path),
         'album': tag.album or "",
-        'artist': tag.artist.split(';')[0] or "",
+        'artist': album_artist,
         'artists': [{
             'id': "ARTIST:{}".format(art.strip()),
             'name': art.strip(),
@@ -138,7 +139,7 @@ def get_song_info_from_file(file_path:str, star_dict:dict={}, is_external_file:b
     }
 
     if not is_external_file:
-        song["artistId"] = "ARTIST:{}".format(song.get("artist")) if song.get('artist') else ""
+        song["artistId"] = "ARTIST:{}".format(album_artist) if album_artist else ""
         song["albumId"] = "ALBUM:{}".format(song.get("album")) if song.get('album') else ""
 
     return song
