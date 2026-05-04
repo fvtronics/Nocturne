@@ -104,6 +104,16 @@ template $NocturneLoginDialog: Adw.Dialog {
             clicked => $login_button_clicked();
             halign: center;
           }
+
+          Gtk.Button quick_connect_button_el {
+            styles [
+              "pill"
+            ]
+            label: _("Use Quick Connect");
+            tooltip-text: _("Use Quick Connect");
+            clicked => $quick_connect_button_clicked();
+            halign: center;
+          }
         };
       };
     };

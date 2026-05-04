@@ -4,7 +4,7 @@ from gi.repository import Gtk, Adw, Gio, GLib
 from ...integrations import secret
 from ...constants import DEFAULT_MUSIC_DIR
 from ..containers import ContextContainer
-import threading
+import threading, time
 
 @Gtk.Template(resource_path='/com/jeffser/Nocturne/pages/login.ui')
 class LoginDialog(Adw.Dialog):
@@ -22,6 +22,7 @@ class LoginDialog(Adw.Dialog):
     password_el = Gtk.Template.Child()
 
     login_button_el = Gtk.Template.Child()
+    quick_connect_button_el = Gtk.Template.Child()
 
     def __init__(self, integration):
         super().__init__()
@@ -66,6 +67,9 @@ class LoginDialog(Adw.Dialog):
         # Login Button
         self.login_button_el.set_label(metadata.get('login-label') or _("Login"))
         self.login_button_el.set_sensitive(True)
+
+        # Quick Connect (Jellyfin)
+        self.quick_connect_button_el.set_visible(self.integration.__gtype_name__ == 'NocturneIntegrationJellyfin')
 
         # Extra Menu
         self.extra_menu_el.set_visible('extra-menu' in metadata)
@@ -112,3 +116,44 @@ class LoginDialog(Adw.Dialog):
         secret.store_password(self.password_el.get_text())
         self.integration.set_property('libraryDir', self.directory_el.get_subtitle())
         threading.Thread(target=self.get_root().get_application().try_login, args=(self.integration,)).start()
+
+    @Gtk.Template.Callback()
+    def quick_connect_button_clicked(self, button):
+        if self.integration.__gtype_name__ != 'NocturneIntegrationJellyfin':
+            return
+
+        def wait_confirmation(data, dialog):
+            waited_turns = 0
+            is_authenticated = False
+            while not is_authenticated and dialog.get_root():
+                is_authenticated = self.integration.checkQuickConnect(data.get('Secret'))
+                if is_authenticated:
+                    GLib.idle_add(dialog.close)
+                    threading.Thread(target=self.get_root().get_application().try_login, args=(self.integration,)).start()
+                    break
+                time.sleep(5)
+                waited_turns += 1
+                if waited_turns >= 5:
+                    GLib.idle_add(dialog.close)
+                    break
+
+        def run():
+            data = self.integration.initiateQuickConnect()
+            dialog = Adw.AlertDialog(
+                heading=_("Quick Connect"),
+                body=data.get("Code") or _("Error getting code")
+            )
+            dialog.add_response(
+                "cancel",
+                _("Cancel")
+            )
+            dialog.set_close_response("cancel")
+            GLib.idle_add(dialog.choose,
+                self.get_root(),
+                None,
+                lambda *_: None
+            )
+            GLib.idle_add(threading.Thread(target=wait_confirmation, args=(data, dialog)).start)
+
+        threading.Thread(target=run).start()
+

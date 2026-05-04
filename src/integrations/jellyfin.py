@@ -116,6 +116,22 @@ class Jellyfin(Base):
                 self.get_property('accessToken')
             )
 
+    def initiateQuickConnect(self) -> dict:
+        return self.make_request(
+            action='QuickConnect/Initiate',
+            mode='POST',
+        )
+
+    def checkQuickConnect(self, secret_str:str) -> bool:
+        response = self.make_request(
+            action='QuickConnect/Connect',
+            params={'secret': secret_str}
+        )
+        if response.get('Authenticated'):
+            secret.store_password(response.get("Secret"))
+            return True
+        return False
+
     def getCoverArt(self, model_id:str=None) -> tuple:
         if model_id:
             if model := self.loaded_models.get(model_id):
@@ -156,16 +172,30 @@ class Jellyfin(Base):
         return None, None
 
     def ping(self) -> bool:
+        self.set_property('accessToken', "")
+        self.set_property('userId', "")
         response = self.make_request(
-            action='Users/AuthenticateByName',
+            action='Users/AuthenticateWithQuickConnect',
             json={
-                'Username': self.get_property('user'),
-                'Pw': secret.get_plain_password()
+                "Secret": secret.get_plain_password()
             },
             mode='POST'
         )
         self.set_property('accessToken', response.get('AccessToken'))
         self.set_property('userId', response.get('User', {}).get('Id'))
+        if self.get_property("accessToken") and self.get_property("userId"):
+            self.set_property("user", response.get('User', {}).get('Name'))
+        else:
+            response = self.make_request(
+                action='Users/AuthenticateByName',
+                json={
+                    'Username': self.get_property('user'),
+                    'Pw': secret.get_plain_password()
+                },
+                mode='POST'
+            )
+            self.set_property('accessToken', response.get('AccessToken'))
+            self.set_property('userId', response.get('User', {}).get('Id'))
         return self.get_property('accessToken') and self.get_property('userId')
 
     def getAlbumList(self, list_type:str="recent", size:int=10, offset:int=0) -> list:
