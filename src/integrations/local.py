@@ -216,24 +216,23 @@ class Local(Base):
                     self.loaded_models[album.get('id')] = models.Album(**album)
 
             # Making Artist Model
-            for a_dict in song.get('artists', []):
-                if a_dict.get('id'):
-                    if a_dict.get('id') not in self.loaded_models:
-                        artist = {
-                            'id': a_dict.get('id'),
-                            'coverArt': song.get('path'),
-                            'name': a_dict.get('name'),
-                            'album': [],
-                            'albumCount': 0,
-                            'starred': a_dict.get('id') in star_dict
-                        }
-                        self.loaded_models[artist.get('id')] = models.Artist(**artist)
+            artist_id = song.get('artistId')
+            if artist_id:
+                if artist_id not in self.loaded_models:
+                    self.loaded_models[artist_id] = models.Artist(
+                        id=artist_id,
+                        coverArt=song.get('path'),
+                        name=song.get('artist'),
+                        album=[],
+                        albumCount=0,
+                        starred=artist_id in star_dict
+                    )
 
-                    # Add album
-                    album_list = self.loaded_models.get(a_dict.get('id')).album
-                    if album_id and not any([album.get('id') == album_id for album in album_list]):
-                        self.loaded_models.get(a_dict.get('id')).album.append({'id': album_id})
-                        self.loaded_models.get(a_dict.get('id')).albumCount += 1
+                # Add album
+                album_list = self.loaded_models.get(artist_id).album
+                if album_id and not any(album.get('id') == album_id for album in album_list):
+                    self.loaded_models.get(artist_id).album.append({'id': album_id})
+                    self.loaded_models.get(artist_id).albumCount += 1
 
         if force_update or not self.loaded_models.get(model_id).get_property('title'):
             if use_threading:
