@@ -257,6 +257,11 @@ class Navidrome(Base):
         def update():
             response = self.make_request('getSong', {'id': model_id})
             song_dict = response.get('song', {})
+            if 'artists' not in song_dict and song_dict.get('artistId'):
+                song_dict['artists'] = [{
+                    'id': song_dict.get('artistId'),
+                    'name': song_dict.get('artist')
+                }]
             gains = song_dict.get('replayGain') or {}
             self.loaded_models[model_id].update_data(**song_dict, albumGain=gains.get('albumGain', 0.0), trackGain=gains.get('trackGain', 0.0))
             threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
@@ -586,5 +591,4 @@ class NavidromeIntegrated(Navidrome):
             self.process.terminate()
             self.process = None
         self.set_property('serverRunning', False)
-
 
