@@ -452,7 +452,7 @@ class Player(EventAdapter):
                         if song_model := integration.loaded_models.get(model.get_property('songId')):
                             if song_model.get_property('isRadio'):
                                 success, artist = tag_list.get_string(Gst.TAG_ARTIST)
-                                if success and artist:
+                                if success and artist and artist != 'null':
                                     current_artist = model.get_property('displaySongArtist')
                                     if current_artist != artist:
                                         model.set_property('displaySongArtist', artist)
