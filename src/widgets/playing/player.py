@@ -449,12 +449,13 @@ class Player(EventAdapter):
                             current_title = model.get_property('displaySongTitle')
                             if current_title != title:
                                 model.set_property('displaySongTitle', title)
-                        if integration.loaded_models.get(model.get_property('songId')).get_property('isRadio'):
-                            success, artist = tag_list.get_string(Gst.TAG_ARTIST)
-                            if success and artist:
-                                current_artist = model.get_property('displaySongArtist')
-                                if current_artist != artist:
-                                    model.set_property('displaySongArtist', artist)
+                        if song_model := integration.loaded_models.get(model.get_property('songId')):
+                            if song_model.get_property('isRadio'):
+                                success, artist = tag_list.get_string(Gst.TAG_ARTIST)
+                                if success and artist:
+                                    current_artist = model.get_property('displaySongArtist')
+                                    if current_artist != artist:
+                                        model.set_property('displaySongArtist', artist)
             elif message.type == Gst.MessageType.EOS:
                 self.handle_song_change_request("end")
             elif message.type == Gst.MessageType.ERROR:
