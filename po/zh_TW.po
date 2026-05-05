@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Nocturne 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-05-05 17:59+0800\n"
-"PO-Revision-Date: 2026-05-05 18:11+0800\n"
+"PO-Revision-Date: 2026-05-05 18:30+0800\n"
 "Last-Translator: Yuan Chiu <chyuaner@gmail.com>\n"
 "Language-Team: Traditional Chinese\n"
 "Language: zh_TW\n"
@@ -20,357 +20,293 @@ msgstr ""
 
 #: data/com.jeffser.Nocturne.desktop.in:2
 #: data/com.jeffser.Nocturne.metainfo.xml.in:7
-#, fuzzy
 msgid "Nocturne"
 msgstr "Nocturne"
 
 #: data/com.jeffser.Nocturne.desktop.in:10
-#, fuzzy
 msgid "GTK;Navidrome;Jellyfin;Music;"
 msgstr "GTK;Navidrome;Jellyfin;Music;"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:8
-#, fuzzy
 msgid "Bring your music library together"
 msgstr "將您的音樂庫整合在一起"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:10
-#, fuzzy
 msgid "A modern Navidrome / Jellyfin client"
-msgstr "現時代的 Navidrome / Jellyfin 客戶端"
+msgstr "現代的 Navidrome / Jellyfin 用戶端"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:11
-#, fuzzy
 msgid "Features"
 msgstr "功能"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:13
-#, fuzzy
 msgid "Exploration by songs, artists, albums, radios and playlists"
-msgstr "通過歌曲、藝術家、專輯、收音機和播放列表進行探索"
+msgstr "透過歌曲、演出者、專輯、廣播和播放清單進行探索"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:14
-#, fuzzy
 msgid "Playlist management"
-msgstr "播放列表管理"
+msgstr "播放清單管理"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:15
-#, fuzzy
 msgid "Mpris integration"
-msgstr "Mpris 集成"
+msgstr "Mpris 整合"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:16
-#, fuzzy
 msgid "Integrated Navidrome instance management"
-msgstr "集成 Navidrome 實刻管理"
+msgstr "整合 Navidrome 實例管理"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:17
-#, fuzzy
 msgid "Cool interface"
 msgstr "很酷的界面"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:18
-#, fuzzy
 msgid "Automatic lyrics fetching"
 msgstr "自動獲取詞歌"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:23
-#, fuzzy
 msgid "Jeffry Samuel Eduarte Rojas"
 msgstr "Jeffry Samuel Eduarte Rojas"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:64
-#, fuzzy
 msgid "Main homepage"
 msgstr "主頁"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:68
-#, fuzzy
 msgid "Song queue"
-msgstr "歌曲隊列"
+msgstr "待播歌曲"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:72
 #: src/ui/playing/popout_window.blp:308 src/ui/window.blp:137
-#, fuzzy
 msgid "Lyrics"
 msgstr "歌詞"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:76
-#, fuzzy
 msgid "Song list"
-msgstr "歌曲隊列"
+msgstr "歌曲清單"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:80
-#, fuzzy
 msgid "Album page"
 msgstr "專輯頁面"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:85
-#, fuzzy
 msgid "navidrome"
 msgstr "navidrome"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:86
-#, fuzzy
 msgid "jellyfin"
 msgstr "jellyfin"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:87
-#, fuzzy
 msgid "music"
 msgstr "音樂"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:88
-#, fuzzy
 msgid "gtk"
 msgstr "gtk"
 
 #: src/actions.py:105 src/ui/song/row.blp:78
-#, fuzzy
 msgid "External File"
-msgstr "外部文件"
+msgstr "外部檔案"
 
 #: src/actions.py:106
-#, fuzzy
 msgid ""
 "This track was loaded from an external file, this means it will have less "
 "features compared to a track inside the library"
 msgstr "此曲目是從外部檔案載入的，這意味著與音樂庫中的曲目相比，其功能會較少。"
 
 #: src/actions.py:108 src/ui/song/queue.blp:40
-#, fuzzy
 msgid "Close"
 msgstr "關閉"
 
 #: src/actions.py:124
-#, fuzzy
 msgid "Navidrome server deleted successfully"
-msgstr "Navidrome 的服務器刪除成功"
+msgstr "Navidrome 的伺服器刪除成功"
 
 #: src/actions.py:131
-#, fuzzy
 msgid "Delete Navidrome Server"
-msgstr "刪除 Navidrome 的服務器"
+msgstr "刪除 Navidrome 的伺服器"
 
 #: src/actions.py:132
-#, fuzzy
 msgid "Are you sure you want to delete the integrated Navidrome server?"
-msgstr "您確定要刪除集成的 Navidrome 服務器嗎？"
+msgstr "您確定要刪除整合的 Navidrome 伺服器嗎？"
 
 #: src/actions.py:134 src/actions.py:260 src/actions.py:294 src/actions.py:571
 #: src/actions.py:685 src/ui/lyrics/dialog.blp:16 src/ui/lyrics/dialog.blp:17
-#, fuzzy
 msgid "Cancel"
 msgstr "取消"
 
 #: src/actions.py:135
-#, fuzzy
 msgid "Keep Data"
-msgstr "保留數據"
+msgstr "保留資料"
 
 #: src/actions.py:136
-#, fuzzy
 msgid "Delete Everything"
-msgstr "刪掉全部內容"
+msgstr "移除全部內容"
 
 #: src/actions.py:224
-#, fuzzy
 msgid "Radio updated successfully"
-msgstr "收音機站臺更新成功"
+msgstr "廣播站台更新成功"
 
 #: src/actions.py:224
-#, fuzzy
 msgid "Radio added successfully"
-msgstr "收音機站臺添加成功"
+msgstr "廣播站台添加成功"
 
 #: src/actions.py:235
-#, fuzzy
 msgid "Error updating radio"
-msgstr "收音機站臺更新出錯"
+msgstr "廣播站台更新出錯"
 
 #: src/actions.py:235
-#, fuzzy
 msgid "Error adding radio"
-msgstr "添加收音機站臺出錯"
+msgstr "添加廣播站台出錯"
 
 #: src/actions.py:244 src/actions.py:563
-#, fuzzy
 msgid "Name"
 msgstr "名字"
 
 #: src/actions.py:249
-#, fuzzy
 msgid "Stream Url"
 msgstr "流媒體 URL"
 
 #: src/actions.py:257
-#, fuzzy
 msgid "Update Radio Station"
-msgstr "更新收音機站臺"
+msgstr "更新廣播站台"
 
 #: src/actions.py:257
-#, fuzzy
 msgid "Add Radio Station"
-msgstr "添加收音機站臺"
+msgstr "添加廣播站台"
 
 #: src/actions.py:261 src/ui/lyrics/dialog.blp:23 src/ui/lyrics/dialog.blp:24
-#, fuzzy
 msgid "Save"
 msgstr "保存"
 
 #: src/actions.py:277
-#, fuzzy
 msgid "Radio deleted successfully"
-msgstr "收音機站臺刪掉成功"
+msgstr "廣播站台移除成功"
 
 #: src/actions.py:285
-#, fuzzy
 msgid "Error deleting radio"
-msgstr "收音機站臺刪掉出錯"
+msgstr "廣播站台移除出錯"
 
 #: src/actions.py:291
-#, fuzzy
 msgid "Delete Radio Station"
-msgstr "刪掉收音機站臺"
+msgstr "移除廣播站台"
 
 #: src/actions.py:292 src/actions.py:683
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Are you sure you want to delete '{}'?"
-msgstr "確定要刪掉'{}'嗎？"
+msgstr "確定要移除'{}'嗎？"
 
 #: src/actions.py:295 src/actions.py:686 src/constants.py:329
 #: src/constants.py:362
-#, fuzzy
 msgid "Delete"
-msgstr "刪掉"
+msgstr "移除"
 
 #: src/actions.py:325 src/actions.py:352 src/actions.py:357 src/actions.py:440
 #: src/actions.py:499
-#, fuzzy
 msgid "Playing Next"
 msgstr "下一首"
 
 #: src/actions.py:335 src/actions.py:368 src/actions.py:373 src/actions.py:455
 #: src/actions.py:514
-#, fuzzy
 msgid "Playing Later"
 msgstr "稍後播放"
 
 #: src/actions.py:352 src/actions.py:368 src/widgets/playlist/button.py:51
 #: src/widgets/playlist/dialog.py:31 src/widgets/playlist/page.py:101
 #: src/widgets/playlist/row.py:51 src/widgets/playlist/selector_row.py:40
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{} Songs"
 msgstr "{} 歌曲"
 
 #: src/actions.py:402
-#, fuzzy
 msgid "Lyrics Saved"
 msgstr "歌詞保存了"
 
 #: src/actions.py:544
-#, fuzzy
 msgid "Playlist updated successfully"
-msgstr "功播放列表更新成功"
+msgstr "功播放清單更新成功"
 
 #: src/actions.py:544
-#, fuzzy
 msgid "Playlist created successfully"
-msgstr "播放列表創建成功"
+msgstr "播放清單建立成功"
 
 #: src/actions.py:554
-#, fuzzy
 msgid "Error updating playlist"
-msgstr "播放列表更新出錯"
+msgstr "播放清單更新出錯"
 
 #: src/actions.py:554
-#, fuzzy
 msgid "Error creating playlist"
-msgstr "播放列表添加出錯"
+msgstr "播放清單添加出錯"
 
 #: src/actions.py:568
-#, fuzzy
 msgid "Update Playlist"
-msgstr "跟新播放列表"
+msgstr "更新播放清單"
 
 #: src/actions.py:568 src/ui/pages/playlists.blp:40
-#, fuzzy
 msgid "Create Playlist"
-msgstr "添加播放列表"
+msgstr "添加播放清單"
 
 #: src/actions.py:572
-#, fuzzy
 msgid "Update"
 msgstr "刷新"
 
 #: src/actions.py:572
-#, fuzzy
 msgid "Create"
 msgstr "添加"
 
 #: src/actions.py:592
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{} Songs Removed"
-msgstr "{} 歌曲刪掉了"
+msgstr "{} 歌曲已移除"
 
 #: src/actions.py:597
-#, fuzzy
 msgid "Song Removed"
-msgstr "歌曲刪掉了"
+msgstr "歌曲已移除"
 
 #: src/actions.py:629 src/actions.py:652
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{} Songs Added"
 msgstr "{} 個歌曲添加了"
 
 #: src/actions.py:631 src/actions.py:650
-#, fuzzy
 msgid "1 Song Added"
 msgstr "1 個歌曲添加了"
 
 #: src/actions.py:657
-#, fuzzy
 msgid "1 Song Skipped"
 msgstr "1 個歌曲跳過了"
 
 #: src/actions.py:659
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{} Songs Skipped"
 msgstr "{} 個歌曲跳過了"
 
 #: src/actions.py:671
-#, fuzzy
 msgid "Playlist Deleted"
-msgstr "播放列表刪掉了"
+msgstr "播放清單已移除"
 
 #: src/actions.py:682
-#, fuzzy
 msgid "Delete Playlist"
-msgstr "刪掉播放列表"
+msgstr "移除播放清單"
 
 #: src/actions.py:719
-#, fuzzy
 msgid "No songs found"
 msgstr "未找到歌曲成立"
 
 #: src/constants.py:173 src/ui/playing/playback_mode_button.blp:5
-#, fuzzy
 msgid "Consecutive"
-msgstr "連續"
+msgstr "依序播放"
 
 #: src/constants.py:177
-#, fuzzy
 msgid "Repeat All"
-msgstr "全部重複"
+msgstr "全部重複曲目"
 
 #: src/constants.py:181
-#, fuzzy
 msgid "Repeat One"
-msgstr "重複一次"
+msgstr "重複單一曲目"
 
 #. Item
 #: src/constants.py:189 src/ui/pages/home.blp:5
-#, fuzzy
 msgid "Home"
 msgstr "首頁"
 
@@ -379,19 +315,16 @@ msgstr "首頁"
 #: src/ui/pages/albums_all.blp:27 src/ui/pages/albums.blp:5
 #: src/ui/preferences.blp:88 src/widgets/artist/page.py:52
 #: src/widgets/pages/home.py:50
-#, fuzzy
 msgid "Albums"
 msgstr "專輯"
 
 #. Item
 #: src/constants.py:199
-#, fuzzy
 msgid "All"
 msgstr "全部"
 
 #. Item
 #: src/constants.py:204
-#, fuzzy
 msgid "Random"
 msgstr "隨機"
 
@@ -399,240 +332,197 @@ msgstr "隨機"
 #: src/constants.py:210 src/widgets/album/button.py:61
 #: src/widgets/album/page.py:104 src/widgets/artist/page.py:98
 #: src/widgets/playing/control_page.py:245 src/widgets/song/row.py:140
-#, fuzzy
 msgid "Starred"
 msgstr "星標了"
 
 #. Item
 #: src/constants.py:216
-#, fuzzy
 msgid "Recently Added"
 msgstr "最近添加"
 
 #. Item
 #: src/constants.py:222
-#, fuzzy
 msgid "Recently Played"
 msgstr "最近播放"
 
 #. Item
 #: src/constants.py:228
-#, fuzzy
 msgid "Most Played"
 msgstr "播放次數最多"
 
 #. Item
 #: src/constants.py:238 src/ui/pages/artists.blp:5 src/ui/pages/artists.blp:27
 #: src/ui/preferences.blp:97 src/widgets/pages/home.py:62
-#, fuzzy
 msgid "Artists"
-msgstr "藝術家"
+msgstr "演出者"
 
 #. Item
 #: src/constants.py:243 src/ui/pages/songs.blp:5 src/ui/pages/songs.blp:28
 #: src/ui/preferences.blp:79 src/widgets/album/page.py:31
 #: src/widgets/pages/home.py:32 src/widgets/playlist/page.py:31
-#, fuzzy
 msgid "Songs"
 msgstr "歌曲"
 
 #. Item
 #: src/constants.py:248 src/ui/pages/radios.blp:5 src/ui/pages/radios.blp:12
-#, fuzzy
 msgid "Radios"
-msgstr "收音機站臺"
+msgstr "廣播站台"
 
 #. Item
 #: src/constants.py:253 src/ui/pages/playlists.blp:5
 #: src/ui/pages/playlists.blp:27 src/ui/preferences.blp:106
 #: src/widgets/pages/home.py:74
-#, fuzzy
 msgid "Playlists"
-msgstr "播放列表"
+msgstr "播放清單"
 
 #: src/constants.py:263 src/constants.py:304 src/ui/lyrics/dialog.blp:47
 #: src/ui/playing/control_page.blp:185 src/ui/playing/footer.blp:89
 #: src/ui/playing/popout_window.blp:126 src/ui/song/queue.blp:47
 #: src/ui/song/queue.blp:49
-#, fuzzy
 msgid "Play"
 msgstr "播放"
 
 #: src/constants.py:268 src/constants.py:291 src/constants.py:309
-#, fuzzy
 msgid "Shuffle"
 msgstr "隨機"
 
 #: src/constants.py:273 src/constants.py:314 src/constants.py:342
 #: src/ui/song/queue.blp:55 src/ui/song/queue.blp:57
-#, fuzzy
 msgid "Play Next"
 msgstr "播放下首"
 
 #: src/constants.py:278 src/constants.py:319 src/constants.py:347
 #: src/ui/song/queue.blp:63 src/ui/song/queue.blp:65
-#, fuzzy
 msgid "Play Later"
 msgstr "下次播放"
 
 #: src/constants.py:283 src/constants.py:368 src/ui/song/queue.blp:71
 #: src/ui/song/queue.blp:73
-#, fuzzy
 msgid "Add To Playlist"
-msgstr "添加到播放列表"
+msgstr "添加到播放清單"
 
 #: src/constants.py:296 src/ui/playing/lyrics_page.blp:131
 #: src/widgets/song/row.py:87
-#, fuzzy
 msgid "Radio"
-msgstr "收音機"
+msgstr "廣播"
 
 #: src/constants.py:324 src/constants.py:352
-#, fuzzy
 msgid "Edit"
 msgstr "編輯"
 
 #: src/constants.py:338
-#, fuzzy
 msgid "Select"
-msgstr "選擇"
+msgstr "選取"
 
 #: src/constants.py:357
-#, fuzzy
 msgid "Edit Lyrics"
-msgstr "編制歌詞"
+msgstr "編輯歌詞"
 
 #: src/constants.py:373 src/ui/song/queue.blp:82 src/ui/song/queue.blp:84
-#, fuzzy
 msgid "Remove"
-msgstr "刪掉"
+msgstr "移除"
 
 #: src/constants.py:381
-#, fuzzy
 msgid "Update Server"
-msgstr "更新服務器"
+msgstr "更新伺服器"
 
 #: src/constants.py:386
-#, fuzzy
 msgid "Delete Server"
-msgstr "刪掉服務器"
+msgstr "刪掉伺服器"
 
 #: src/integrations/jellyfin.py:19
-#, fuzzy
 msgid "Jellyfin (Experimental)"
 msgstr "Jellyfin (實驗版)"
 
 #: src/integrations/jellyfin.py:20
-#, fuzzy
 msgid "Use an existing Jellyfin instance"
 msgstr "使用現在有的 Jellyfin 實例"
 
 #: src/integrations/local.py:18 src/integrations/local.py:24
 #: src/integrations/local.py:563
-#, fuzzy
 msgid "Local Files"
-msgstr "本地文件"
+msgstr "本地檔案"
 
 #: src/integrations/local.py:20 src/ui/pages/setup.blp:67
 #: src/ui/pages/setup.blp:68
-#, fuzzy
 msgid "Continue"
 msgstr "繼續"
 
 #: src/integrations/local.py:25
-#, fuzzy
 msgid "Limited functionality"
 msgstr "有限的功能"
 
 #: src/integrations/navidrome.py:15
-#, fuzzy
 msgid "Navidrome"
 msgstr "Navidrome"
 
 #: src/integrations/navidrome.py:20
-#, fuzzy
 msgid "External Server"
-msgstr "外部的服務器"
+msgstr "現有的外部伺服器"
 
 #: src/integrations/navidrome.py:21
-#, fuzzy
 msgid "Use an existing Navidrome / Subsonic instance"
 msgstr "使用現在有的 Navidrome/Subsonic 實例"
 
 #: src/integrations/navidrome.py:469
-#, fuzzy
 msgid "Navidrome Managed"
-msgstr "Navidrome 管理了"
+msgstr "本機端的 Navidrome 伺服器"
 
 #: src/integrations/navidrome.py:472
-#, fuzzy
 msgid "Instance Website"
 msgstr "實例網站"
 
 #: src/integrations/navidrome.py:474
-#, fuzzy
 msgid "Manage Server"
-msgstr "管理服務器"
+msgstr "管理伺服器"
 
 #: src/integrations/navidrome.py:479
-#, fuzzy
 msgid "Managed Server"
-msgstr "管理了服務器"
+msgstr "本機的Navidrome伺服器"
 
 #: src/integrations/navidrome.py:480
-#, fuzzy
 msgid "Create and use Navidrome instance"
-msgstr "創建和使用 Navidrome"
+msgstr "建立和使用 Navidrome"
 
 #: src/ui/album/button.blp:29
-#, fuzzy
 msgid "Play Album"
 msgstr "播放專輯"
 
 #: src/ui/album/button.blp:44 src/ui/album/page.blp:101
 #: src/ui/artist/page.blp:100 src/ui/song/row.blp:111
-#, fuzzy
 msgid "Toggle star"
 msgstr "切換星標"
 
 #: src/ui/album/button.blp:58 src/ui/playing/control_page.blp:111
-#, fuzzy
 msgid "Show Album"
 msgstr "顯示專輯"
 
 #: src/ui/album/button.blp:71 src/ui/album/page.blp:50 src/ui/album/row.blp:32
-#, fuzzy
 msgid "Album cover art"
 msgstr "專輯封面"
 
 #: src/ui/album/button.blp:91
-#, fuzzy
 msgid "Enter album page"
 msgstr "輸入專輯頁"
 
 #: src/ui/album/button.blp:116 src/ui/album/page.blp:85
-#, fuzzy
 msgid "Enter artist page"
-msgstr "輸入藝術家頁"
+msgstr "輸入演出者頁"
 
 #: src/ui/album/page.blp:5 src/widgets/album/page.py:90
-#, fuzzy
 msgid "Album"
 msgstr "專輯"
 
 #: src/ui/album/row.blp:48 src/ui/artist/row.blp:40 src/ui/playlist/row.blp:48
 #: src/ui/song/row.blp:126
-#, fuzzy
 msgid "Options"
 msgstr "選擇"
 
 #: src/ui/artist/page.blp:5
-#, fuzzy
 msgid "Artist"
-msgstr "藝術家"
+msgstr "演出者"
 
 #: src/ui/artist/page.blp:84
-#, fuzzy
 msgid "Expand Biography"
 msgstr "擴展傳"
 
@@ -641,258 +531,213 @@ msgstr "擴展傳"
 #: src/ui/pages/albums_all.blp:15 src/ui/pages/artists.blp:15
 #: src/ui/pages/playlists.blp:15 src/ui/pages/songs.blp:15
 #: src/ui/song/queue.blp:16 src/ui/song/queue.blp:18
-#, fuzzy
 msgid "List"
 msgstr "列表"
 
 #: src/ui/lyrics/dialog.blp:5
-#, fuzzy
 msgid "Lyrics Editor"
-msgstr "歌詞編制器"
+msgstr "歌詞編輯器"
 
 #: src/ui/lyrics/dialog.blp:61 src/ui/playing/control_page.blp:200
 #: src/ui/playing/footer.blp:104 src/ui/playing/popout_window.blp:141
-#, fuzzy
 msgid "Pause"
 msgstr "暫停"
 
 #: src/ui/lyrics/dialog.blp:98 src/ui/playing/control_page.blp:135
 #: src/ui/playing/popout_window.blp:213
-#, fuzzy
 msgid "Current song progress bar"
 msgstr "現在的歌曲的進度條"
 
 #: src/ui/lyrics/dialog.blp:103
-#, fuzzy
 msgid "Set Next Line Timestamp to Now"
 msgstr "將下一行時間戳設置為“現在”"
 
 #: src/ui/lyrics/dialog.blp:112
-#, fuzzy
 msgid "Add Line at Timestamp"
 msgstr "添加時間戳"
 
 #: src/ui/lyrics/dialog.blp:133
-#, fuzzy
 msgid "No Lyrics"
 msgstr "沒有歌詞"
 
 #: src/ui/lyrics/dialog.blp:134
-#, fuzzy
 msgid "No lyrics found for this track, to get started add a new line"
 msgstr "未找到這首歌曲的歌詞，開始添加時間戳"
 
 #: src/ui/lyrics/edit_row.blp:9
-#, fuzzy
 msgid "Timestamp"
 msgstr "時間戳"
 
 #: src/ui/lyrics/edit_row.blp:15 src/ui/lyrics/edit_row.blp:17
-#, fuzzy
 msgid "Go to Timestamp"
 msgstr "去時間戳"
 
 #: src/ui/lyrics/edit_row.blp:27 src/ui/lyrics/edit_row.blp:29
-#, fuzzy
 msgid "Set Current Timestamp"
 msgstr "設置當前時間戳"
 
 #: src/ui/lyrics/edit_row.blp:39 src/ui/lyrics/edit_row.blp:41
-#, fuzzy
 msgid "Remove Line"
 msgstr "刪掉除行"
 
 #: src/ui/pages/albums_all.blp:20 src/ui/pages/artists.blp:20
 #: src/ui/pages/playlists.blp:20 src/ui/pages/songs.blp:20
-#, fuzzy
 msgid "Grid"
 msgstr "格框"
 
 #: src/ui/pages/albums_all.blp:30
-#, fuzzy
 msgid "Search albums"
 msgstr "搜尋專輯"
 
 #: src/ui/pages/albums_all.blp:98 src/ui/pages/artists.blp:97
 #: src/ui/pages/songs.blp:100
-#, fuzzy
 msgid "Reached End of List"
 msgstr "已到達列表末尾"
 
 #: src/ui/pages/albums_all.blp:114 src/ui/pages/albums.blp:45
-#, fuzzy
 msgid "No Albums Found"
 msgstr "未找到專輯"
 
 #: src/ui/pages/artists.blp:30
-#, fuzzy
 msgid "Search artists"
-msgstr "搜尋藝術家"
+msgstr "搜尋演出者"
 
 #: src/ui/pages/artists.blp:113
-#, fuzzy
 msgid "No Artists Found"
-msgstr "未找到藝術家"
+msgstr "未找到演出者"
 
 #: src/ui/pages/home.blp:47
-#, fuzzy
 msgid "No Elements Found"
 msgstr "未找到元素"
 
 #. Login Button
 #: src/ui/pages/login.blp:5 src/ui/pages/login.blp:29 src/ui/pages/login.blp:86
 #: src/widgets/pages/login.py:37 src/widgets/pages/login.py:71
-#, fuzzy
 msgid "Login"
 msgstr "登錄"
 
 #: src/ui/pages/login.blp:14
-#, fuzzy
 msgid "Go to Welcome Page"
 msgstr "去歡迎頁面"
 
 #: src/ui/pages/login.blp:21
-#, fuzzy
 msgid "Manage Navidrome Server"
-msgstr "管理 Navidrome 服務器"
+msgstr "管理 Navidrome 伺服器"
 
 #: src/ui/pages/login.blp:39
-#, fuzzy
 msgid "Url"
 msgstr "URL"
 
 #: src/ui/pages/login.blp:46
-#, fuzzy
 msgid "More Options"
-msgstr "跟多選項"
+msgstr "更多選項"
 
 #: src/ui/pages/login.blp:55
-#, fuzzy
 msgid "Trust Server Certificates"
-msgstr "信任服務器的數字證書"
+msgstr "信任伺服器的憑證"
 
 #: src/ui/pages/login.blp:63
-#, fuzzy
+msgid "Server Status"
+msgstr "伺服器狀態"
+
+#: src/ui/pages/login.blp:63
 msgid "Username"
-msgstr "用戶名"
+msgstr "帳號名稱"
 
 #: src/ui/pages/login.blp:67
-#, fuzzy
 msgid "Password"
 msgstr "密碼"
 
 #: src/ui/pages/login.blp:71
-#, fuzzy
 msgid "Library Directory"
-msgstr "庫目錄"
+msgstr "媒體庫資料夾"
 
 #: src/ui/pages/login.blp:94 src/ui/pages/setup.blp:63
-#, fuzzy
 msgid "Instance Webpage"
 msgstr "實例網頁"
 
 #: src/ui/pages/playlists.blp:30
-#, fuzzy
 msgid "Search playlists"
-msgstr "搜尋播放列表"
+msgstr "搜尋播放清單"
 
 #: src/ui/pages/playlists.blp:105
-#, fuzzy
 msgid "No Playlists Found"
-msgstr "未找到播放列表"
+msgstr "未找到播放清單"
 
 #: src/ui/pages/radios.blp:15
-#, fuzzy
 msgid "Search radios"
-msgstr "搜尋收音機站臺"
+msgstr "搜尋廣播站台"
 
 #: src/ui/pages/radios.blp:25
-#, fuzzy
 msgid "Add Radio"
-msgstr "添加收音機站臺"
+msgstr "添加廣播站台"
 
 #: src/ui/pages/radios.blp:60
-#, fuzzy
 msgid "No Radios Found"
-msgstr "未找到收音機站臺"
+msgstr "未找到廣播站台"
 
 #: src/ui/pages/setup.blp:5
-#, fuzzy
 msgid "Setup"
 msgstr "設定"
 
 #: src/ui/pages/setup.blp:19
-#, fuzzy
 msgid "Navidrome Download"
 msgstr "下載 Navidrome"
 
 #: src/ui/pages/setup.blp:20
-#, fuzzy
 msgid "Nocturne will download Navidrome automatically"
 msgstr "Nocturne 會自動下載 Navidrome"
 
 #: src/ui/pages/setup.blp:22
-#, fuzzy
 msgid "Download (~20 mb)"
 msgstr "下載 (大約~20 MB)"
 
 #: src/ui/pages/setup.blp:23 src/ui/playing/lyrics_page.blp:156
 #: src/ui/playing/lyrics_page.blp:159
-#, fuzzy
 msgid "Download"
 msgstr "下載"
 
 #: src/ui/pages/setup.blp:34
-#, fuzzy
 msgid "Downloading"
 msgstr "下載中"
 
 #: src/ui/pages/setup.blp:46
-#, fuzzy
 msgid "An Error Occurred"
 msgstr "發生錯誤"
 
 #: src/ui/pages/setup.blp:47
-#, fuzzy
 msgid "Please try again later"
 msgstr "請稍後再試"
 
 #: src/ui/pages/setup.blp:55
-#, fuzzy
 msgid "Download Successful"
 msgstr "下載成功"
 
 #: src/ui/pages/setup.blp:56
-#, fuzzy
 msgid ""
 "Before continuing make sure you create an admin account and also make sure "
 "all your tracks are inside your music directory"
 msgstr ""
-"在繼續操作之前，請確保您已創建管理員帳戶，並確保您的所有曲目都位於您的音樂目"
+"在繼續操作之前，請確保您已建立管理員帳戶，並確保您的所有曲目都位於您的音樂目"
 "錄中"
 
 #: src/ui/pages/songs.blp:31
-#, fuzzy
 msgid "Search songs"
 msgstr "搜尋歌曲"
 
 #: src/ui/pages/songs.blp:116 src/ui/song/queue.blp:104
-#, fuzzy
 msgid "No Songs Found"
 msgstr "未找到歌曲"
 
 #: src/ui/pages/welcome.blp:5
-#, fuzzy
 msgid "Welcome"
 msgstr "歡迎"
 
 #: src/ui/pages/welcome.blp:16
-#, fuzzy
 msgid "Welcome to Nocturne"
 msgstr "歡迎使用 Nocturne"
 
 #: src/ui/pages/welcome.blp:17
-#, fuzzy
 msgid ""
 "Nocturne is powered by a Subsonic compatible instance, if you do not have "
 "one Nocturne can automatically set up a Navidrome instance for you!"
@@ -901,494 +746,400 @@ msgstr ""
 "可以自動為您設置一個 Navidrome 實例!"
 
 #: src/ui/playing/control_page.blp:5
-#, fuzzy
 msgid "Playing"
 msgstr "播放中"
 
 #: src/ui/playing/control_page.blp:48 src/ui/playing/popout_window.blp:272
-#, fuzzy
 msgid "Song Cover"
 msgstr "歌曲封面"
 
 #: src/ui/playing/control_page.blp:86
-#, fuzzy
 msgid "Visit current radio homepage"
 msgstr "訪問當前音機電臺主頁"
 
 #: src/ui/playing/control_page.blp:95
-#, fuzzy
 msgid "Show Artist"
-msgstr "顯示藝術家"
+msgstr "顯示演出者"
 
 #: src/ui/playing/control_page.blp:170 src/ui/playing/footer.blp:74
 #: src/ui/playing/popout_window.blp:111
-#, fuzzy
 msgid "Previous"
-msgstr "上個"
+msgstr "上一首"
 
 #: src/ui/playing/control_page.blp:214 src/ui/playing/footer.blp:118
 #: src/ui/playing/popout_window.blp:155
-#, fuzzy
 msgid "Next"
-msgstr "下個"
+msgstr "下一首"
 
 #: src/ui/playing/control_page.blp:234 src/widgets/album/button.py:65
 #: src/widgets/album/page.py:108 src/widgets/artist/page.py:102
 #: src/widgets/playing/control_page.py:249 src/widgets/song/row.py:144
-#, fuzzy
 msgid "Star"
 msgstr "星"
 
 #: src/ui/playing/control_page.blp:244
-#, fuzzy
 msgid "Open Pop-out Window"
 msgstr "打開彈出窗口"
 
 #: src/ui/playing/control_page.blp:252 src/ui/window.blp:159
 #: src/ui/window.blp:161
-#, fuzzy
 msgid "Close Pop-out Window"
 msgstr "關閉彈出窗口"
 
 #: src/ui/playing/control_page.blp:260
-#, fuzzy
 msgid "Show Sidebar"
 msgstr "顯示側邊欄"
 
 #: src/ui/playing/equalizer_page.blp:15
-#, fuzzy
 msgid "Presets"
 msgstr "預設"
 
 #: src/ui/playing/equalizer_page.blp:20
-#, fuzzy
 msgid "Flat"
 msgstr "平"
 
 #: src/ui/playing/equalizer_page.blp:27
-#, fuzzy
 msgid "Vocal Clarity"
 msgstr "人聲"
 
 #: src/ui/playing/equalizer_page.blp:32
-#, fuzzy
 msgid "Smooth Jazz"
 msgstr "時尚爵士"
 
 #: src/ui/playing/equalizer_page.blp:37
-#, fuzzy
 msgid "Rock"
 msgstr "搖滾樂"
 
 #: src/ui/playing/equalizer_page.blp:42
-#, fuzzy
 msgid "Classic"
 msgstr "經典"
 
 #: src/ui/playing/equalizer_page.blp:47
-#, fuzzy
 msgid "Acoustic"
 msgstr "原聲"
 
 #: src/ui/playing/footer.blp:12
-#, fuzzy
 msgid "Current song progress indicator"
 msgstr "當前歌曲進度指示器"
 
 #: src/ui/playing/footer.blp:33
-#, fuzzy
 msgid "Current song cover art"
 msgstr "當前歌曲封面"
 
 #: src/ui/playing/lyrics_page.blp:24 src/ui/playing/lyrics_page.blp:65
 #: src/ui/playing/lyrics_page.blp:100 src/ui/playing/lyrics_page.blp:104
 #: src/ui/playing/lyrics_page.blp:117 src/ui/playing/lyrics_page.blp:121
-#, fuzzy
 msgid "Go Back"
 msgstr "回去"
 
 #: src/ui/playing/lyrics_page.blp:97
-#, fuzzy
 msgid "No Lyrics Found"
 msgstr "未找到歌詞"
 
 #: src/ui/playing/lyrics_page.blp:114
-#, fuzzy
 msgid "Instrumental"
 msgstr "Instrumental"
 
 #: src/ui/playing/lyrics_page.blp:139
-#, fuzzy
 msgid "Not Downloaded"
 msgstr "未下載"
 
 #: src/ui/playing/lyrics_page.blp:141
-#, fuzzy
 msgid ""
 "The lyrics for this song have not been downloaded yet, they might be "
 "available for download"
 msgstr "這個歌曲的歌詞沒有下載過，但有可能 可下載"
 
 #: src/ui/playing/lyrics_page.blp:167
-#, fuzzy
 msgid "Lyrics are Provided by LRCLIB"
 msgstr "LRCLIB 提供的歌詞"
 
 #: src/ui/playing/lyrics_page.blp:176 src/ui/playing/lyrics_page.blp:179
-#, fuzzy
 msgid "Load Lyrics File"
-msgstr "加載歌詞文件"
+msgstr "載入歌詞檔案"
 
 #: src/ui/playing/popout_window.blp:5
-#, fuzzy
 msgid "Pop-out Window"
 msgstr "彈出窗口"
 
 #: src/ui/playing/popout_window.blp:223
-#, fuzzy
 msgid "Player"
 msgstr "播放器"
 
 #: src/ui/playing/popout_window.blp:240 src/ui/shortcuts-dialog.blp:16
 #: src/ui/window.blp:182 src/widgets/playing/popout_window.py:76
-#, fuzzy
 msgid "Toggle Fullscreen"
 msgstr "切換全屏"
 
 #: src/ui/playing/popout_window.blp:282 src/ui/window.blp:109
-#, fuzzy
 msgid "Song Details"
 msgstr "歌曲詳情"
 
 #: src/ui/playing/popout_window.blp:302 src/ui/window.blp:131
-#, fuzzy
 msgid "Queue"
-msgstr "隊列"
+msgstr "待播歌曲"
 
 #: src/ui/playing/queue_page.blp:20
-#, fuzzy
 msgid "Generating next queue"
-msgstr "正在生成下一個隊列"
+msgstr "正在產生下一個待播歌曲清單"
 
 #: src/ui/playing/queue_page.blp:24
-#, fuzzy
 msgid "Autoplay"
 msgstr "自動播放"
 
 #: src/ui/playing/queue_page.blp:25
-#, fuzzy
 msgid "Generate a new queue when the current one ends"
-msgstr "當前隊列結束時，生成一個新隊列。"
+msgstr "當前歌曲清單結束時，將會產生一個新的待播清單。"
 
 #: src/ui/playing/volume_button.blp:5
-#, fuzzy
 msgid "Volume"
 msgstr "音量"
 
 #: src/ui/playing/volume_button.blp:12
-#, fuzzy
 msgid "Speaker Mute"
 msgstr "揚聲器靜音"
 
 #: src/ui/playing/volume_button.blp:30
-#, fuzzy
 msgid "Speaker Full Volume"
 msgstr "揚聲器音量全開"
 
 #: src/ui/playlist/button.blp:29
-#, fuzzy
 msgid "Play Playlist"
-msgstr "播放列表"
+msgstr "播放清單"
 
 #: src/ui/playlist/button.blp:43
-#, fuzzy
 msgid "Show Playlist"
-msgstr "顯示播放列表"
+msgstr "顯示播放清單"
 
 #: src/ui/playlist/button.blp:56 src/ui/playlist/page.blp:49
 #: src/ui/playlist/row.blp:32 src/ui/playlist/selector_row.blp:24
-#, fuzzy
 msgid "Playlist cover art"
-msgstr "播放列表"
+msgstr "播放清單"
 
 #: src/ui/playlist/button.blp:68
-#, fuzzy
 msgid "Enter playlist page"
-msgstr "輸入播放列表頁面"
+msgstr "輸入播放清單頁面"
 
 #: src/ui/playlist/dialog.blp:6 src/ui/playlist/page.blp:5
 #: src/widgets/playlist/page.py:82
-#, fuzzy
 msgid "Playlist"
-msgstr "播放列表"
+msgstr "播放清單"
 
 #: src/ui/playlist/dialog.blp:11
-#, fuzzy
 msgid "Search (or create new playlist)"
-msgstr "搜尋 (或者創新播放列表)"
+msgstr "搜尋 (或者建立新的播放清單)"
 
 #: src/ui/playlist/dialog.blp:17
-#, fuzzy
 msgid "Adding Music to Playlist"
-msgstr "添加音樂到播放列表"
+msgstr "添加音樂到播放清單"
 
 #: src/ui/playlist/dialog.blp:31
-#, fuzzy
 msgid "Create new playlist and add songs"
-msgstr "創新播放列表，加歌曲"
+msgstr "建立新的播放清單與加入歌曲"
 
 #: src/ui/preferences.blp:7
-#, fuzzy
 msgid "General"
 msgstr "通常"
 
 #: src/ui/preferences.blp:11
-#, fuzzy
 msgid "Interface"
 msgstr "介面"
 
 #: src/ui/preferences.blp:13
-#, fuzzy
 msgid "Show Context Button in Rows"
 msgstr "在行中顯示上下文按鈕"
 
 #: src/ui/preferences.blp:14
-#, fuzzy
 msgid "The menu can also be shown by right clicking / long pressing"
-msgstr "也可以通過右鍵單擊/長按來顯示菜單。"
+msgstr "也可以透過右鍵點擊/長按來顯示選單。"
 
 #: src/ui/preferences.blp:17
-#, fuzzy
 msgid "Use Dynamic Background in Player"
 msgstr "在播放器中使用動態背景"
 
 #: src/ui/preferences.blp:18
-#, fuzzy
 msgid "Generate a gradient background based on the current song cover art"
 msgstr "根據當前封面生成漸變背景"
 
 #: src/ui/preferences.blp:22
-#, fuzzy
 msgid "Blur Background in Player (Experimental)"
 msgstr "播放控件背景模糊（實驗性功能）"
 
 #: src/ui/preferences.blp:23
-#, fuzzy
 msgid "Make background of player slightly transparent and blur the backdrop"
 msgstr "使播放器背景略微透明並模糊底面"
 
 #: src/ui/preferences.blp:28
-#, fuzzy
 msgid "Behavior"
 msgstr "行為"
 
 #: src/ui/preferences.blp:30
-#, fuzzy
 msgid "Restore Session"
 msgstr "恢復會話"
 
 #: src/ui/preferences.blp:31
-#, fuzzy
 msgid "Retrieve previous queue"
-msgstr "恢復上一個隊列"
+msgstr "恢復上一個佇列"
 
 #: src/ui/preferences.blp:34
-#, fuzzy
 msgid "Hide on Close"
 msgstr "關閉時隱藏"
 
 #: src/ui/preferences.blp:35
-#, fuzzy
 msgid "Hide Nocturne when closing"
 msgstr "關閉時隱藏 Nocturne"
 
 #: src/ui/preferences.blp:39
-#, fuzzy
 msgid "Session"
 msgstr "會話"
 
 #: src/ui/preferences.blp:42
-#, fuzzy
 msgid "User"
 msgstr "用戶"
 
 #: src/ui/preferences.blp:62
-#, fuzzy
 msgid "Logout"
 msgstr "登出"
 
 #: src/ui/preferences.blp:72
-#, fuzzy
 msgid "Homepage"
 msgstr "首頁"
 
 #: src/ui/preferences.blp:76
-#, fuzzy
 msgid "Sections"
 msgstr "板塊"
 
 #: src/ui/preferences.blp:77
-#, fuzzy
 msgid "Reload homepage to see changes"
-msgstr "重新加載首頁以查看更改"
+msgstr "重新載入首頁以查看更改"
 
 #: src/ui/preferences.blp:80
-#, fuzzy
 msgid "Max amount of songs to be shown"
 msgstr "要顯示的最大麴目數量"
 
 #: src/ui/preferences.blp:89
-#, fuzzy
 msgid "Max amount of albums to be shown"
 msgstr "要顯示的最大專輯數量"
 
 #: src/ui/preferences.blp:98
-#, fuzzy
 msgid "Max amount of artists to be shown"
-msgstr "要顯示的最大藝術家數量"
+msgstr "要顯示的最大演出者數量"
 
 #: src/ui/preferences.blp:107
-#, fuzzy
 msgid "Max amount of playlists to be shown"
-msgstr "要顯示的最大播放列表數量"
+msgstr "要顯示的最大播放清單數量"
 
 #: src/ui/shortcuts-dialog.blp:6
-#, fuzzy
 msgid "Shortcuts"
 msgstr "快捷鍵"
 
 #: src/ui/shortcuts-dialog.blp:8
-#, fuzzy
 msgid "Show Shortcuts"
 msgstr "顯示快捷鍵"
 
 #: src/ui/shortcuts-dialog.blp:12
-#, fuzzy
 msgid "Show Preferences"
 msgstr "顯示設置"
 
 #: src/ui/shortcuts-dialog.blp:20
-#, fuzzy
 msgid "Quit"
 msgstr "退出"
 
 #: src/ui/song/row.blp:41
-#, fuzzy
 msgid "Drag icon"
 msgstr "拖動圖標"
 
 #: src/ui/song/row.blp:138
-#, fuzzy
 msgid "Selection box"
 msgstr "選擇框"
 
 #: src/ui/song/small_row.blp:37
-#, fuzzy
 msgid "Song cover art"
 msgstr "歌曲封面"
 
 #: src/ui/window.blp:66
-#, fuzzy
 msgid "Play Random Queue"
-msgstr "隨機播放隊列"
+msgstr "隨機播放佇列"
 
 #: src/ui/window.blp:74
-#, fuzzy
 msgid "Menu"
-msgstr "菜單"
+msgstr "選單"
 
 #: src/ui/window.blp:151
-#, fuzzy
 msgid "Player in Pop-out Window"
 msgstr "彈出窗口中的播放器"
 
 #: src/ui/window.blp:177
-#, fuzzy
 msgid "Preferences"
 msgstr "設定"
 
 #: src/ui/window.blp:187
-#, fuzzy
 msgid "Keyboard Shortcuts"
 msgstr "鍵盤快捷鍵"
 
 #: src/ui/window.blp:192
-#, fuzzy
 msgid "About Nocturne"
 msgstr "關於 Nocturne"
 
 #: src/widgets/artist/button.py:42 src/widgets/artist/row.py:48
-#, fuzzy
 msgid "1 Album"
 msgstr "1 專輯"
 
 #: src/widgets/artist/button.py:44 src/widgets/artist/row.py:50
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{} Albums"
 msgstr "{} 專輯"
 
 #: src/widgets/artist/page.py:47
-#, fuzzy
 msgid "Related Artists"
-msgstr "相關藝術家"
+msgstr "相關演出者"
 
 #: src/widgets/artist/page.py:88
-#, fuzzy
 msgid "Author"
 msgstr "作者"
 
 #: src/widgets/lyrics/dialog.py:55
-#, fuzzy
 msgid "No Timestamp"
 msgstr "無時間戳"
 
 #: src/widgets/pages/login.py:75
-#, fuzzy
 msgid "Extra Menu"
-msgstr "額外菜單"
+msgstr "額外選單"
 
 #: src/widgets/pages/login.py:93
-#, fuzzy
 msgid "Local Music Library"
 msgstr "本地音樂庫"
 
 #: src/widgets/pages/login.py:125
-#, fuzzy
 msgid "Login Failed"
 msgstr "登錄失敗"
 
 #: src/widgets/pages/setup.py:61
-#, fuzzy
 msgid "Installing"
 msgstr "正在安裝"
 
 #: src/widgets/pages/welcome.py:28 src/widgets/pages/welcome.py:30
-#, fuzzy
 msgid "Integration"
-msgstr "集成"
+msgstr "整合"
 
 #: src/widgets/playing/lyrics_page.py:143
-#, fuzzy
 msgid "LRC File"
-msgstr "LRC 文件"
+msgstr "LRC 檔案"
 
 #: src/widgets/playlist/button.py:49 src/widgets/playlist/page.py:99
 #: src/widgets/playlist/row.py:49 src/widgets/playlist/selector_row.py:38
-#, fuzzy
 msgid "1 Song"
 msgstr "1 首歌曲"
 
 #: src/widgets/playlist/dialog.py:55
-#, fuzzy
 msgid "New Playlist"
-msgstr "新建播放列表"
+msgstr "新建播放清單"
 
 #: src/widgets/playlist/selector_row.py:34
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Add songs to '{}'"
 msgstr "在 '{}' 添加歌曲標題"
 
 #: src/widgets/song/row.py:125 src/widgets/song/row.py:130
-#, fuzzy
 msgid "Multiple Artists"
-msgstr "多位藝術家"
+msgstr "多位演出者"
