@@ -24,7 +24,7 @@ class LyricRow(Gtk.ListBoxRow):
             )
         )
 
-        pattern = r"<(\d{2}):(\d{2})\.(\d{2,3})>([^<]*)"
+        pattern = r"<(\d{2}):(\d{2})\.(\d{2,3})>\s*([^<]*)"
         matches = re.findall(pattern, content)
         self.cues = {}
         if len(matches) > 0:
