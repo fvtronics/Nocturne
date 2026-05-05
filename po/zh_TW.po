@@ -33,7 +33,7 @@ msgstr "將您的音樂庫整合在一起"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:10
 msgid "A modern Navidrome / Jellyfin client"
-msgstr "現代的 Navidrome / Jellyfin 用戶端"
+msgstr "現代的 Navidrome / Jellyfin 客戶端"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:11
 msgid "Features"
@@ -73,7 +73,7 @@ msgstr ""
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:21
 msgid "Cool interface"
-msgstr "很酷的界面"
+msgstr "酷炫的介面"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:26
 msgid "Jeffry Samuel Eduarte Rojas"
@@ -167,7 +167,7 @@ msgstr "廣播站台更新成功"
 
 #: src/actions.py:320
 msgid "Radio added successfully"
-msgstr "廣播站台添加成功"
+msgstr "廣播站台新增成功"
 
 #: src/actions.py:331
 msgid "Error updating radio"
@@ -175,7 +175,7 @@ msgstr "廣播站台更新出錯"
 
 #: src/actions.py:331
 msgid "Error adding radio"
-msgstr "添加廣播站台出錯"
+msgstr "新增廣播站台失敗"
 
 #: src/actions.py:340 src/actions.py:666
 msgid "Name"
@@ -191,12 +191,12 @@ msgstr "更新廣播站台"
 
 #: src/actions.py:352
 msgid "Add Radio Station"
-msgstr "添加廣播站台"
+msgstr "新增廣播站台"
 
 #: src/actions.py:356 src/preferences.py:316 src/ui/lyrics/dialog.blp:23
 #: src/ui/lyrics/dialog.blp:24
 msgid "Save"
-msgstr "保存"
+msgstr "儲存"
 
 #: src/actions.py:372
 msgid "Radio deleted successfully"
@@ -240,11 +240,11 @@ msgstr "{} 歌曲"
 
 #: src/actions.py:497
 msgid "Lyrics Saved"
-msgstr "歌詞保存了"
+msgstr "歌詞已儲存"
 
 #: src/actions.py:647
 msgid "Playlist updated successfully"
-msgstr "功播放清單更新成功"
+msgstr "播放清單更新成功"
 
 #: src/actions.py:647
 msgid "Playlist created successfully"
@@ -256,7 +256,7 @@ msgstr "播放清單更新出錯"
 
 #: src/actions.py:657
 msgid "Error creating playlist"
-msgstr "播放清單添加出錯"
+msgstr "新增播放清單失敗"
 
 #: src/actions.py:671
 msgid "Update Playlist"
@@ -264,15 +264,15 @@ msgstr "更新播放清單"
 
 #: src/actions.py:671 src/ui/pages/playlists.blp:41
 msgid "Create Playlist"
-msgstr "添加播放清單"
+msgstr "新增播放清單"
 
 #: src/actions.py:675
 msgid "Update"
-msgstr "刷新"
+msgstr "更新"
 
 #: src/actions.py:675
 msgid "Create"
-msgstr "添加"
+msgstr "新增"
 
 #: src/actions.py:695
 #, python-brace-format
@@ -286,20 +286,20 @@ msgstr "歌曲已移除"
 #: src/actions.py:732 src/actions.py:756
 #, python-brace-format
 msgid "{} Songs Added"
-msgstr "{} 個歌曲添加了"
+msgstr "已新增 {} 首歌曲"
 
 #: src/actions.py:734 src/actions.py:754
 msgid "1 Song Added"
-msgstr "1 個歌曲添加了"
+msgstr "已新增 1 首歌曲"
 
 #: src/actions.py:761 src/actions.py:910
 msgid "1 Song Skipped"
-msgstr "1 個歌曲跳過了"
+msgstr "已略過 1 首歌曲"
 
 #: src/actions.py:763 src/actions.py:910
 #, python-brace-format
 msgid "{} Songs Skipped"
-msgstr "{} 個歌曲跳過了"
+msgstr "已略過 {} 首歌曲"
 
 #: src/actions.py:775
 msgid "Playlist Deleted"
@@ -311,7 +311,7 @@ msgstr "移除播放清單"
 
 #: src/actions.py:836
 msgid "No songs found"
-msgstr "未找到歌曲成立"
+msgstr "找不到任何歌曲"
 
 #: src/actions.py:879 src/actions.py:906 src/actions.py:943 src/actions.py:979
 msgid "Download Started"
@@ -429,7 +429,7 @@ msgstr ""
 #. Item
 #: src/constants.py:217
 msgid "Recently Added"
-msgstr "最近添加"
+msgstr "最近新增"
 
 #. Item
 #: src/constants.py:222
@@ -478,7 +478,7 @@ msgstr "下次播放"
 #: src/constants.py:281 src/constants.py:375 src/ui/song/queue.blp:71
 #: src/ui/song/queue.blp:73
 msgid "Add To Playlist"
-msgstr "添加到播放清單"
+msgstr "加入播放清單"
 
 #: src/constants.py:286 src/constants.py:332 src/constants.py:380
 #: src/ui/pages/setup.blp:23 src/ui/playing/lyrics_page.blp:147
@@ -532,7 +532,7 @@ msgstr "更新伺服器"
 
 #: src/constants.py:426
 msgid "Delete Server"
-msgstr "刪掉伺服器"
+msgstr "移除伺服器"
 
 #: src/integrations/jellyfin.py:15
 msgid "Connect to a Jellyfin server."
@@ -616,7 +616,7 @@ msgstr ""
 
 #: src/main.py:116
 msgid "Login Failed"
-msgstr "登錄失敗"
+msgstr "登入失敗"
 
 #: src/preferences.py:304
 msgid "Settings Page"
@@ -649,11 +649,11 @@ msgstr "專輯封面"
 
 #: src/ui/album/button.blp:92
 msgid "Enter album page"
-msgstr "輸入專輯頁"
+msgstr "進入專輯頁面"
 
 #: src/ui/album/button.blp:117 src/ui/album/page.blp:85
 msgid "Enter artist page"
-msgstr "輸入演出者頁"
+msgstr "進入演出者頁面"
 
 #: src/ui/album/page.blp:5 src/widgets/album/page.py:131
 msgid "Album"
@@ -695,7 +695,7 @@ msgstr "演出者"
 
 #: src/ui/artist/page.blp:83
 msgid "Expand Biography"
-msgstr "擴展傳"
+msgstr "展開簡介"
 
 #: src/ui/containers/carousel.blp:19 src/ui/containers/carousel.blp:21
 #: src/ui/containers/wrapbox.blp:19 src/ui/containers/wrapbox.blp:21
@@ -704,7 +704,7 @@ msgstr "擴展傳"
 #: src/ui/pages/songs_starred.blp:15 src/ui/song/queue.blp:16
 #: src/ui/song/queue.blp:18
 msgid "List"
-msgstr "列表"
+msgstr "清單"
 
 #: src/ui/containers/download_row.blp:31
 msgid "Downloaded"
@@ -738,15 +738,15 @@ msgstr "暫停"
 #: src/ui/lyrics/dialog.blp:98 src/ui/playing/control_page.blp:194
 #: src/ui/playing/popout_window.blp:213
 msgid "Current song progress bar"
-msgstr "現在的歌曲的進度條"
+msgstr "目前歌曲進度列"
 
 #: src/ui/lyrics/dialog.blp:103
 msgid "Set Next Line Timestamp to Now"
-msgstr "將下一行時間戳設置為“現在”"
+msgstr "將下一行時間戳設為目前時間"
 
 #: src/ui/lyrics/dialog.blp:112
 msgid "Add Line at Timestamp"
-msgstr "添加時間戳"
+msgstr "新增時間戳"
 
 #: src/ui/lyrics/dialog.blp:133
 msgid "No Lyrics"
@@ -754,7 +754,7 @@ msgstr "沒有歌詞"
 
 #: src/ui/lyrics/dialog.blp:134
 msgid "No lyrics found for this track, to get started add a new line"
-msgstr "未找到這首歌曲的歌詞，開始添加時間戳"
+msgstr "找不到這首歌的歌詞，請先新增一行內容"
 
 #: src/ui/lyrics/edit_row.blp:9
 msgid "Timestamp"
@@ -762,15 +762,15 @@ msgstr "時間戳"
 
 #: src/ui/lyrics/edit_row.blp:15 src/ui/lyrics/edit_row.blp:17
 msgid "Go to Timestamp"
-msgstr "去時間戳"
+msgstr "前往時間戳"
 
 #: src/ui/lyrics/edit_row.blp:27 src/ui/lyrics/edit_row.blp:29
 msgid "Set Current Timestamp"
-msgstr "設置當前時間戳"
+msgstr "設定目前時間戳"
 
 #: src/ui/lyrics/edit_row.blp:39 src/ui/lyrics/edit_row.blp:41
 msgid "Remove Line"
-msgstr "刪掉除行"
+msgstr "刪除此行"
 
 #: src/ui/pages/albums_all.blp:20 src/ui/pages/artists.blp:20
 #: src/ui/pages/playlists.blp:20 src/ui/pages/songs_all.blp:20
@@ -808,7 +808,7 @@ msgstr "未找到元素"
 #: src/ui/pages/login.blp:102 src/ui/pages/login.blp:103
 #: src/widgets/pages/login.py:34 src/widgets/pages/login.py:68
 msgid "Login"
-msgstr "登錄"
+msgstr "登入"
 
 #: src/ui/pages/login.blp:31
 msgid "Server Status"
@@ -868,7 +868,7 @@ msgstr "搜尋廣播站台"
 
 #: src/ui/pages/radios.blp:26
 msgid "Add Radio"
-msgstr "添加廣播站台"
+msgstr "新增廣播站台"
 
 #: src/ui/pages/radios.blp:61
 msgid "No Radios Found"
@@ -987,11 +987,11 @@ msgstr "平"
 
 #: src/ui/playing/equalizer_page.blp:33
 msgid "Vocal Clarity"
-msgstr "人聲"
+msgstr "人聲清晰"
 
 #: src/ui/playing/equalizer_page.blp:38
 msgid "Smooth Jazz"
-msgstr "時尚爵士"
+msgstr "柔和爵士"
 
 #: src/ui/playing/equalizer_page.blp:43
 msgid "Rock"
@@ -1007,17 +1007,17 @@ msgstr "原聲"
 
 #: src/ui/playing/footer.blp:12
 msgid "Current song progress indicator"
-msgstr "當前歌曲進度指示器"
+msgstr "目前歌曲進度指示器"
 
 #: src/ui/playing/footer.blp:34
 msgid "Current song cover art"
-msgstr "當前歌曲封面"
+msgstr "目前歌曲封面"
 
 #: src/ui/playing/lyrics_page.blp:24 src/ui/playing/lyrics_page.blp:65
 #: src/ui/playing/lyrics_page.blp:95 src/ui/playing/lyrics_page.blp:99
 #: src/ui/playing/lyrics_page.blp:112 src/ui/playing/lyrics_page.blp:116
 msgid "Go Back"
-msgstr "回去"
+msgstr "返回"
 
 #: src/ui/playing/lyrics_page.blp:92
 msgid "No Lyrics Found"
@@ -1043,7 +1043,7 @@ msgstr "載入歌詞檔案"
 
 #: src/ui/playing/popout_window.blp:5
 msgid "Pop-out Window"
-msgstr "彈出窗口"
+msgstr "彈出視窗"
 
 #: src/ui/playing/popout_window.blp:223 src/ui/window.blp:153
 msgid "Player"
@@ -1052,11 +1052,11 @@ msgstr "播放器"
 #: src/ui/playing/popout_window.blp:240 src/ui/shortcuts-dialog.blp:16
 #: src/ui/window.blp:254 src/widgets/playing/popout_window.py:63
 msgid "Toggle Fullscreen"
-msgstr "切換全屏"
+msgstr "切換全螢幕"
 
 #: src/ui/playing/popout_window.blp:293 src/ui/window.blp:193
 msgid "Song Details"
-msgstr "歌曲詳情"
+msgstr "歌曲詳細資訊"
 
 #: src/ui/playing/popout_window.blp:313 src/ui/window.blp:159
 #: src/ui/window.blp:215
@@ -1078,7 +1078,7 @@ msgstr "自動播放"
 
 #: src/ui/playing/queue_page.blp:25
 msgid "Generate a new queue when the current one ends"
-msgstr "當前歌曲清單結束時，將會產生一個新的待播清單。"
+msgstr "目前歌曲清單結束時，將會產生新的待播清單。"
 
 #: src/ui/playing/volume_button.blp:5
 msgid "Volume"
@@ -1103,11 +1103,11 @@ msgstr "顯示播放清單"
 #: src/ui/playlist/button.blp:56 src/ui/playlist/page.blp:50
 #: src/ui/playlist/row.blp:32 src/ui/playlist/selector_row.blp:24
 msgid "Playlist cover art"
-msgstr "播放清單"
+msgstr "播放清單封面"
 
 #: src/ui/playlist/button.blp:68
 msgid "Enter playlist page"
-msgstr "輸入播放清單頁面"
+msgstr "進入播放清單頁面"
 
 #: src/ui/playlist/dialog.blp:6 src/ui/playlist/page.blp:5
 #: src/widgets/playlist/page.py:86
@@ -1120,7 +1120,7 @@ msgstr "搜尋 (或者建立新的播放清單)"
 
 #: src/ui/playlist/dialog.blp:20
 msgid "Adding Music to Playlist"
-msgstr "添加音樂到播放清單"
+msgstr "將音樂加入播放清單"
 
 #: src/ui/playlist/dialog.blp:34
 msgid "Create new playlist and add songs"
@@ -1128,7 +1128,7 @@ msgstr "建立新的播放清單與加入歌曲"
 
 #: src/ui/preferences.blp:7
 msgid "General"
-msgstr "通常"
+msgstr "一般"
 
 #: src/ui/preferences.blp:10
 msgid "Behavior"
@@ -1152,7 +1152,7 @@ msgstr ""
 
 #: src/ui/preferences.blp:29
 msgid "Session"
-msgstr "會話"
+msgstr "工作階段"
 
 #: src/ui/preferences.blp:32
 msgid "ListenBrainz Link"
@@ -1172,7 +1172,7 @@ msgstr ""
 
 #: src/ui/preferences.blp:61
 msgid "User"
-msgstr "用戶"
+msgstr "使用者"
 
 #: src/ui/preferences.blp:81
 msgid "Logout"
@@ -1358,7 +1358,7 @@ msgstr "顯示快捷鍵"
 
 #: src/ui/shortcuts-dialog.blp:12
 msgid "Show Preferences"
-msgstr "顯示設置"
+msgstr "顯示偏好設定"
 
 #: src/ui/shortcuts-dialog.blp:20 src/ui/window.blp:249
 msgid "Open Pop-Out Window"
@@ -1366,15 +1366,15 @@ msgstr ""
 
 #: src/ui/shortcuts-dialog.blp:24
 msgid "Quit"
-msgstr "退出"
+msgstr "離開"
 
 #: src/ui/song/row.blp:41
 msgid "Drag icon"
-msgstr "拖動圖標"
+msgstr "拖曳圖示"
 
 #: src/ui/song/row.blp:139
 msgid "Selection box"
-msgstr "選擇框"
+msgstr "選取方塊"
 
 #: src/ui/song/small_row.blp:37
 msgid "Song cover art"
@@ -1435,12 +1435,12 @@ msgstr ""
 
 #: src/widgets/artist/button.py:43 src/widgets/artist/row.py:48
 msgid "1 Album"
-msgstr "1 專輯"
+msgstr "1 張專輯"
 
 #: src/widgets/artist/button.py:45 src/widgets/artist/row.py:50
 #, python-brace-format
 msgid "{} Albums"
-msgstr "{} 專輯"
+msgstr "{} 張專輯"
 
 #: src/widgets/artist/page.py:50
 msgid "Top Songs"
@@ -1509,12 +1509,12 @@ msgstr "1 首歌曲"
 
 #: src/widgets/playlist/dialog.py:55
 msgid "New Playlist"
-msgstr "新建播放清單"
+msgstr "新增播放清單"
 
 #: src/widgets/playlist/selector_row.py:34
 #, python-brace-format
 msgid "Add songs to '{}'"
-msgstr "在 '{}' 添加歌曲標題"
+msgstr "將歌曲加入 '{}'"
 
 #: src/widgets/song/row.py:146 src/widgets/song/row.py:151
 msgid "Multiple Artists"
