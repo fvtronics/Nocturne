@@ -149,6 +149,7 @@ TRANSLATORS = [
     "Martin Prokoph (German) https://github.com/Motschen",
     "Aleksandr Shamaraev (Russian) https://github.com/AlexanderShad",
     "Muhammed Emin Akalan (Turkish) https://github.com/muhammedeminakalan",
+    "Yuan Chiu (Traditional Chinese) https://yuaner.tw",
     "Saul Gman (Simplified Chinese) https://github.com/Ja4e"
 ]
 
