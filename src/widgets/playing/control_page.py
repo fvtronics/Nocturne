@@ -201,7 +201,7 @@ class PlayingControlPage(Adw.NavigationPage):
             mpris_path = os.path.join(MPRIS_COVER_PATH, "{}.png".format(song_id))
             for old_file in glob.glob(f"{MPRIS_COVER_PATH}/*.png"):
                 os.remove(old_file)
-            if paintable := integration.getCoverArt(song_id):
+            if paintable := integration.getCoverArt(song_id, big=True):
                 GLib.idle_add(self.cover_el.set_paintable, paintable)
                 GLib.idle_add(self.cover_el.set_visible, True)
                 paintable.save_to_png(mpris_path)

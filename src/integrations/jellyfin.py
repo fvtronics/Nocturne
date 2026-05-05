@@ -132,43 +132,45 @@ class Jellyfin(Base):
             return True
         return False
 
-    def getCoverArt(self, model_id:str=None) -> Gdk.Paintable:
-        if model_id:
-            if model := self.loaded_models.get(model_id):
-                if isinstance(model, models.Song) and model.isExternalFile:
-                    return local.Local.getCoverArt(self, model_id)
-                if model.get_property('gdkPaintable') is not None:
-                    return model.get_property('gdkPaintable')
+    def getCoverArt(self, model_id:str='', big:bool=False) -> Gdk.Paintable:
+        if model := self.loaded_models.get(model_id):
+            if isinstance(model, models.Song) and model.get_property('isRadio'):
+                return None
+            if isinstance(model, models.Song) and model.get_property('isExternalFile'):
+                return local.Local.getCoverArt(self, model_id, big=big)
+            if not big and model.get_property('gdkPaintable') is not None:
+                return model.get_property('gdkPaintable')
 
-                params = {
-                    'maxWidth': 720,
-                    'quality': 90
-                }
+            params = {
+                'maxWidth': 720 if big else 240,
+                'quality': 90
+            }
+            try:
+                response = requests.get(
+                    self.get_url('Items/{id}/Images/Primary', id=model_id),
+                    headers=self.get_base_header(),
+                    params=params,
+                    verify=not self.get_property('trustServer'),
+                    timeout=10
+                )
+                # Treat non-200 responses as empty content to avoid
+                # propagating network-related exceptions up and into the UI thread
+                response.raise_for_status()
+                response_bytes = response.content
+            except Exception:
+                response_bytes = b''
+
+            if response_bytes and len(response_bytes) > 0:
                 try:
-                    response = requests.get(
-                        self.get_url('Items/{id}/Images/Primary', id=model_id),
-                        headers=self.get_base_header(),
-                        params=params,
-                        verify=not self.get_property('trustServer'),
-                        timeout=10
-                    )
-                    # Treat non-200 responses as empty content to avoid
-                    # propagating network-related exceptions up and into the UI thread
-                    response.raise_for_status()
-                    response_bytes = response.content
-                except Exception:
-                    response_bytes = b''
-
-                if response_bytes and len(response_bytes) > 0:
-                    try:
-                        gbytes = GLib.Bytes.new(response_bytes)
-                        texture = Gdk.Texture.new_from_bytes(gbytes)
-                        model.set_property('gdkPaintable', texture)
-                        return model.get_property('gdkPaintable')
-                    except Exception as e:
-                        pass
-
-        return None, None
+                    gbytes = GLib.Bytes.new(response_bytes)
+                    texture = Gdk.Texture.new_from_bytes(gbytes)
+                    if big:
+                        return texture
+                    model.set_property('gdkPaintable', texture)
+                    return model.get_property('gdkPaintable')
+                except Exception as e:
+                    pass
+        return None
 
     def ping(self) -> bool:
         self.set_property('accessToken', "")

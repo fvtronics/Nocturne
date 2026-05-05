@@ -121,7 +121,7 @@ class PopoutWindow(Adw.ApplicationWindow):
             self.fs_artist_el.set_action_name("app.show_artist")
 
             # Paintable
-            paintable = integration.getCoverArt(id)
+            paintable = integration.getCoverArt(id, big=True)
             if paintable:
                 self.cover_el.remove_css_class('p50')
             else:

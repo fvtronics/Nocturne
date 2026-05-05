@@ -90,38 +90,38 @@ class Navidrome(Base):
         query_string = "&".join([f"{k}={v}" for k, v in params.items()])
         return '{}/rest/stream?{}'.format(self.get_property('url').strip('/'), query_string)
 
-    def getCoverArt(self, model_id:str=None) -> Gdk.Paintable:
-        if model_id:
-            if model:= self.loaded_models.get(model_id):
-                if isinstance(model, models.Song) and model.get_property('isRadio'):
-                    return None, None
-                if isinstance(model, models.Song) and model.get_property('isExternalFile'):
-                    return local.Local.getCoverArt(self, model_id)
-                if model.get_property('gdkPaintable'):
+    def getCoverArt(self, model_id:str='', big:bool=False) -> Gdk.Paintable:
+        if model := self.loaded_models.get(model_id):
+            if isinstance(model, models.Song) and model.get_property('isRadio'):
+                return None
+            if isinstance(model, models.Song) and model.get_property('isExternalFile'):
+                return local.Local.getCoverArt(self, model_id, big=big)
+            if not big and model.get_property('gdkPaintable'):
+                return model.get_property('gdkPaintable')
+
+            params = {
+                **self.get_base_params(),
+                'id': model.get_property('coverArt') or model.get_property('id'),
+                'size': 720 if big else 240
+            }
+            response = requests.get(
+                self.get_url('getCoverArt'),
+                params=params,
+                verify=not self.get_property('trustServer')
+            )
+            response_bytes = response.content if response.status_code == 200 else b''
+
+            if response_bytes and len(response_bytes) > 0:
+                try:
+                    gbytes = GLib.Bytes.new(response_bytes)
+                    texture = Gdk.Texture.new_from_bytes(gbytes)
+                    if big:
+                        return texture
+                    model.set_property('gdkPaintable', texture)
                     return model.get_property('gdkPaintable')
-
-                params = {
-                    **self.get_base_params(),
-                    'id': model.get_property('coverArt') or model.get_property('id'),
-                    'size': 720
-                }
-                response = requests.get(
-                    self.get_url('getCoverArt'),
-                    params=params,
-                    verify=not self.get_property('trustServer')
-                )
-                response_bytes = response.content if response.status_code == 200 else b''
-
-                if response_bytes and len(response_bytes) > 0:
-                    try:
-                        gbytes = GLib.Bytes.new(response_bytes)
-                        texture = Gdk.Texture.new_from_bytes(gbytes)
-                        model.set_property('gdkPaintable', texture)
-                        return model.get_property('gdkPaintable')
-                    except Exception as e:
-                        pass
-
-        return None, None
+                except Exception as e:
+                    pass
+        return None
 
     def ping(self) -> bool:
         try:

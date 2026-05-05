@@ -85,11 +85,13 @@ class Base(GObject.Object):
         os.makedirs(directory, exist_ok=True)
         return directory
 
-    def getCoverArt(self, model_id:str=None) -> Gdk.Paintable:
-        # should set GdkPaintable from Model
+    def getCoverArt(self, model_id:str='', big:bool=False) -> Gdk.Paintable:
+        # should set gdkPaintable to Model
         # should return Gdk.Paintable (texture)
+        # Important: if big is set to True then DO NOT save the picture to the model, just return it
+        # Resolutios: 240 normally, 720 if big is set to True
         print('WARNING', 'getCoverArt', 'not implemented')
-        return None, None
+        return None
 
     def ping(self) -> bool:
         # return True if logged in and connection is successful

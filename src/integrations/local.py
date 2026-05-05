@@ -86,34 +86,41 @@ class Local(Base):
             return model.get_property('streamUrl')
         return 'file://{}'.format(model.get_property('path'))
 
-    def getCoverArt(self, model_id:str=None) -> Gdk.Paintable:
-        if model_id:
-            if model := self.loaded_models.get(model_id):
-                if isinstance(model, models.Song) and model.get_property('isRadio'):
-                    return None, None
-                if not isinstance(model, models.Playlist) and model.get_property('gdkPaintable'):
-                    return model.get_property('gdkPaintable')
+    def getCoverArt(self, model_id:str='', big:bool=False) -> Gdk.Paintable:
+        if model := self.loaded_models.get(model_id):
+            if isinstance(model, models.Song) and model.get_property('isRadio'):
+                return None
+            if not big and not isinstance(model, models.Playlist) and model.get_property('gdkPaintable'):
+                return model.get_property('gdkPaintable')
 
-                coverArtPath = model.get_property('coverArt')
-                if not coverArtPath:
-                    return None, None
+            coverArtPath = model.get_property('coverArt')
+            if not coverArtPath:
+                return None
 
-                tag = TinyTag.get(coverArtPath, image=True)
-                if tag is None:
-                    return None, None
+            tag = TinyTag.get(coverArtPath, image=True)
+            if tag is None:
+                return None
 
-                raw_data = tag.get_image()
-                if not raw_data:
-                    return None, None
+            image_data = tag.get_image()
+            if not image_data:
+                return None
 
-                try:
-                    gbytes = GLib.Bytes.new(raw_data)
-                    texture = Gdk.Texture.new_from_bytes(gbytes)
-                    model.set_property('gdkPaintable', texture)
-                    return model.get_property('gdkPaintable')
-                except Exception as e:
-                    pass
-        return None, None
+            try:
+                img = Image.open(io.BytesIO(image_data))
+                width = 720 if big else 240
+                w_percent = (width / float(img.size[0]))
+                height = int((float(img.size[1]) * float(w_percent)))
+                resized_img = img.resize((width, height), Image.LANCZOS)
+                buffer = io.BytesIO()
+                resized_img.save(buffer, format="JPEG", quality=85)
+                raw_data = buffer.getvalue()
+                gbytes = GLib.Bytes.new(raw_data)
+                texture = Gdk.Texture.new_from_bytes(gbytes)
+                model.set_property('gdkPaintable', texture)
+                return model.get_property('gdkPaintable')
+            except Exception as e:
+                pass
+        return None
 
     def ping(self) -> bool:
         # Always true, it checks it at login
