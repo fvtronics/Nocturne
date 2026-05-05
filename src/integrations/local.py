@@ -86,14 +86,13 @@ class Local(Base):
             return model.get_property('streamUrl')
         return 'file://{}'.format(model.get_property('path'))
 
-    def getCoverArt(self, model_id:str=None) -> tuple:
-        # returns bytes, Gdk.Paintable or None, None
+    def getCoverArt(self, model_id:str=None) -> Gdk.Paintable:
         if model_id:
             if model := self.loaded_models.get(model_id):
-                if isinstance(model, models.Song) and model.isRadio:
+                if isinstance(model, models.Song) and model.get_property('isRadio'):
                     return None, None
-                if not isinstance(model, models.Playlist) and model.gdkPaintable:
-                    return model.gdkPaintableBytes, model.gdkPaintable
+                if not isinstance(model, models.Playlist) and model.get_property('gdkPaintable'):
+                    return model.get_property('gdkPaintable')
 
                 coverArtPath = model.get_property('coverArt')
                 if not coverArtPath:
@@ -110,9 +109,8 @@ class Local(Base):
                 try:
                     gbytes = GLib.Bytes.new(raw_data)
                     texture = Gdk.Texture.new_from_bytes(gbytes)
-                    model.set_property('gdkPaintableBytes', gbytes)
                     model.set_property('gdkPaintable', texture)
-                    return model.get_property('gdkPaintableBytes'), model.get_property('gdkPaintable')
+                    return model.get_property('gdkPaintable')
                 except Exception as e:
                     pass
         return None, None

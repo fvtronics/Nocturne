@@ -563,7 +563,8 @@ class Player(EventAdapter):
                 self.last_song_id = songId
                 self.rg_volume.set_property("fallback-gain", new_gain)
                 self.rg_volume.set_property("album-mode", album_mode)
-                threading.Thread(target=self.update_palette, args=(bytes(model.get_property('gdkPaintableBytes').get_data()),)).start()
+                if raw_bytes := model.get_property('gdkPaintable').save_to_png_bytes().get_data():
+                    threading.Thread(target=self.update_palette, args=(raw_bytes,)).start()
 
         if song_id:
             if song_id != self.last_song_id:

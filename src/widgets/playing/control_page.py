@@ -197,13 +197,11 @@ class PlayingControlPage(Adw.NavigationPage):
     def update_cover_art(self):
         integration = get_current_integration()
         song_id = integration.loaded_models.get('currentSong').get_property('songId')
-        if song_id:
+        if model := integration.loaded_models.get(song_id):
             mpris_path = os.path.join(MPRIS_COVER_PATH, "{}.png".format(song_id))
             for old_file in glob.glob(f"{MPRIS_COVER_PATH}/*.png"):
                 os.remove(old_file)
-
-            gbytes, paintable = integration.getCoverArt(song_id)
-            if paintable:
+            if paintable := model.get_property('gdkPaintable'):
                 GLib.idle_add(self.cover_el.set_paintable, paintable)
                 GLib.idle_add(self.cover_el.set_visible, True)
                 paintable.save_to_png(mpris_path)

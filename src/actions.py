@@ -27,14 +27,14 @@ def __show_page(window, page):
 
 def __show_custom_toast(window, model_id:str, title_property:str, subtitle:str, icon_name:str=None):
     integration = get_current_integration()
+    model = integration.loaded_models.get(model_id)
     custom_widget = Adw.ActionRow(
-        title=integration.loaded_models.get(model_id).get_property(title_property) if model_id else title_property,
+        title=model.get_property(title_property) if model else title_property,
         subtitle=subtitle
     )
     if icon_name:
         custom_widget.set_icon_name(icon_name)
     else:
-        gbytes, paintable = integration.getCoverArt(model_id)
         album_art = Gtk.Image(
             css_classes=['card'],
             height_request=48,
@@ -43,7 +43,7 @@ def __show_custom_toast(window, model_id:str, title_property:str, subtitle:str, 
             halign=Gtk.Align.CENTER,
             valign=Gtk.Align.CENTER,
         )
-        if paintable:
+        if paintable := model.get_property('gdkPaintable'):
             album_art.set_from_paintable(paintable)
             album_art.set_pixel_size(48)
         else:

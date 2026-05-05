@@ -44,7 +44,6 @@ class PlaylistPage(Adw.NavigationPage):
         integration.connect_to_model(self.id, 'duration', self.update_duration)
         integration.connect_to_model(self.id, 'entry', self.update_song_list)
         integration.connect_to_model(self.id, 'gdkPaintable', self.update_cover)
-        integration.connect_to_model(self.id, 'gdkPaintableBytes', self.update_background)
 
         self.song_list_el.playlist_id = self.id
         self.song_ids = []
@@ -55,30 +54,30 @@ class PlaylistPage(Adw.NavigationPage):
         if paintable:
             self.cover_el.set_from_paintable(paintable)
             self.cover_el.set_pixel_size(240)
+            self.update_background(paintable.save_to_png_bytes().get_data())
         elif isinstance(self.cover_el.get_paintable(), Adw.SpinnerPaintable):
             self.cover_el.set_from_icon_name("music-note-symbolic")
             self.cover_el.set_pixel_size(-1)
 
-    def update_background(self, gbytes:bytes):
+    def update_background(self, raw_bytes:bytes):
         def run():
-            if raw_bytes := gbytes.get_data():
-                img_io = io.BytesIO(raw_bytes)
-                color = ColorThief(img_io).get_color(quality=10)
-                css = f"""
-                clamp {{
-                    transition: background .2s;
-                    background: linear-gradient(180deg, color-mix(in srgb, rgb({','.join([str(c) for c in color])}) 50%, transparent), transparent 30%);
-                    background-size: 100% 1000px;
-                    background-repeat: no-repeat;
-                }}
-                """
-                provider = Gtk.CssProvider()
-                provider.load_from_data(css.encode())
-                GLib.idle_add(self.clamp_el.get_style_context().add_provider,
-                    provider,
-                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-                )
-        if gbytes:
+            img_io = io.BytesIO(raw_bytes)
+            color = ColorThief(img_io).get_color(quality=10)
+            css = f"""
+            clamp {{
+                transition: background .2s;
+                background: linear-gradient(180deg, color-mix(in srgb, rgb({','.join([str(c) for c in color])}) 50%, transparent), transparent 30%);
+                background-size: 100% 1000px;
+                background-repeat: no-repeat;
+            }}
+            """
+            provider = Gtk.CssProvider()
+            provider.load_from_data(css.encode())
+            GLib.idle_add(self.clamp_el.get_style_context().add_provider,
+                provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
+        if raw_bytes:
             threading.Thread(target=run).start()
 
     def update_name(self, name:str):

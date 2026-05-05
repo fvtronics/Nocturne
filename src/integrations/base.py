@@ -85,9 +85,9 @@ class Base(GObject.Object):
         os.makedirs(directory, exist_ok=True)
         return directory
 
-    def getCoverArt(self, model_id:str=None) -> tuple:
-        # should set GdkPaintable and gdkPaintableBytes from Model
-        # should return GLib.Bytes, Gdk.Paintable (texture)
+    def getCoverArt(self, model_id:str=None) -> Gdk.Paintable:
+        # should set GdkPaintable from Model
+        # should return Gdk.Paintable (texture)
         print('WARNING', 'getCoverArt', 'not implemented')
         return None, None
 

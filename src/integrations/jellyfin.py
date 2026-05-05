@@ -132,13 +132,13 @@ class Jellyfin(Base):
             return True
         return False
 
-    def getCoverArt(self, model_id:str=None) -> tuple:
+    def getCoverArt(self, model_id:str=None) -> Gdk.Paintable:
         if model_id:
             if model := self.loaded_models.get(model_id):
                 if isinstance(model, models.Song) and model.isExternalFile:
                     return local.Local.getCoverArt(self, model_id)
                 if model.get_property('gdkPaintable') is not None:
-                    return model.get_property('gdkPaintableBytes'), model.get_property('gdkPaintable')
+                    return model.get_property('gdkPaintable')
 
                 params = {
                     'maxWidth': 720,
@@ -163,9 +163,8 @@ class Jellyfin(Base):
                     try:
                         gbytes = GLib.Bytes.new(response_bytes)
                         texture = Gdk.Texture.new_from_bytes(gbytes)
-                        model.set_property('gdkPaintableBytes', gbytes)
                         model.set_property('gdkPaintable', texture)
-                        return model.get_property('gdkPaintableBytes'), model.get_property('gdkPaintable')
+                        return model.get_property('gdkPaintable')
                     except Exception as e:
                         pass
 

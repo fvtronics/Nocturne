@@ -90,16 +90,15 @@ class Navidrome(Base):
         query_string = "&".join([f"{k}={v}" for k, v in params.items()])
         return '{}/rest/stream?{}'.format(self.get_property('url').strip('/'), query_string)
 
-    def getCoverArt(self, model_id:str=None) -> tuple:
-        # returns bytes, Gdk.Paintable or None, None
+    def getCoverArt(self, model_id:str=None) -> Gdk.Paintable:
         if model_id:
             if model:= self.loaded_models.get(model_id):
-                if isinstance(model, models.Song) and model.isRadio:
+                if isinstance(model, models.Song) and model.get_property('isRadio'):
                     return None, None
-                if isinstance(model, models.Song) and model.isExternalFile:
+                if isinstance(model, models.Song) and model.get_property('isExternalFile'):
                     return local.Local.getCoverArt(self, model_id)
                 if model.get_property('gdkPaintable'):
-                    return model.get_property('gdkPaintableBytes'), model.get_property('gdkPaintable')
+                    return model.get_property('gdkPaintable')
 
                 params = {
                     **self.get_base_params(),
@@ -117,9 +116,8 @@ class Navidrome(Base):
                     try:
                         gbytes = GLib.Bytes.new(response_bytes)
                         texture = Gdk.Texture.new_from_bytes(gbytes)
-                        model.set_property('gdkPaintableBytes', gbytes)
                         model.set_property('gdkPaintable', texture)
-                        return model.get_property('gdkPaintableBytes'), model.get_property('gdkPaintable')
+                        return model.get_property('gdkPaintable')
                     except Exception as e:
                         pass
 

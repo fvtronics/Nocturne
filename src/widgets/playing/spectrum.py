@@ -131,9 +131,8 @@ class Spectrum(Gtk.DrawingArea):
 
     def song_changed(self, songId:str):
         def set_color(model):
-            if gbytes := model.get_property('gdkPaintableBytes'):
-                raw_bytes = bytes(gbytes.get_data())
-                img_io = io.BytesIO(raw_bytes)
+            if paintable := model.get_property('gdkPaintable'):
+                img_io = io.BytesIO(paintable.save_to_png_bytes().get_data())
                 self.accent_color = [min(c/255, 1) for c in ColorThief(img_io).get_color(quality=10)]
 
         integration = get_current_integration()
