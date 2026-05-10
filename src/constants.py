@@ -114,11 +114,24 @@ def get_display_time(seconds:float, show_ms:bool=False) -> str:
         # Format MM:SS.ms
         return f"{minutes:02.0f}:{seconds_str}"
 
+def _normalize_artists(values:list[str]) -> list[str]:
+    artists = []
+    for value in values:
+        for artist_name in value.split(';'):
+            artist_name = artist_name.strip()
+            if artist_name and artist_name not in artists:
+                artists.append(artist_name)
+    return artists
+
 def get_song_info_from_file(file_path:str, star_dict:dict={}, is_external_file:bool=False) -> dict | None:
     tag = TinyTag.get(file_path)
     if not tag:
         return None
-    album_artist = (tag.albumartist or tag.artist or "").split(';')[0].strip()
+
+    artists = _normalize_artists(tag.as_dict().get('artist', []))
+    album_artists = _normalize_artists([tag.albumartist or ""])
+    album_artist = album_artists[0] if album_artists else (artists[0] if artists else "")
+
     song = {
         'path': file_path,
         'coverArt': file_path,
@@ -127,10 +140,10 @@ def get_song_info_from_file(file_path:str, star_dict:dict={}, is_external_file:b
         'album': tag.album or "",
         'artist': album_artist,
         'artists': [{
-            'id': "ARTIST:{}".format(art.strip()),
-            'name': art.strip(),
-            'starred': star_dict.get("ARTIST:{}".format(art.strip()))
-        } for art in tag.artist.split(';')],
+            'id': "ARTIST:{}".format(artist_name),
+            'name': artist_name,
+            'starred': star_dict.get("ARTIST:{}".format(artist_name))
+        } for artist_name in artists],
         'track': tag.track or 0,
         'isExternalFile': is_external_file,
         'discNumber': tag.disc or 0,
@@ -430,4 +443,3 @@ CONTEXT_MANAGED_NAVIDROME_SERVER = {
         "action-name": "app.delete_navidrome_server"
     }
 }
-
