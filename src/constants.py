@@ -50,6 +50,7 @@ DOWNLOAD_MIME_MAP = {
     "audio/flac": ".flac",
     "audio/x-flac": ".flac",
     "audio/ogg": ".ogg",
+    "audio/opus": ".opus",
     "audio/wav": ".wav",
     "audio/mp4": ".m4a",
     "audio/x-m4a": ".m4a"
