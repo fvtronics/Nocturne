@@ -97,6 +97,8 @@ class PopoutWindow(Adw.ApplicationWindow):
 
     @Gtk.Template.Callback()
     def close_request(self, window):
+        if application := self.get_application():
+            application.uninhibit_idle()
         if self.get_application().main_window.get_hide_on_close():
             self.get_application().main_window.present()
 
@@ -164,4 +166,10 @@ class PopoutWindow(Adw.ApplicationWindow):
 
     @Gtk.Template.Callback()
     def fullscreen_toggled(self, window, gparam):
-        self.toggle_fullscreen_el.set_icon_name('view-unfullscreen-symbolic' if window.is_fullscreen() else 'view-fullscreen-symbolic')
+        fullscreen = window.is_fullscreen()
+        self.toggle_fullscreen_el.set_icon_name('view-unfullscreen-symbolic' if fullscreen else 'view-fullscreen-symbolic')
+        if application := self.get_application():
+            if fullscreen:
+                application.inhibit_idle(self)
+            else:
+                application.uninhibit_idle()

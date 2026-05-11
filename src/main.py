@@ -47,6 +47,7 @@ class NocturneApplication(Adw.Application):
         self.popout_window = None
         self.player = None
         self.inhibit_cookie = None
+        self.idle_inhibit_cookie = None
         self.css_provider = Gtk.CssProvider()
         Gtk.StyleContext.add_provider_for_display(
             Gdk.Display.get_default(),
@@ -73,6 +74,19 @@ class NocturneApplication(Adw.Application):
         if self.inhibit_cookie is not None:
             self.uninhibit(self.inhibit_cookie)
             self.inhibit_cookie = None
+
+    def inhibit_idle(self, window=None):
+        if self.idle_inhibit_cookie is None:
+            self.idle_inhibit_cookie = self.inhibit(
+                window or self.get_active_window(),
+                Gtk.ApplicationInhibitFlags.IDLE,
+                _("Fullscreen Player Active")
+            )
+
+    def uninhibit_idle(self):
+        if self.idle_inhibit_cookie is not None:
+            self.uninhibit(self.idle_inhibit_cookie)
+            self.idle_inhibit_cookie = None
 
     def load_default_integration(self):
         settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
