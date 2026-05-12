@@ -47,6 +47,7 @@ class NocturneApplication(Adw.Application):
         self.popout_window = None
         self.player = None
         self.inhibit_cookie = None
+        self.idle_inhibit_cookie = None
         self.css_provider = Gtk.CssProvider()
         Gtk.StyleContext.add_provider_for_display(
             Gdk.Display.get_default(),
@@ -74,6 +75,19 @@ class NocturneApplication(Adw.Application):
             self.uninhibit(self.inhibit_cookie)
             self.inhibit_cookie = None
 
+    def inhibit_idle(self, window=None):
+        if self.idle_inhibit_cookie is None:
+            self.idle_inhibit_cookie = self.inhibit(
+                window or self.get_active_window(),
+                Gtk.ApplicationInhibitFlags.IDLE,
+                _("Fullscreen Player Active")
+            )
+
+    def uninhibit_idle(self):
+        if self.idle_inhibit_cookie is not None:
+            self.uninhibit(self.idle_inhibit_cookie)
+            self.idle_inhibit_cookie = None
+
     def load_default_integration(self):
         settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
         selected_local_folder = settings.get_value("integration-library-dir").unpack()
@@ -90,7 +104,7 @@ class NocturneApplication(Adw.Application):
                 directory = settings.get_value('integration-library-dir').unpack()
                 if Gio.File.new_for_path(directory).query_exists():
                     integration.set_property('libraryDir', directory)
-                threading.Thread(target=self.try_login, args=(integration,)).start()
+                threading.Thread(target=self.try_login, args=(integration,), daemon=True).start()
                 return
         self.main_window.main_stack.set_visible_child_name('welcome')
 
@@ -106,9 +120,9 @@ class NocturneApplication(Adw.Application):
             settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
             default_page = settings.get_value('default-page-tag').unpack() or 'home'
             self.main_window.activate_action("app.replace_root_page", GLib.Variant('s', default_page))
-            GLib.idle_add(threading.Thread(target=self.main_window.update_playlist_section_of_sidebar).start)
+            GLib.idle_add(threading.Thread(target=self.main_window.update_playlist_section_of_sidebar, daemon=True).start)
             if settings.get_value("restore-session").unpack():
-                threading.Thread(target=self.player.restore_play_queue).start()
+                threading.Thread(target=self.player.restore_play_queue, daemon=True).start()
             if dialog := self.main_window.get_visible_dialog():
                 dialog.close()
         else:

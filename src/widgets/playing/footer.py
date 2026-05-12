@@ -66,7 +66,7 @@ class PlayingFooter(Gtk.Overlay):
         if song := integration.loaded_models.get(song_id):
             artists = song.get_property('artists')
             self.progress_el.get_adjustment().set_upper(song.get_property('duration'))
-            threading.Thread(target=self.update_cover_art).start()
+            threading.Thread(target=self.update_cover_art, daemon=True).start()
 
     def display_title_changed(self, display_title:str):
         self.title_el.set_label(display_title)

@@ -65,7 +65,7 @@ class ArtistPage(Adw.NavigationPage):
         self.top_songs_wrapbox.list_el.set_justify_last_line(True)
         self.top_songs_wrapbox.list_el.set_child_spacing(5)
         self.top_songs_wrapbox.list_el.set_line_spacing(5)
-        threading.Thread(target=self.update_top_songs).start()
+        threading.Thread(target=self.update_top_songs, daemon=True).start()
 
     def update_top_songs(self):
         # call in different thread
@@ -106,7 +106,7 @@ class ArtistPage(Adw.NavigationPage):
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
         if raw_bytes:
-            threading.Thread(target=run).start()
+            threading.Thread(target=run, daemon=True).start()
 
     def update_name(self, name:str):
         self.avatar_el.set_tooltip_text(name)

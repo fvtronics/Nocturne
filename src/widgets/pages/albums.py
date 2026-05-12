@@ -22,7 +22,7 @@ class AlbumsPage(Adw.NavigationPage):
 
     def check_scrollbar(self, adjustment):
         if adjustment.get_upper() <= adjustment.get_page_size():
-            threading.Thread(target=self.load_albums).start()
+            threading.Thread(target=self.load_albums, daemon=True).start()
 
     def reload(self):
         GLib.idle_add(self.main_stack.set_visible_child_name, 'loading')
@@ -30,7 +30,7 @@ class AlbumsPage(Adw.NavigationPage):
         self.loading = False
         GLib.idle_add(self.reset)
         GLib.idle_add(self.end_stack.set_visible_child_name, 'loading')
-        threading.Thread(target=self.load_albums).start()
+        threading.Thread(target=self.load_albums, daemon=True).start()
 
     def reset(self):
         self.list_el.remove_all()
@@ -64,7 +64,7 @@ class AlbumsPage(Adw.NavigationPage):
     @Gtk.Template.Callback()
     def scroll_edge_reached(self, scrolledwindow, pos):
         if pos == Gtk.PositionType.BOTTOM and self.end_stack.get_visible_child_name() == 'loading':
-            threading.Thread(target=self.load_albums).start()
+            threading.Thread(target=self.load_albums, daemon=True).start()
 
     def update_visibility(self):
         for row in list(self.list_el.list_el):

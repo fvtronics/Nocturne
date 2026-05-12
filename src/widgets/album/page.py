@@ -119,7 +119,7 @@ class AlbumPage(Adw.NavigationPage):
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
         if raw_bytes:
-            threading.Thread(target=run).start()
+            threading.Thread(target=run, daemon=True).start()
 
     def update_rating(self, rating:int):
         for i, el in enumerate(list(self.rating_container)):
@@ -174,7 +174,7 @@ class AlbumPage(Adw.NavigationPage):
             GLib.idle_add(self.song_list_el.list_el.invalidate_sort)
             GLib.idle_add(self.connect_rows)
         if len(list(self.song_list_el.list_el)) != song_list:
-            threading.Thread(target=run).start()
+            threading.Thread(target=run, daemon=True).start()
 
     def connect_rows(self):
         song_ids = []
@@ -183,7 +183,8 @@ class AlbumPage(Adw.NavigationPage):
             row.set_action_name(None)
             row.set_action_target_value(GLib.Variant('a{sv}', {
                 'songId': GLib.Variant('s', row.id),
-                'songs': GLib.Variant('as', song_ids)
+                'songs': GLib.Variant('as', song_ids),
+                'originId': GLib.Variant('s', self.id)
             }))
             row.set_action_name('app.play_song_from_list')
 

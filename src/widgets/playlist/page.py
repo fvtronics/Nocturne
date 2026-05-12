@@ -78,7 +78,7 @@ class PlaylistPage(Adw.NavigationPage):
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
         if raw_bytes:
-            threading.Thread(target=run).start()
+            threading.Thread(target=run, daemon=True).start()
 
     def update_name(self, name:str):
         self.name_el.set_label(name)
@@ -95,7 +95,8 @@ class PlaylistPage(Adw.NavigationPage):
                 row.set_action_name('app.play_song_from_list')
                 row.set_action_target_value(GLib.Variant('a{sv}', {
                     'songId': GLib.Variant('s', songId),
-                    'songs': GLib.Variant('as', self.song_ids)
+                    'songs': GLib.Variant('as', self.song_ids),
+                    'originId': GLib.Variant('s', self.id)
                 }))
                 GLib.idle_add(self.song_list_el.list_el.append, row)
             self.current_offset += 50
@@ -106,12 +107,12 @@ class PlaylistPage(Adw.NavigationPage):
         self.song_list_el.main_stack.set_visible_child_name('content' if len(song_list) > 0 else 'no-content')
         self.song_ids = [s.get('id') for s in song_list]
         self.current_offset = 0
-        threading.Thread(target=self.load_song_rows).start()
+        threading.Thread(target=self.load_song_rows, daemon=True).start()
 
     @Gtk.Template.Callback()
     def scroll_edge_reached(self, scrolledwindow, pos):
         if pos == Gtk.PositionType.BOTTOM:
-            threading.Thread(target=self.load_song_rows).start()
+            threading.Thread(target=self.load_song_rows, daemon=True).start()
 
     def update_song_count(self, songCount:int):
         if songCount == 1:

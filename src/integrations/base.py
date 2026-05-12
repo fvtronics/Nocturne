@@ -31,20 +31,22 @@ class Base(GObject.Object):
     # Show spinner in sidebar with message as tooltip text if set
     loadingMessage = GObject.Property(type=str)
 
-    def open_json(self, filename:str, is_list:bool=False) -> dict | list:
+    def open_json(self, filename:str, fallback={}) -> dict:
         # loads a JSON file from the current integration
         try:
             with open(os.path.join(self.getIntegrationDir(), filename), 'r') as f:
-                result = json.load(f)
-                if is_list:
-                    if not isinstance(result, list):
-                        return []
-                else:
-                    if not isinstance(result, dict):
-                        return {}
-                return result
+                return json.load(f)
         except Exception:
-            return [] if is_list else {}
+            pass
+        return fallback
+
+    def save_json(self, filename:str, data:dict):
+        # save JSON to instance specific file
+        try:
+            with open(os.path.join(self.getIntegrationDir(), filename), 'w') as f:
+                json.dump(data, f)
+        except Exception:
+            pass
 
     def check_if_ready(self, row) -> bool:
         # gets called to see if it is ready to show login page
@@ -233,6 +235,8 @@ class Base(GObject.Object):
         # the id is for a Song, this is how views are stored
         # called when a song is played
         # if you need to inherit this, also call super().scrobble(id) so that listenbrainz can also get the scrobble
+
+        # Playback (monthly scrobble)
         playback_scrobble = self.open_json('playback.json')
         date_formated = datetime.now().strftime("%m-%Y")
         if date_formated not in playback_scrobble:
@@ -241,9 +245,9 @@ class Base(GObject.Object):
             playback_scrobble[date_formated][model_id] += 1
         else:
             playback_scrobble[date_formated][model_id] = 1
-        with open(os.path.join(self.getIntegrationDir(), 'playback.json'), 'w') as f:
-            json.dump(playback_scrobble, f, ensure_ascii=False)
+        self.save_json('playback.json', playback_scrobble)
 
+        # ListenBrainz
         if model := self.loaded_models.get(model_id):
             if token := secret.get_plain_password("listenbrainz"):
                 listen_payload = {
@@ -274,6 +278,31 @@ class Base(GObject.Object):
                     response = requests.post("https://api.listenbrainz.org/1/submit-listens", json=payload, headers=headers)
                 except:
                     pass
+
+        # Playlist Resume
+        queue_origin_id = self.loaded_models.get('currentSong').get_property('queueOrigin')
+        if model := self.loaded_models.get(queue_origin_id):
+            if isinstance(model, models.Playlist):
+                playlist_resume_dict = self.open_json('playlist_resume.json')
+                playlist_resume_dict[model.get_property('id')] = model_id
+                self.save_json('playlist_resume.json', playlist_resume_dict)
+
+    def getPlaylistLastPlayedSong(self, model_id:str) -> str:
+        # Works as is, no need to modify
+        # If no song is found it returns the first one from the playlist
+        if playlist := self.loaded_models.get(model_id):
+            playlist_resume_dict = self.open_json('playlist_resume.json')
+            songs = playlist.get_property('entry')
+            fallback_song = ""
+            if len(songs) > 0:
+                fallback_song = songs[0].get('id')
+            return playlist_resume_dict.get(playlist.get_property('id'), fallback_song)
+        return ""
+
+    def getSongDetails(self, model_id:str) -> models.SongDetails:
+        # Fill and return songDetails
+        # Do NOT add it to loaded_models
+        return models.SongDetails()
     
     def getServerInformation(self) -> dict:
         # should return these keys:

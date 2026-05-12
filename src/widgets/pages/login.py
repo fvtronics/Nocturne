@@ -81,7 +81,7 @@ class LoginDialog(Adw.Dialog):
         if row.get_visible() and 'library-dir' in self.integration.login_page_metadata.get('entries'):
             self.integration.set_property('libraryDir', row.get_subtitle())
             self.integration.terminate_instance()
-            threading.Thread(target=self.integration.start_instance).start()
+            threading.Thread(target=self.integration.start_instance, daemon=True).start()
 
     @Gtk.Template.Callback()
     def open_local_directory(self, row):
@@ -115,7 +115,7 @@ class LoginDialog(Adw.Dialog):
         self.integration.set_property('user', self.user_el.get_text())
         secret.store_password(self.password_el.get_text())
         self.integration.set_property('libraryDir', self.directory_el.get_subtitle())
-        threading.Thread(target=self.get_root().get_application().try_login, args=(self.integration,)).start()
+        threading.Thread(target=self.get_root().get_application().try_login, args=(self.integration,), daemon=True).start()
 
     @Gtk.Template.Callback()
     def quick_connect_button_clicked(self, button):
@@ -129,7 +129,7 @@ class LoginDialog(Adw.Dialog):
                 is_authenticated = self.integration.checkQuickConnect(data.get('Secret'))
                 if is_authenticated:
                     GLib.idle_add(dialog.close)
-                    threading.Thread(target=self.get_root().get_application().try_login, args=(self.integration,)).start()
+                    threading.Thread(target=self.get_root().get_application().try_login, args=(self.integration,), daemon=True).start()
                     break
                 time.sleep(5)
                 waited_turns += 1
@@ -157,7 +157,7 @@ class LoginDialog(Adw.Dialog):
                 None,
                 lambda *_: None
             )
-            GLib.idle_add(threading.Thread(target=wait_confirmation, args=(data, dialog)).start)
+            GLib.idle_add(threading.Thread(target=wait_confirmation, args=(data, dialog), daemon=True).start)
 
-        threading.Thread(target=run).start()
+        threading.Thread(target=run, daemon=True).start()
 

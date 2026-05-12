@@ -137,7 +137,7 @@ class Spectrum(Gtk.DrawingArea):
                 self.accent_color = [min(c/255, 1) for c in ColorThief(img_io).get_color(quality=10)]
 
         if integration.loaded_models.get(songId):
-            threading.Thread(target=set_color).start()
+            threading.Thread(target=set_color, daemon=True).start()
         else:
             self.stopped = True
 

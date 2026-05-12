@@ -81,7 +81,7 @@ class LyricsDialog(Adw.Dialog):
         settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
         self.playback_mode_backup = settings.get_value('playback-mode').unpack()
         settings.set_string('playback-mode', 'repeat-one')
-        threading.Thread(target=self.retrieve_lyrics).start()
+        threading.Thread(target=self.retrieve_lyrics, daemon=True).start()
 
     def update_duration(self, duration):
         self.progress_el.get_adjustment().set_upper(duration)

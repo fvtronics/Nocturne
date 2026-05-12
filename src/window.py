@@ -81,7 +81,7 @@ class NocturneWindow(Adw.ApplicationWindow):
         if page:
             self.main_bottom_sheet.set_open(False)
             self.main_split_view.set_show_content(True)
-            threading.Thread(target=page.reload).start()
+            threading.Thread(target=page.reload, daemon=True).start()
             self.main_navigationview.replace([page])
 
     def create_action(self, callback:callable, shortcuts:list=[], parameter_type:str="s"):
@@ -119,7 +119,7 @@ class NocturneWindow(Adw.ApplicationWindow):
         self.loading_el.set_visible(message)
         self.loading_el.set_tooltip_text(message)
         if not message:
-            threading.Thread(target=self.main_navigationview.get_visible_page().reload).start()
+            threading.Thread(target=self.main_navigationview.get_visible_page().reload, daemon=True).start()
 
     def update_playlist_section_of_sidebar(self):
         integration = get_current_integration()
@@ -199,10 +199,13 @@ class NocturneWindow(Adw.ApplicationWindow):
         self.create_action(actions.open_popout_window, shortcuts=['<ctrl>P'], parameter_type=None)
         self.create_action(actions.toggle_fullscreen, shortcuts=['F11'], parameter_type=None)
 
+        self.create_action(actions.player_toggle, shortcuts=['<ctrl>K'], parameter_type=None)
         self.create_action(actions.player_play, parameter_type=None)
         self.create_action(actions.player_pause, parameter_type=None)
-        self.create_action(actions.player_next, parameter_type=None)
-        self.create_action(actions.player_previous, parameter_type=None)
+        self.create_action(actions.player_next, shortcuts=['<ctrl>Right'], parameter_type=None)
+        self.create_action(actions.player_previous, shortcuts=['<ctrl>Left'], parameter_type=None)
+        self.create_action(actions.player_raise_volume, shortcuts=['<ctrl>Up'], parameter_type=None)
+        self.create_action(actions.player_lower_volume, shortcuts=['<ctrl>Down'], parameter_type=None)
 
         self.create_action(actions.play_radio)
         self.create_action(actions.add_radio, parameter_type=None)
@@ -219,6 +222,7 @@ class NocturneWindow(Adw.ApplicationWindow):
         self.create_action(actions.edit_lyrics)
         self.create_action(actions.save_lyrics, parameter_type="a{sv}")
         self.create_action(actions.play_random_queue, parameter_type=None)
+        self.create_action(actions.show_song_details)
 
         self.create_action(actions.show_album)
         self.create_action(actions.show_album_from_song)
@@ -228,6 +232,7 @@ class NocturneWindow(Adw.ApplicationWindow):
         self.create_action(actions.play_album_shuffle)
 
         self.create_action(actions.show_playlist)
+        self.create_action(actions.resume_playlist)
         self.create_action(actions.play_playlist)
         self.create_action(actions.play_playlist_next)
         self.create_action(actions.play_playlist_later)

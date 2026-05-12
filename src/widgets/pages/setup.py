@@ -1,4 +1,5 @@
 # setup.py
+# page used to download the managed Navidrome instance
 
 from gi.repository import Gtk, Adw, Gio, GLib
 from ...constants import BASE_NAVIDROME_DIR, CACHE_DIR, get_navidrome_path, get_navidrome_env
@@ -75,7 +76,7 @@ class SetupPage(Adw.NavigationPage):
     @Gtk.Template.Callback()
     def download_clicked(self, button):
         self.main_stack.set_visible_child_name('downloading')
-        threading.Thread(target=self.download_worker).start()
+        threading.Thread(target=self.download_worker, daemon=True).start()
 
     @Gtk.Template.Callback()
     def link_visited(self, button):

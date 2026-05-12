@@ -310,7 +310,7 @@ class Player(EventAdapter):
         self.pause_next_change = False
         self.last_gst_state_type = -1
         integration = get_current_integration()
-        integration.connect_to_model('currentSong', 'songId', self.song_changed)#lambda song_id: threading.Thread(target=self.song_changed, args=(song_id,)).start())
+        integration.connect_to_model('currentSong', 'songId', self.song_changed)
 
     def on_source_setup(self, playbin, source):
         try:
@@ -346,7 +346,7 @@ class Player(EventAdapter):
             duration = song.get_property('duration') if song else 0
 
             if action == "end" or (duration > 0 and position >= (duration / 2)):
-                threading.Thread(target=integration.scrobble, args=(current_song_id,)).start()
+                threading.Thread(target=integration.scrobble, args=(current_song_id,), daemon=True).start()
 
         mode = self.settings.get_value('playback-mode').unpack()
 
@@ -380,7 +380,7 @@ class Player(EventAdapter):
                     elif next_index < len(id_list):
                         integration.loaded_models.get('currentSong').set_property('songId', id_list[next_index])
                     elif self.settings.get_value('auto-play').unpack():
-                        threading.Thread(target=self.auto_play).start()
+                        threading.Thread(target=self.auto_play, daemon=True).start()
                 elif mode == 'repeat-all':
                     if next_index < len(id_list) and next_index >= 0:
                         integration.loaded_models.get('currentSong').set_property('songId', id_list[next_index])
@@ -433,7 +433,7 @@ class Player(EventAdapter):
         if message.src == self.spectrum:
             struct = message.get_structure()
             if struct and struct.get_name() == "spectrum" and self.settings.get_value('show-visualizer').unpack():
-                threading.Thread(target=self.handle_spectrum_message, args=(struct,)).start()
+                threading.Thread(target=self.handle_spectrum_message, args=(struct,), daemon=True).start()
         else:
             if message.type == Gst.MessageType.STATE_CHANGED:
                 old_state, new_state, pending_state = message.parse_state_changed()
@@ -566,7 +566,7 @@ class Player(EventAdapter):
                 self.rg_volume.set_property("album-mode", album_mode)
                 if paintable := integration.getCoverArt(songId):
                     if raw_bytes := paintable.save_to_png_bytes().get_data():
-                        threading.Thread(target=self.update_palette, args=(raw_bytes,)).start()
+                        threading.Thread(target=self.update_palette, args=(raw_bytes,), daemon=True).start()
 
         if song_id:
             if song_id != self.last_song_id:
@@ -578,7 +578,7 @@ class Player(EventAdapter):
                     self.pause_next_change = False
                 else:
                     self.gst.set_state(Gst.State.PLAYING)
-                threading.Thread(target=integration.scrobble, args=(song_id,), kwargs={'submission': False}).start()
-                threading.Thread(target=update_default_metadata, args=(song_id,)).start()
+                threading.Thread(target=integration.scrobble, args=(song_id,), kwargs={'submission': False}, daemon=True).start()
+                threading.Thread(target=update_default_metadata, args=(song_id,), daemon=True).start()
         else:
             self.gst.set_state(Gst.State.NULL)

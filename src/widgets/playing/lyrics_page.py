@@ -127,7 +127,7 @@ class PlayingLyricsPage(Gtk.Stack):
                     )
                     GLib.idle_add(self.lrc_list_el.append, row)
 
-        threading.Thread(target=update_lyrics).start()
+        threading.Thread(target=update_lyrics, daemon=True).start()
 
     def position_changed(self, position_seconds:float):
         if self.get_visible_child_name() == 'lrc':

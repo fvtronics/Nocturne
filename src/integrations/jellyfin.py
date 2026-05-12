@@ -378,11 +378,11 @@ class Jellyfin(Base):
             if model_id not in self.loaded_models:
                 self.loaded_models[model_id] = models.Artist(id=model_id)
             if use_threading:
-                threading.Thread(target=run).start()
+                threading.Thread(target=run, daemon=True).start()
             else:
                 run()
 
-        threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
+        threading.Thread(target=self.getCoverArt, args=(model_id,), daemon=True).start()
 
     def verifyAlbum(self, model_id:str, force_update:bool=False, use_threading:bool=True):
         def run():
@@ -427,11 +427,11 @@ class Jellyfin(Base):
             if model_id not in self.loaded_models:
                 self.loaded_models[model_id] = models.Album(id=model_id)
             if use_threading:
-                threading.Thread(target=run).start()
+                threading.Thread(target=run, daemon=True).start()
             else:
                 run()
 
-        threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
+        threading.Thread(target=self.getCoverArt, args=(model_id,), daemon=True).start()
 
     def verifyPlaylist(self, model_id:str, force_update:bool=False, use_threading:bool=True):
         def run():
@@ -466,11 +466,11 @@ class Jellyfin(Base):
             if model_id not in self.loaded_models:
                 self.loaded_models[model_id] = models.Playlist(id=model_id)
             if use_threading:
-                threading.Thread(target=run).start()
+                threading.Thread(target=run, daemon=True).start()
             else:
                 run()
 
-        threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
+        threading.Thread(target=self.getCoverArt, args=(model_id,), daemon=True).start()
 
     def verifySong(self, model_id:str, force_update:bool=False, use_threading:bool=True):
         def run():
@@ -506,11 +506,11 @@ class Jellyfin(Base):
             if model_id not in self.loaded_models:
                 self.loaded_models[model_id] = models.Song(id=model_id)
             if use_threading:
-                threading.Thread(target=run).start()
+                threading.Thread(target=run, daemon=True).start()
             else:
                 run()
 
-        threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
+        threading.Thread(target=self.getCoverArt, args=(model_id,), daemon=True).start()
 
     def star(self, model_id:str) -> bool:
         response = self.make_request(
@@ -529,16 +529,7 @@ class Jellyfin(Base):
         return not response.get('IsFavorite', False)
 
     def getPlayQueue(self) -> tuple:
-        QUEUEFILE = os.path.join(self.getIntegrationDir(), 'queue.json')
-
-        try:
-            with open(QUEUEFILE, 'r') as f:
-                queue_dict = json.load(f)
-            if not isinstance(queue_dict, dict):
-                queue_dict = {}
-        except Exception:
-            queue_dict = {}
-
+        queue_dict = self.open_json('queue.json')
         song_list = [model_id for model_id in queue_dict.get('id', [])]
         current = queue_dict.get('current', "")
         if current not in song_list:
@@ -550,8 +541,6 @@ class Jellyfin(Base):
         return current, song_list
 
     def savePlayQueue(self, id_list:list, current:str, position:int) -> bool:
-        QUEUEFILE = os.path.join(self.getIntegrationDir(), 'queue.json')
-
         final_id_list = []
         for model_id in id_list:
             if model := self.loaded_models.get(model_id):
@@ -569,10 +558,7 @@ class Jellyfin(Base):
             'current': current,
             'position': position
         }
-
-        with open(QUEUEFILE, 'w') as f:
-            json.dump(queue_dict, f, ensure_ascii=False)
-
+        self.save_json('queue.json', queue_dict)
         return True
 
     def getSimilarSongs(self, model_id:str, count:int=20) -> list:
@@ -847,20 +833,10 @@ class Jellyfin(Base):
         return response.get("state") == "ok"
 
     def setRating(self, model_id:str, rating:int=0) -> bool:
-        RATINGSFILE = os.path.join(self.getIntegrationDir(), 'ratings.json')
-
-        try:
-            with open(RATINGSFILE, 'r') as f:
-                rating_dict = json.load(f)
-            if not isinstance(rating_dict, dict):
-                rating_dict = {}
-        except Exception:
-            rating_dict = {}
+        rating_dict = self.open_json('ratings.json')
         rating_dict[model_id] = rating
-
         self.loaded_models.get(model_id).set_property('userRating', rating)
-        with open(RATINGSFILE, 'w') as f:
-            json.dump(rating_dict, f, ensure_ascii=False)
+        self.save_json('ratings.json', rating_dict)
         return True
 
     def getTopSongs(self, artist_id:str, count:int=10) -> list:
@@ -901,6 +877,42 @@ class Jellyfin(Base):
                 os.replace(file_path, os.path.join(DOWNLOADS_DIR, file_name))
         except:
             pass
+
+    def getSongDetails(self, model_id:str) -> models.SongDetails:
+        song = self.make_request(
+            action='Users/{userId}/Items/{id}',
+            action_keys={'id': model_id},
+            mode='GET',
+            params={
+                'fields': 'MediaSources,Genres,ArtistItems,Path,ProductionYear,Taglines'
+            }
+        )
+        # Limitations:
+        # - no bpm
+        return models.SongDetails(
+            id=model_id,
+            title=song.get('Name'),
+            album=song.get('Album'),
+            albumId=song.get('AlbumId'),
+            artist=song.get('Artists')[0] if song.get('Artists') else "",
+            artistId=song.get('ArtistItems')[0].get('Id', '') if song.get('ArtistItems') else "",
+            track=song.get('IndexNumber', 0),
+            year=song.get('ProductionYear', 0),
+            size=song.get('MediaSources', [{}])[0].get('Size', 0),
+            suffix=song.get('MediaSources', [{}])[0].get('Container', _("Unknown")),
+            starred=song.get('UserData', {}).get('IsFavorite', False),
+            duration=song.get('RunTimeTicks', 1) / 10_000_000,
+            bitRate=song.get('MediaSources', [{}])[0].get('Bitrate', 1) / 1000,
+            bitDepth=song.get('MediaSources', [{}])[0].get('MediaStreams', [{}])[0].get('BitDepth', 0),
+            samplingRate=song.get('MediaSources', [{}])[0].get('MediaStreams', [{}])[0].get('SampleRate', 1),
+            path=song.get('Path'),
+            discNumber=song.get('ParentIndexNumber', 0),
+            genres=[{'name': genre} for genre in song.get('Genres', [])],
+            artists=[{'name': art.get('Name'), 'id': art.get('Id')} for art in song.get('ArtistItems', [])],
+            trackGain=song.get('NormalizationGain', 0.0),
+            albumGain=song.get('NormalizationGain', 0.0)
+        )
+
 
     def getServerInformation(self) -> dict:
         server_information = {

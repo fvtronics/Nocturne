@@ -45,5 +45,5 @@ class PlayingQueuePage(Gtk.ScrolledWindow):
                         removable=True
                     )
                     GLib.idle_add(self.song_list_el.list_el.insert, row, position + i)
-        threading.Thread(target=run).start()
+        threading.Thread(target=run, daemon=True).start()
 

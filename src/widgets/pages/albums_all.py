@@ -31,7 +31,7 @@ class AlbumsAllPage(Adw.NavigationPage):
 
     def check_scrollbar(self, adjustment):
         if adjustment.get_upper() <= adjustment.get_page_size():
-            threading.Thread(target=self.search).start()
+            threading.Thread(target=self.search, daemon=True).start()
 
     def reload(self):
         if len(list(self.list_el)) + len(list(self.wrapbox_el)) == 0:
@@ -78,12 +78,12 @@ class AlbumsAllPage(Adw.NavigationPage):
         self.offset = 0
         for widget in list(self.list_el) + list(self.wrapbox_el):
             widget.set_visible(False)
-        threading.Thread(target=self.search).start()
+        threading.Thread(target=self.search, daemon=True).start()
 
     @Gtk.Template.Callback()
     def scroll_edge_reached(self, scrolledwindow, pos):
         if pos == Gtk.PositionType.BOTTOM and self.end_stack.get_visible_child_name() == 'loading':
-            threading.Thread(target=self.search).start()
+            threading.Thread(target=self.search, daemon=True).start()
 
     def update_visibility(self):
         for row in list(self.list_el) + list(self.wrapbox_el):

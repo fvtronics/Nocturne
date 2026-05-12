@@ -211,11 +211,11 @@ class Navidrome(Base):
 
         if force_update:
             if use_threading:
-                threading.Thread(target=update).start()
+                threading.Thread(target=update, daemon=True).start()
             else:
                 update()
 
-        threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
+        threading.Thread(target=self.getCoverArt, args=(model_id,), daemon=True).start()
 
     def verifyAlbum(self, model_id:str, force_update:bool=False, use_threading:bool=True):
         def update():
@@ -229,11 +229,11 @@ class Navidrome(Base):
 
         if force_update:
             if use_threading:
-                threading.Thread(target=update).start()
+                threading.Thread(target=update, daemon=True).start()
             else:
                 update()
 
-        threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
+        threading.Thread(target=self.getCoverArt, args=(model_id,), daemon=True).start()
 
     def verifyPlaylist(self, model_id:str, force_update:bool=False, use_threading:bool=True):
         def update():
@@ -247,11 +247,11 @@ class Navidrome(Base):
 
         if force_update:
             if use_threading:
-                threading.Thread(target=update).start()
+                threading.Thread(target=update, daemon=True).start()
             else:
                 update()
 
-        threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
+        threading.Thread(target=self.getCoverArt, args=(model_id,), daemon=True).start()
 
     def verifySong(self, model_id:str, force_update:bool=False, use_threading:bool=True):
         def update():
@@ -264,7 +264,7 @@ class Navidrome(Base):
                 }]
             gains = song_dict.get('replayGain') or {}
             self.loaded_models.get(model_id).update_data(**song_dict, albumGain=gains.get('albumGain', 0.0), trackGain=gains.get('trackGain', 0.0))
-            threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
+            threading.Thread(target=self.getCoverArt, args=(model_id,), daemon=True).start()
 
         if model_id not in self.loaded_models:
             self.loaded_models[model_id] = models.Song(id=model_id)
@@ -272,11 +272,11 @@ class Navidrome(Base):
 
         if force_update:
             if use_threading:
-                threading.Thread(target=update).start()
+                threading.Thread(target=update, daemon=True).start()
             else:
                 update()
         else:
-            threading.Thread(target=self.getCoverArt, args=(model_id,)).start()
+            threading.Thread(target=self.getCoverArt, args=(model_id,), daemon=True).start()
 
     def star(self, model_id:str) -> bool:
         response = self.make_request('star', {'id': model_id})
@@ -505,6 +505,14 @@ class Navidrome(Base):
                     'submission': submission
                 })
         super().scrobble(model_id, submission)
+
+    def getSongDetails(self, model_id:str) -> models.SongDetails:
+        song_dict = self.make_request('getSong', {
+            'id': model_id,
+        }).get('song', {})
+        song_dict['trackGain'] = song_dict.get('replayGain', {}).get('trackGain') or 0.0
+        song_dict['albumGain'] = song_dict.get('replayGain', {}).get('albumGain') or 0.0
+        return models.SongDetails(**song_dict)
 
     def getServerInformation(self) -> dict:
         server_information = {

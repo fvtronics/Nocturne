@@ -36,6 +36,6 @@ class WelcomePage(Adw.NavigationPage):
                 dialog = LoginDialog(integration)
                 dialog.present(self.get_root())
             else:
-                threading.Thread(target=self.get_root().get_application().try_login, args=(integration,)).start()
+                threading.Thread(target=self.get_root().get_application().try_login, args=(integration,), daemon=True).start()
 
 

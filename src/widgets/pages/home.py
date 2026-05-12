@@ -42,7 +42,8 @@ class HomePage(Adw.NavigationPage):
         songs = integration.getRandomSongs(size=max_songs) if max_songs > 0 else []
         threading.Thread(
             target=self.song_wrapbox.set_widgets,
-            args=([SongSmallRow(id) for id in songs],)
+            args=([SongSmallRow(id) for id in songs],),
+            daemon=True
         ).start()
 
         # -- Albums --
@@ -54,7 +55,8 @@ class HomePage(Adw.NavigationPage):
         albums = integration.getAlbumList(size=max_albums) if max_albums > 0 else []
         threading.Thread(
             target=self.album_carousel.set_widgets,
-            args=([AlbumButton(id) for id in albums],)
+            args=([AlbumButton(id) for id in albums],),
+            daemon=True
         ).start()
 
         # -- Artists --
@@ -66,7 +68,8 @@ class HomePage(Adw.NavigationPage):
         artists = integration.getArtists(size=max_artists) if max_artists > 0 else []
         threading.Thread(
             target=self.artist_carousel.set_widgets,
-            args=([ArtistButton(id) for id in artists],)
+            args=([ArtistButton(id) for id in artists],),
+            daemon=True
         ).start()
 
         # -- Playlists --
@@ -78,14 +81,15 @@ class HomePage(Adw.NavigationPage):
         playlists = integration.getPlaylists()[:max_playlists]
         threading.Thread(
             target=self.playlist_carousel.set_widgets,
-            args=([PlaylistButton(id) for id in playlists],)
+            args=([PlaylistButton(id) for id in playlists],),
+            daemon=True
         ).start()
 
         n_elements = sum([len(s) for s in (songs, albums, artists, playlists)])
         self.main_stack.set_visible_child_name('content' if n_elements > 0 else 'no-content')
 
     def reset(self):
-        threading.Thread(target=self.song_wrapbox.set_widgets, args=([],)).start()
-        threading.Thread(target=self.album_carousel.set_widgets, args=([],)).start()
-        threading.Thread(target=self.artist_carousel.set_widgets, args=([],)).start()
-        threading.Thread(target=self.playlist_carousel.set_widgets, args=([],)).start()
+        threading.Thread(target=self.song_wrapbox.set_widgets, args=([],), daemon=True).start()
+        threading.Thread(target=self.album_carousel.set_widgets, args=([],), daemon=True).start()
+        threading.Thread(target=self.artist_carousel.set_widgets, args=([],), daemon=True).start()
+        threading.Thread(target=self.playlist_carousel.set_widgets, args=([],), daemon=True).start()

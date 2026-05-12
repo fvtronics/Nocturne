@@ -62,6 +62,8 @@
     <file alias="icons/scalable/status/paintbrush-symbolic.svg">icons/paintbrush-symbolic.svg</file>
     <file alias="icons/scalable/status/cross-large-circle-filled-symbolic.svg">icons/cross-large-circle-filled-symbolic.svg</file>
     <file alias="icons/scalable/status/cross-large-symbolic.svg">icons/cross-large-symbolic.svg</file>
+    <file alias="icons/scalable/status/playback-options-symbolic.svg">icons/playback-options-symbolic.svg</file>
+    <file alias="icons/scalable/status/info-outline-symbolic.svg">icons/info-outline-symbolic.svg</file>
 
     <file alias="window.ui">ui/window.ui</file>
     <file alias="shortcuts-dialog.ui">ui/shortcuts-dialog.ui</file>
@@ -105,6 +107,7 @@
     <file alias="song/row.ui">ui/song/row.ui</file>
     <file alias="song/queue.ui">ui/song/queue.ui</file>
     <file alias="song/small_row.ui">ui/song/small_row.ui</file>
+    <file alias="song/details_dialog.ui">ui/song/details_dialog.ui</file>
 
     <file alias="containers/carousel.ui">ui/containers/carousel.ui</file>
     <file alias="containers/wrapbox.ui">ui/containers/wrapbox.ui</file>

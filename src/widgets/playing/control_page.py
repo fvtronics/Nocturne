@@ -192,7 +192,7 @@ class PlayingControlPage(Adw.NavigationPage):
         integration = get_current_integration()
         model = integration.loaded_models.get(song_id)
         self.update_interface(model)
-        threading.Thread(target=self.update_cover_art).start()
+        threading.Thread(target=self.update_cover_art, daemon=True).start()
 
     def update_cover_art(self):
         integration = get_current_integration()

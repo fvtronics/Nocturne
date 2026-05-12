@@ -21,11 +21,11 @@ msgstr ""
 #: data/com.jeffser.Nocturne.desktop.in:2
 #: data/com.jeffser.Nocturne.metainfo.xml.in:7
 msgid "Nocturne"
-msgstr ""
+msgstr "Nocturne"
 
 #: data/com.jeffser.Nocturne.desktop.in:10
 msgid "GTK;Navidrome;Jellyfin;Music;"
-msgstr ""
+msgstr "GTK;Navidrome;Jellyfin;Music;Музыка;Аудио;"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:8
 msgid "Bring your music library together"
@@ -65,7 +65,7 @@ msgstr "Автоматическое получение текста песен"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:23
 msgid "Jeffry Samuel Eduarte Rojas"
-msgstr ""
+msgstr "Джеффри Самуэль Эдуарте Рохас"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:64
 msgid "Main homepage"
@@ -90,11 +90,11 @@ msgstr "Страница альбома"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:85
 msgid "navidrome"
-msgstr ""
+msgstr "navidrome"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:86
 msgid "jellyfin"
-msgstr ""
+msgstr "jellyfin"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:87
 msgid "music"
@@ -102,7 +102,7 @@ msgstr "музыка"
 
 #: data/com.jeffser.Nocturne.metainfo.xml.in:88
 msgid "gtk"
-msgstr ""
+msgstr "gtk"
 
 #: src/actions.py:104 src/ui/song/row.blp:78
 msgid "External File"
@@ -660,7 +660,7 @@ msgstr "Управление сервером Navidrome"
 
 #: src/ui/pages/login.blp:39
 msgid "Url"
-msgstr ""
+msgstr "URL-адрес"
 
 #: src/ui/pages/login.blp:46
 msgid "More Options"
