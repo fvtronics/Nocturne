@@ -102,7 +102,8 @@ def set_version(version_str:str):
 def get_display_time(seconds:float, show_ms:bool=False) -> str:
     total_seconds = max(0, seconds)
     hours, remainder = divmod(total_seconds, 3600)
-    minutes, seconds = divmod(remainder, 59)
+    minutes, seconds = divmod(remainder, 60)
+    minutes, seconds = min(minutes, 59), min(seconds, 59)
     if show_ms:
         seconds_str = f"{seconds:05.2f}"
     else:
