@@ -142,14 +142,7 @@ class Local(Base):
                 albums[model.get_property('id')] = pathlib.Path(model.get_property('coverArt')).stat().st_ctime
             album_list = sorted(albums, key=lambda x: albums.get(x), reverse=True)
         elif list_type in ("frequent", "recent"):
-            try:
-                with open(os.path.join(self.getIntegrationDir(), 'scrobble.json'), 'r') as f:
-                    scrobble_dict = json.load(f)
-                if not isinstance(scrobble_dict, dict):
-                    return []
-            except Exception:
-                return []
-
+            scrobble_dict = self.open_json('scrobble.json')
             album_views = {}
             for data in scrobble_dict.values():
                 if data.get('album') in album_views:
@@ -265,9 +258,7 @@ class Local(Base):
         current_time = datetime.now(timezone.utc).isoformat(timespec='microseconds').replace("+00:00", "Z")
         star_dict[model_id] = current_time
 
-        with open(os.path.join(self.getIntegrationDir(), 'stars.json'), 'w') as f:
-            json.dump(star_dict, f, ensure_ascii=False)
-
+        self.save_json('stars.json', star_dict)
         return True
 
     def unstar(self, model_id:str) -> bool:
@@ -276,9 +267,7 @@ class Local(Base):
         if model_id in star_dict:
             del star_dict[model_id]
 
-        with open(os.path.join(self.getIntegrationDir(), 'stars.json'), 'w') as f:
-            json.dump(star_dict, f, ensure_ascii=False)
-
+        self.save_json('stars.json', star_dict)
         return True
 
     def getPlayQueue(self) -> tuple:
@@ -313,9 +302,7 @@ class Local(Base):
             'position': position
         }
 
-        with open(os.path.join(self.getIntegrationDir(), 'queue.json'), 'w') as f:
-            json.dump(queue_dict, f, ensure_ascii=False)
-
+        self.save_json('queue.json', queue_dict)
         return True
 
     def getSimilarSongs(self, model_id:str, count:int=20) -> list:
@@ -367,9 +354,7 @@ class Local(Base):
             isRadio=True
         )
 
-        with open(os.path.join(self.getIntegrationDir(), 'radios.json'), 'w') as f:
-            json.dump(radio_dict, f, ensure_ascii=False)
-
+        self.save_json('radios.json', radio_dict)
         return True
 
     def updateInternetRadioStation(self, model_id:str, name:str, streamUrl:str) -> bool:
@@ -383,20 +368,14 @@ class Local(Base):
             model.set_property('title', name)
             model.set_property('streamUrl', streamUrl)
 
-        with open(os.path.join(self.getIntegrationDir(), 'radios.json'), 'w') as f:
-            json.dump(radio_dict, f, ensure_ascii=False)
-
+        self.save_json('radios.json', radio_dict)
         return True
 
     def deleteInternetRadioStation(self, model_id:str) -> bool:
         radio_dict = self.open_json('radios.json')
-
         if model_id in radio_dict:
             del radio_dict[model_id]
-
-        with open(os.path.join(self.getIntegrationDir(), 'radios.json'), 'w') as f:
-            json.dump(radio_dict, f, ensure_ascii=False)
-
+        self.save_json('radios.json', radio_dict)
         return True
 
     def createPlaylist(self, name:str=None, playlistId:str=None, songId:list=[]) -> str:
@@ -421,10 +400,7 @@ class Local(Base):
             entry=[{'id': model_id} for model_id in songId],
             coverArt = path_str
         )
-
-        with open(os.path.join(self.getIntegrationDir(), 'playlists.json'), 'w') as f:
-            json.dump(playlist_dict, f, ensure_ascii=False)
-
+        self.save_json('playlists.json', playlist_dict)
         return playlistId
 
     def updatePlaylist(self, playlistId:str, songIdToAdd:list=[], songIndexToRemove:list=[]) -> bool:
@@ -447,18 +423,14 @@ class Local(Base):
                         path_str = model.get_property('path')
                 model.set_property('coverArt', path_str)
 
-        with open(os.path.join(self.getIntegrationDir(), 'playlists.json'), 'w') as f:
-            json.dump(playlist_dict, f, ensure_ascii=False)
-
+        self.save_json('playlists.json', playlist_dict)
         return True
 
     def deletePlaylist(self, model_id:str) -> bool:
         playlist_dict = self.open_json('playlists.json')
         if model_id in playlist_dict:
             del playlist_dict[model_id]
-        with open(os.path.join(self.getIntegrationDir(), 'playlists.json'), 'w') as f:
-            json.dump(playlist_dict, f, ensure_ascii=False)
-
+        self.save_json('playlists.json', playlist_dict)
         return True
 
     def getTopSongs(self, artist_id:str, count:int=10) -> list:
@@ -502,17 +474,14 @@ class Local(Base):
                         'album': model.get_property('albumId'),
                         'artist': model.get_property('artistId')
                     }
-
-                with open(os.path.join(self.getIntegrationDir(), 'scrobble.json'), 'w') as f:
-                    json.dump(scrobble_dict, f, ensure_ascii=False)
+                self.save_json('scrobble.json', scrobble_dict)
         super().scrobble(model_id, submission=submission)
 
     def setRating(self, model_id:str, rating:int=0) -> bool:
         ratings = self.open_json('ratings.json')
         ratings[model_id] = rating
         self.loaded_models.get(model_id).set_property('userRating', rating)
-        with open(os.path.join(self.getIntegrationDir(), 'ratings.json'), 'w') as f:
-            json.dump(ratings, f, ensure_ascii=False)
+        self.save_json('ratings.json', ratings)
         return True
 
     def getServerInformation(self) -> dict:

@@ -31,20 +31,22 @@ class Base(GObject.Object):
     # Show spinner in sidebar with message as tooltip text if set
     loadingMessage = GObject.Property(type=str)
 
-    def open_json(self, filename:str, is_list:bool=False) -> dict | list:
+    def open_json(self, filename:str, fallback={}) -> dict:
         # loads a JSON file from the current integration
         try:
             with open(os.path.join(self.getIntegrationDir(), filename), 'r') as f:
-                result = json.load(f)
-                if is_list:
-                    if not isinstance(result, list):
-                        return []
-                else:
-                    if not isinstance(result, dict):
-                        return {}
-                return result
+                return json.load(f)
         except Exception:
-            return [] if is_list else {}
+            pass
+        return fallback
+
+    def save_json(self, filename:str, data:dict):
+        # save JSON to instance specific file
+        try:
+            with open(os.path.join(self.getIntegrationDir(), filename), 'w') as f:
+                json.dump(data, f)
+        except Exception:
+            pass
 
     def check_if_ready(self, row) -> bool:
         # gets called to see if it is ready to show login page
@@ -241,8 +243,7 @@ class Base(GObject.Object):
             playback_scrobble[date_formated][model_id] += 1
         else:
             playback_scrobble[date_formated][model_id] = 1
-        with open(os.path.join(self.getIntegrationDir(), 'playback.json'), 'w') as f:
-            json.dump(playback_scrobble, f, ensure_ascii=False)
+        self.save_json('playback.json', playback_scrobble)
 
         if model := self.loaded_models.get(model_id):
             if token := secret.get_plain_password("listenbrainz"):

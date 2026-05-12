@@ -529,16 +529,7 @@ class Jellyfin(Base):
         return not response.get('IsFavorite', False)
 
     def getPlayQueue(self) -> tuple:
-        QUEUEFILE = os.path.join(self.getIntegrationDir(), 'queue.json')
-
-        try:
-            with open(QUEUEFILE, 'r') as f:
-                queue_dict = json.load(f)
-            if not isinstance(queue_dict, dict):
-                queue_dict = {}
-        except Exception:
-            queue_dict = {}
-
+        queue_dict = self.open_json('queue.json')
         song_list = [model_id for model_id in queue_dict.get('id', [])]
         current = queue_dict.get('current', "")
         if current not in song_list:
@@ -550,8 +541,6 @@ class Jellyfin(Base):
         return current, song_list
 
     def savePlayQueue(self, id_list:list, current:str, position:int) -> bool:
-        QUEUEFILE = os.path.join(self.getIntegrationDir(), 'queue.json')
-
         final_id_list = []
         for model_id in id_list:
             if model := self.loaded_models.get(model_id):
@@ -569,10 +558,7 @@ class Jellyfin(Base):
             'current': current,
             'position': position
         }
-
-        with open(QUEUEFILE, 'w') as f:
-            json.dump(queue_dict, f, ensure_ascii=False)
-
+        self.save_json('queue.json', queue_dict)
         return True
 
     def getSimilarSongs(self, model_id:str, count:int=20) -> list:
@@ -847,20 +833,10 @@ class Jellyfin(Base):
         return response.get("state") == "ok"
 
     def setRating(self, model_id:str, rating:int=0) -> bool:
-        RATINGSFILE = os.path.join(self.getIntegrationDir(), 'ratings.json')
-
-        try:
-            with open(RATINGSFILE, 'r') as f:
-                rating_dict = json.load(f)
-            if not isinstance(rating_dict, dict):
-                rating_dict = {}
-        except Exception:
-            rating_dict = {}
+        rating_dict = self.open_json('ratings.json')
         rating_dict[model_id] = rating
-
         self.loaded_models.get(model_id).set_property('userRating', rating)
-        with open(RATINGSFILE, 'w') as f:
-            json.dump(rating_dict, f, ensure_ascii=False)
+        self.save_json('ratings.json', rating_dict)
         return True
 
     def getTopSongs(self, artist_id:str, count:int=10) -> list:
