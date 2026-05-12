@@ -11,6 +11,8 @@ from .constants import DATA_DIR, BASE_NAVIDROME_DIR, DOWNLOADS_DIR
 
 def __show_page(window, page):
     # page is Adw.NavigationViewPage
+    for dialog in window.get_dialogs():
+        dialog.close()
     application = window.get_application()
     active_window = application.props.active_window
     if active_window.__gtype_name__ == 'NocturnePopoutWindow':
@@ -202,9 +204,8 @@ def logout(window):
     GLib.idle_add(replace_root_page, window, 'home')
     if window.get_application().player.mpris_published:
         window.get_application().player.mpris.unpublish()
-    dialogs = window.get_dialogs()
-    if len(dialogs) > 0:
-        dialogs[0].close()
+    for dialog in window.get_dialogs():
+        dialog.close()
     for page in list(window.main_navigationview):
         if isinstance(page, Adw.NavigationPage):
             GLib.idle_add(page.reset)
@@ -546,6 +547,10 @@ def play_random_queue(window):
         daemon=True
     ).start()
 
+def show_song_details(window, model_id):
+    dialog = Widgets.SongDetailsDialog(model_id)
+    dialog.present(window)
+
 # -- ALBUM --
 
 def show_album(window, model_id:str):
@@ -789,9 +794,8 @@ def prompt_add_album_to_playlist(window, model_id:str):
 
 def add_songs_to_playlist(window, data):
     integration = get_current_integration()
-    dialogs = window.get_dialogs()
-    if len(dialogs) > 0:
-        dialogs[0].close()
+    for dialog in window.get_dialogs():
+        dialog.close()
 
     if data.get('new_playlist'):
         response = integration.createPlaylist(

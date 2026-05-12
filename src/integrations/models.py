@@ -133,6 +133,50 @@ class Song(GObject.Object):
                 else:
                     self.set_property(prop.get_name(), prop.get_default_value())
 
+class SongDetails(GObject.Object):
+    __gtype_name__ = 'NocturneSongDetails'
+
+    id = GObject.Property(type=str)
+    title = GObject.Property(type=str)
+    album = GObject.Property(type=str, nick=_("Album"))
+    albumId = GObject.Property(type=str)
+    artist = GObject.Property(type=str, nick=_("Display Artist"))
+    artistId = GObject.Property(type=str)
+    track = GObject.Property(type=int, nick=_("Track Number"))
+    year = GObject.Property(type=int, nick=_("Year"))
+    size = GObject.Property(type=int, nick=_("Size"))
+    suffix = GObject.Property(type=str, nick=_("Suffix"))
+    starred = GObject.Property(type=bool, default=False, nick=_("Favorite"))
+    duration = GObject.Property(type=int, nick=_("Duration"))
+
+    bitRate = GObject.Property(type=int, nick=_("bit Rate"))
+    bitDepth = GObject.Property(type=int, nick=_("bit Depth"))
+    samplingRate = GObject.Property(type=int, nick=_("sampling Rate"))
+    channelCount = GObject.Property(type=int, nick=_("Channel Count"))
+
+    path = GObject.Property(type=str, nick=_("Path"))
+    discNumber = GObject.Property(type=int, nick=_("Disc Number"))
+    bpm = GObject.Property(type=int, nick=_("BPM"))
+    genres = GObject.Property(type=GObject.TYPE_PYOBJECT, nick=_("Genres")) # list
+    artists = GObject.Property(type=GObject.TYPE_PYOBJECT, nick=_("Artists")) # list
+    trackGain = GObject.Property(type=float, nick=_("Track Gain"))
+    albumGain = GObject.Property(type=float, nick=_("Album Gain"))
+
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.update_data(**kwargs)
+
+    def update_data(self, **kwargs):
+        for prop in self.list_properties():
+            if prop.get_name() in kwargs:
+                if self.get_property(prop.get_name()) != kwargs.get(prop.get_name()):
+                    self.set_property(prop.get_name(), kwargs.get(prop.get_name()))
+            elif self.get_property(prop.get_name()) is None:
+                if prop.value_type.name == 'PyObject': #LIST
+                    self.set_property(prop.get_name(), [])
+                else:
+                    self.set_property(prop.get_name(), prop.get_default_value())
+
 class SongDownload(GObject.Object):
     __gtype_name__ = 'NocturneSongDownload'
 

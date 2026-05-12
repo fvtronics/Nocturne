@@ -878,6 +878,42 @@ class Jellyfin(Base):
         except:
             pass
 
+    def getSongDetails(self, model_id:str) -> models.SongDetails:
+        song = self.make_request(
+            action='Users/{userId}/Items/{id}',
+            action_keys={'id': model_id},
+            mode='GET',
+            params={
+                'fields': 'MediaSources,Genres,ArtistItems,Path,ProductionYear,Taglines'
+            }
+        )
+        # Limitations:
+        # - no bpm
+        return models.SongDetails(
+            id=model_id,
+            title=song.get('Name'),
+            album=song.get('Album'),
+            albumId=song.get('AlbumId'),
+            artist=song.get('Artists')[0] if song.get('Artists') else "",
+            artistId=song.get('ArtistItems')[0].get('Id', '') if song.get('ArtistItems') else "",
+            track=song.get('IndexNumber', 0),
+            year=song.get('ProductionYear', 0),
+            size=song.get('MediaSources', [{}])[0].get('Size', 0),
+            suffix=song.get('MediaSources', [{}])[0].get('Container', _("Unknown")),
+            starred=song.get('UserData', {}).get('IsFavorite', False),
+            duration=song.get('RunTimeTicks', 1) / 10_000_000,
+            bitRate=song.get('MediaSources', [{}])[0].get('Bitrate', 1) / 1000,
+            bitDepth=song.get('MediaSources', [{}])[0].get('MediaStreams', [{}])[0].get('BitDepth', 0),
+            samplingRate=song.get('MediaSources', [{}])[0].get('MediaStreams', [{}])[0].get('SampleRate', 1),
+            path=song.get('Path'),
+            discNumber=song.get('ParentIndexNumber', 0),
+            genres=[{'name': genre} for genre in song.get('Genres', [])],
+            artists=[{'name': art.get('Name'), 'id': art.get('Id')} for art in song.get('ArtistItems', [])],
+            trackGain=song.get('NormalizationGain', 0.0),
+            albumGain=song.get('NormalizationGain', 0.0)
+        )
+
+
     def getServerInformation(self) -> dict:
         server_information = {
             'link': self.get_property('url').strip('/'),

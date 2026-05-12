@@ -222,6 +222,7 @@ class NocturneWindow(Adw.ApplicationWindow):
         self.create_action(actions.edit_lyrics)
         self.create_action(actions.save_lyrics, parameter_type="a{sv}")
         self.create_action(actions.play_random_queue, parameter_type=None)
+        self.create_action(actions.show_song_details)
 
         self.create_action(actions.show_album)
         self.create_action(actions.show_album_from_song)

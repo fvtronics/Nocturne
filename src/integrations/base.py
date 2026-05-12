@@ -298,6 +298,11 @@ class Base(GObject.Object):
                 fallback_song = songs[0].get('id')
             return playlist_resume_dict.get(playlist.get_property('id'), fallback_song)
         return ""
+
+    def getSongDetails(self, model_id:str) -> models.SongDetails:
+        # Fill and return songDetails
+        # Do NOT add it to loaded_models
+        return models.SongDetails()
     
     def getServerInformation(self) -> dict:
         # should return these keys:

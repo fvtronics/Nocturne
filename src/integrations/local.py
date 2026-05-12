@@ -484,6 +484,37 @@ class Local(Base):
         self.save_json('ratings.json', ratings)
         return True
 
+    def getSongDetails(self, model_id:str) -> models.SongDetails:
+        if model := self.loaded_models.get(model_id):
+            tag = TinyTag.get(model.get_property('path'))
+
+            # Limitations:
+            # - no bitDepth
+            # - no bpm
+            # - no trackGain
+            # - no albumGain
+            return models.SongDetails(
+                id=model_id,
+                title=tag.title,
+                album=tag.album,
+                albumId=model.get_property('albumId'),
+                artist=tag.artist,
+                artistId=model.get_property('artistId'),
+                track=tag.track or 0,
+                year=int(tag.year or "0"),
+                size=tag.filesize,
+                suffix=os.path.splitext(model.get_property('path'))[1].replace('.',  ''),
+                starred=model.get_property('starred'),
+                duration=tag.duration,
+                bitRate=int(tag.bitrate or "0"),
+                samplingRate=int(tag.samplerate or "0"),
+                path=model.get_property('path'),
+                discNumber=tag.disc or 0,
+                genres=[{'name': tag.genre}] if tag.genre else [],
+                artists=model.get_property('artists')
+            )
+        return models.SongDetails()
+
     def getServerInformation(self) -> dict:
         server_information = {
             'link': 'file://{}'.format(self.get_property('libraryDir')),

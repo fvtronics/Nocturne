@@ -5,6 +5,7 @@ widgets = [
   'row.py',
   'queue.py',
   'small_row.py',
+  'details_dialog.py',
 ]
 
 install_data(widgets, install_dir: moduledir)

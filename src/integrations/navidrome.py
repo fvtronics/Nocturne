@@ -506,6 +506,14 @@ class Navidrome(Base):
                 })
         super().scrobble(model_id, submission)
 
+    def getSongDetails(self, model_id:str) -> models.SongDetails:
+        song_dict = self.make_request('getSong', {
+            'id': model_id,
+        }).get('song', {})
+        song_dict['trackGain'] = song_dict.get('replayGain', {}).get('trackGain') or 0.0
+        song_dict['albumGain'] = song_dict.get('replayGain', {}).get('albumGain') or 0.0
+        return models.SongDetails(**song_dict)
+
     def getServerInformation(self) -> dict:
         server_information = {
             'link': self.get_property('url').strip('/'),

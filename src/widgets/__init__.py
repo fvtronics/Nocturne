@@ -5,6 +5,6 @@ from .pages import HomePage, LoginDialog, ArtistsPage, PlaylistsPage, SongsStarr
 from .album import AlbumButton, AlbumPage, AlbumRow
 from .artist import ArtistButton, ArtistPage, ArtistRow
 from .playlist import PlaylistButton, PlaylistPage, PlaylistRow, PlaylistDialog, PlaylistSelectorRow
-from .song import SongRow, SongQueue, SongSmallRow
+from .song import SongRow, SongQueue, SongSmallRow, SongDetailsDialog
 from .containers import Carousel, Wrapbox, PageDialog
 from .lyrics import LyricsDialog, prepare_lrc, get_lyrics

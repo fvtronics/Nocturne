@@ -427,6 +427,11 @@ CONTEXT_SONG = {
         "css": ["error"],
         "icon-name": "user-trash-symbolic",
         "action-name": "app.delete_download"
+    },
+    "details": {
+        "name": _("Show Details"),
+        "icon-name": "info-outline-symbolic",
+        "action-name": "app.show_song_details"
     }
 }
 
