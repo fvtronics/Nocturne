@@ -100,21 +100,23 @@ def set_version(version_str:str):
     NOCTURNE_VERSION = version_str
 
 def get_display_time(seconds:float, show_ms:bool=False) -> str:
-    total_seconds = max(0, seconds)
+    if not show_ms:
+        total_seconds = round(max(0, seconds))
+    else:
+        total_seconds = max(0, seconds)
     hours, remainder = divmod(total_seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
-    minutes, seconds = min(minutes, 59), min(seconds, 59)
     if show_ms:
         seconds_str = f"{seconds:05.2f}"
     else:
-        seconds_str = f"{seconds:02.0f}"
+        seconds_str = f"{int(seconds):02d}"
 
     if hours > 0:
         # Format H:MM:SS.ms
-        return f"{hours:01.0f}:{minutes:02.0f}:{seconds_str}"
+        return f"{int(hours)}:{int(minutes):02d}:{seconds_str}"
     else:
         # Format MM:SS.ms
-        return f"{minutes:02.0f}:{seconds_str}"
+        return f"{int(minutes):02d}:{seconds_str}"
 
 def _normalize_artists(values:list[str]) -> list[str]:
     artists = []
