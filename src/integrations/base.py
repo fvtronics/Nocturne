@@ -312,16 +312,16 @@ class Base(GObject.Object):
                 INSERT INTO playlist_resume (id, song_id, timestamp)
                 VALUES (?, ?, ?)
                 ON CONFLICT (id) DO UPDATE SET
-                    song_id = excluded.song_id
+                    song_id = excluded.song_id,
                     timestamp = excluded.timestamp;
                 """
                 cursor.execute(query, (queue_origin_id, model_id, current_timestamp))
                 conn.commit()
                 conn.close()
 
-    def getPlaylistLastPlayedSong(self, model_id:str) -> str:
+    def getPlaylistResume(self, model_id:str) -> tuple:
         # Works as is, no need to modify
-        # If no song is found it returns the first one from the playlist
+        # Returns song_id, timestamp (seconds float)
         if playlist := self.loaded_models.get(model_id):
             conn, cursor = sql_instance.get_connection(self)
             cursor.execute(
@@ -331,9 +331,24 @@ class Base(GObject.Object):
             result = cursor.fetchone()
             conn.close()
             if result:
-                #TODO do something with timestamp
-                return result[0]
-        return ""
+                return result[0], result[1]
+        return "", 0
+
+    def savePlaylistResume(self, queue_origin_id:str, song_id:str, current_timestamp:float):
+        # Works as is, no need to modify
+        if model := self.loaded_models.get(queue_origin_id):
+            if isinstance(model, models.Playlist):
+                conn, cursor = sql_instance.get_connection(self)
+                query = """
+                INSERT INTO playlist_resume (id, song_id, timestamp)
+                VALUES (?, ?, ?)
+                ON CONFLICT (id) DO UPDATE SET
+                    song_id = excluded.song_id,
+                    timestamp = excluded.timestamp;
+                """
+                cursor.execute(query, (queue_origin_id, song_id, current_timestamp))
+                conn.commit()
+                conn.close()
 
     def getSongDetails(self, model_id:str) -> models.SongDetails:
         # Fill and return songDetails

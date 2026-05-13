@@ -20,7 +20,7 @@
 from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject, Pango
 
 from . import actions
-from .integrations import get_current_integration
+from .integrations import get_current_integration, models
 from .constants import SIDEBAR_MENU
 import threading
 
@@ -59,7 +59,19 @@ class NocturneWindow(Adw.ApplicationWindow):
             if integration := get_current_integration():
                 id_list = [so.get_string() for so in integration.loaded_models.get('currentSong').get_property('queueModel')]
                 current_song = integration.loaded_models.get('currentSong')
-                integration.savePlayQueue(id_list, current_song.get_property('songId'), current_song.get_property('positionSeconds') * 1000)
+
+                queue_origin = current_song.get_property('queueOrigin')
+                song_id = current_song.get_property('songId')
+                timestamp = current_song.get_property('positionSeconds')
+                if model := integration.loaded_models.get(queue_origin):
+                    if isinstance(model, models.Playlist):
+                        integration.savePlaylistResume(
+                            queue_origin_id=queue_origin,
+                            song_id=song_id,
+                            current_timestamp=timestamp
+                        )
+
+                integration.savePlayQueue(id_list, song_id, timestamp * 1000)
                 integration.terminate_instance()
             settings = Gio.Settings(schema_id="com.jeffser.Nocturne")
             settings.set_int('default-width', self.get_width())
@@ -325,4 +337,5 @@ class NocturneWindow(Adw.ApplicationWindow):
                 GLib.idle_add(self.main_bottom_sheet.set_open, False)
         if not song_playing:
             GLib.idle_add(self.main_bottom_sheet.set_open, False)
+
 

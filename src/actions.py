@@ -57,8 +57,23 @@ def __show_custom_toast(window, model_id:str, title_property:str, subtitle:str, 
     )
     GLib.idle_add(window.get_application().props.active_window.toast_overlay.add_toast, toast)
 
+def __save_playlist_resume(window):
+    # Check if current queue origin is a playlist if so, save the resume state
+    integration = get_current_integration()
+    queue_origin = integration.loaded_models.get('currentSong').get_property('queueOrigin') or ""
+    if model := integration.loaded_models.get(queue_origin):
+        if isinstance(model, models.Playlist):
+            timestamp = integration.loaded_models.get('currentSong').get_property('positionSeconds')
+            current_song = integration.loaded_models.get('currentSong').get_property('songId')
+            integration.savePlaylistResume(
+                queue_origin_id=queue_origin,
+                song_id=current_song,
+                current_timestamp=timestamp
+            )
+
 def __replace_queue(window, songs:list, current_id:str=None, origin_id:str=""):
     integration = get_current_integration()
+    __save_playlist_resume(window)
     integration.loaded_models.get('currentSong').set_property('queueOrigin', origin_id)
     queue_model = integration.loaded_models.get('currentSong').get_property('queueModel')
     GLib.idle_add(queue_model.remove_all)
@@ -76,6 +91,7 @@ def __replace_queue(window, songs:list, current_id:str=None, origin_id:str=""):
 
 def __play_next(window, songs:list):
     integration = get_current_integration()
+    __save_playlist_resume(window)
     integration.loaded_models.get('currentSong').set_property('queueOrigin', "")
     current_song_id = integration.loaded_models.get('currentSong').get_property('songId')
     queue_model = integration.loaded_models.get('currentSong').get_property('queueModel')
@@ -98,6 +114,7 @@ def __play_next(window, songs:list):
 
 def __play_later(window, songs:list):
     integration = get_current_integration()
+    __save_playlist_resume(window)
     integration.loaded_models.get('currentSong').set_property('queueOrigin', "")
     current_song_id = integration.loaded_models.get('currentSong').get_property('songId')
     queue_model = integration.loaded_models.get('currentSong').get_property('queueModel')
@@ -643,16 +660,25 @@ def play_playlist(window, model_id:str):
 
 def resume_playlist(window, model_id:str):
     integration = get_current_integration()
-    current_id = integration.getPlaylistLastPlayedSong(model_id)
+    current_id, timestamp = integration.getPlaylistResume(model_id)
+
+    def run():
+        integration.verifyPlaylist(playlist.get_property('id'), force_update=True, use_threading=False)
+        __replace_queue(
+            window,
+            [s.get('id') for s in playlist.get_property('entry')],
+            origin_id=model_id,
+            current_id=current_id
+        )
+        nanoseconds = int(timestamp * Gst.SECOND)
+        GLib.timeout_add(100, lambda: window.get_application().player.gst.seek_simple(
+            Gst.Format.TIME,
+            Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
+            nanoseconds
+        ) and False)
 
     if playlist := integration.loaded_models.get(model_id):
-        integration.verifyPlaylist(playlist.get_property('id'), force_update=True, use_threading=False)
-        threading.Thread(
-            target=__replace_queue,
-            args=(window, [s.get('id') for s in playlist.get_property('entry')],),
-            kwargs={"origin_id": model_id, "current_id": current_id},
-            daemon=True
-        ).start()
+        threading.Thread(target=run).start()
 
 def play_playlist_next(window, model_id:str):
     integration = get_current_integration()
