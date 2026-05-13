@@ -40,6 +40,11 @@ The following dependencies are requirements of the project.
 - `libsecret`
 - `gstreamer`
 - `blueprint-compiler >= 0.18.0`
+- `python-requests >= 2.33.1`
+- `python-colorthief >= 0.2.1`
+- `python-syncedlyrics >= 1.0.1`
+- `python--mpris-server >= 0.10.0`
+- `python-tinytag >= 2.2.1`
 
 ## Install
 ### Linux (Flatpak)
@@ -87,7 +92,7 @@ cd Nocturne
 # 3. Install python packages
 python3 -m venv ./venv
 source ./venv/bin/activate
-pip install requests colorthief favicon mutagen mpris-server
+pip install requests colorthief syncedlyrics tinytag mpris-server
 ```
 
 #### 3. Build Project
