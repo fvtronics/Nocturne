@@ -26,7 +26,6 @@ class NocturnePreferences(Adw.PreferencesDialog):
     instance_el = Gtk.Template.Child()
     discord_rpc_el = Gtk.Template.Child()
     discord_rpc_client_id_el = Gtk.Template.Child()
-    discord_rpc_public_url_el = Gtk.Template.Child()
 
     # Customization
     ## Interface
@@ -127,13 +126,6 @@ class NocturnePreferences(Adw.PreferencesDialog):
             "text",
             Gio.SettingsBindFlags.DEFAULT
         )
-        settings.bind(
-            "discord-rpc-public-url",
-            self.discord_rpc_public_url_el,
-            "text",
-            Gio.SettingsBindFlags.DEFAULT
-        )
-
         self.listenbrainz_stack_el.set_visible_child_name("unlink" if secret.get_plain_password(schema_type="listenbrainz") else "link")
         if integration:
             data = integration.getServerInformation()

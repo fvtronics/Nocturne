@@ -1,8 +1,7 @@
 # discord_rpc.py
 
-import ipaddress, json, os, socket, struct, threading, time, uuid
+import json, os, socket, struct, threading, time, uuid
 from gi.repository import GLib, Gst
-from urllib.parse import urlparse, urlunparse
 
 from . import get_current_integration
 
@@ -137,11 +136,7 @@ class DiscordRPC:
                 "large_text": self._truncate(song.get_property("album") if song else "Nocturne")
             }
         }
-        if song and (cover_url := integration.getCoverArtUrl(song_id, big=True)):
-            cover_url = self._with_public_base_url(cover_url)
-            activity["assets"]["large_image"] = cover_url if self._is_discord_accessible_url(cover_url) else "logo"
-        else:
-            activity["assets"]["large_image"] = "logo"
+        activity["assets"]["large_image"] = "logo"
 
         if song and song.get_property("duration") > 0:
             position = max(current_song.get_property("positionSeconds"), 0)
@@ -183,39 +178,6 @@ class DiscordRPC:
 
     def _truncate(self, field):
         return field if len(field) <= self.MAX_FIELD_LENGTH else field[:self.MAX_FIELD_LENGTH - 1] + "..."
-
-    def _with_public_base_url(self, url):
-        public_url = self.player.settings.get_value("discord-rpc-public-url").unpack().strip().rstrip("/")
-        if not public_url:
-            return url
-
-        if "://" not in public_url:
-            public_url = "https://{}".format(public_url)
-
-        parsed_url = urlparse(url)
-        parsed_public_url = urlparse(public_url)
-        if not parsed_url.scheme or not parsed_url.netloc or not parsed_public_url.scheme or not parsed_public_url.netloc:
-            return url
-
-        public_path = parsed_public_url.path.rstrip("/")
-        path = "{}{}".format(public_path, parsed_url.path) if public_path else parsed_url.path
-        return urlunparse(parsed_url._replace(
-            scheme=parsed_public_url.scheme,
-            netloc=parsed_public_url.netloc,
-            path=path
-        ))
-
-    def _is_discord_accessible_url(self, url):
-        parsed_url = urlparse(url)
-        if parsed_url.scheme not in ("http", "https") or not parsed_url.hostname:
-            return False
-        if parsed_url.hostname == "localhost":
-            return False
-        try:
-            ip = ipaddress.ip_address(parsed_url.hostname)
-            return not (ip.is_private or ip.is_loopback or ip.is_link_local)
-        except ValueError:
-            return True
 
     def _send(self, op, payload):
         try:

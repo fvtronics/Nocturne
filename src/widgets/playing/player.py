@@ -313,7 +313,6 @@ class Player(EventAdapter):
         self.discord_rpc = DiscordRPC(self)
         self.settings.connect('changed::discord-rpc-enabled', lambda *_: self.discord_rpc.update())
         self.settings.connect('changed::discord-rpc-client-id', lambda *_: self.discord_rpc.update())
-        self.settings.connect('changed::discord-rpc-public-url', lambda *_: self.discord_rpc.update())
         integration = get_current_integration()
         integration.connect_to_model('currentSong', 'songId', self.song_changed)
         integration.connect_to_model('currentSong', 'songId', lambda *_: self.discord_rpc.update())
