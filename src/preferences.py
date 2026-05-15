@@ -118,7 +118,7 @@ class NocturnePreferences(Adw.PreferencesDialog):
         settings.bind(
             "discord-rpc-enabled",
             self.discord_rpc_el,
-            "active",
+            "enable-expansion",
             Gio.SettingsBindFlags.DEFAULT
         )
 
