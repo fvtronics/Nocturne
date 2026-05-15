@@ -817,18 +817,11 @@ def remove_songs_from_playlist(window, data:dict):
         songIndexToRemove=song_list
     )
     if result:
-        if len(song_list) > 1:
-            threading.Thread(
-                target=__show_custom_toast,
-                args=(window, playlist_id, "name", _("{} Songs Removed").format(len(song_list))),
-                daemon=True
-            ).start()
-        else:
-            threading.Thread(
-                target=__show_custom_toast,
-                args=(window, playlist_id, "name", _("Song Removed")),
-                daemon=True
-            ).start()
+        threading.Thread(
+            target=__show_custom_toast,
+            args=(window, playlist_id, "name", ngettext("{} Song Removed", "{} Songs Removed", len(song_list)).format(len(song_list))),
+            daemon=True
+        ).start()
 
 def prompt_add_songs_to_playlist(window, song_list:list):
     dialog = Widgets.playlist.PlaylistDialog(song_list)
@@ -857,10 +850,7 @@ def add_songs_to_playlist(window, data):
         )
         if response:
             integration.verifyPlaylist(response, force_update=True, use_threading=False)
-            if len(data.get("songs")) > 1:
-                message = _("{} Songs Added").format(len(data.get("songs")))
-            else:
-                message = _("1 Song Added")
+            message = ngettext("{} Song Added", "{} Songs Added", len(data.get("songs"))).format(len(data.get("songs")))
             threading.Thread(
                 target=__show_custom_toast,
                 args=(window, response, "name", message),
@@ -880,17 +870,11 @@ def add_songs_to_playlist(window, data):
 
         message = []
         if len(songs) > 0:
-            if len(songs) == 1:
-                message.append(_("1 Song Added"))
-            else:
-                message.append(_("{} Songs Added").format(len(songs)))
+            message.append(ngettext("{} Song Added", "{} Songs Added", len(songs)).format(len(songs)))
 
         skipped_songs = len(data.get('songs')) - len(songs)
         if skipped_songs > 0:
-            if skipped_songs == 1:
-                message.append(_("1 Song Skipped"))
-            else:
-                message.append(_("{} Songs Skipped").format(skipped_songs))
+            message.append(ngettext("{} Song Skipped", "{} Songs Skipped", skipped_songs).format(skipped_songs))
 
         threading.Thread(
             target=__show_custom_toast,
@@ -1038,8 +1022,8 @@ def download_songs(window, model_list:str):
             )
         elif successful_starts > 0:
             skipped_songs = len(song_ids) - successful_starts
-            skip_message = _("{} Songs Skipped").format(skipped_songs) if skipped_songs > 1 else _("1 Song Skipped")
-            message = _("{} Songs ({})").format(successful_starts, skip_message) if successful_starts > 1 else _("1 Song ({})").format(skip_message)
+            skip_message = ngettext("{} Song Skipped", "{} Songs Skipped", skipped_songs).format(skipped_songs)
+            message = ngettext("{} Song ({})", "{} Songs ({})", successful_starts).format(successful_starts, skip_message)
 
             __show_custom_toast(
                 window,
@@ -1075,7 +1059,7 @@ def download_album(window, model_id:str):
                 )
             elif successful_starts > 0:
                 skipped_songs = len(song_ids) - successful_starts
-                message = _("Download Started ({} Songs Skipped)").format(skipped_songs) if skipped_songs > 1 else _("Download Started (1 Song Skipped)")
+                message = ngettext("Download Started ({} Song Skipped)", "Download Started ({} Songs Skipped)", skipped_songs).format(skipped_songs)
                 __show_custom_toast(
                     window,
                     albumId,
@@ -1111,7 +1095,7 @@ def download_playlist(window, model_id:str):
                 )
             elif successful_starts > 0:
                 skipped_songs = len(song_ids) - successful_starts
-                message = _("Download Started ({} Songs Skipped)").format(skipped_songs) if skipped_songs > 1 else _("Download Started (1 Song Skipped)")
+                message = ngettext("Download Started ({} Song Skipped)", "Download Started ({} Songs Skipped)", skipped_songs).format(skipped_songs)
                 __show_custom_toast(
                     window,
                     playlistId,

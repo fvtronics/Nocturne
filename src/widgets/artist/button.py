@@ -39,11 +39,7 @@ class ArtistButton(Gtk.Button):
         self.set_name(name)
 
     def update_album_count(self, albumCount:int):
-        if albumCount == 1:
-            self.album_count_el.set_label(_("1 Album"))
-        else:
-            self.album_count_el.set_label(_("{} Albums").format(albumCount))
-
+        self.album_count_el.set_label(ngettext("{} Album", "{} Albums", albumCount).format(albumCount))
         self.album_count_el.set_visible(albumCount)
 
     @Gtk.Template.Callback()
