@@ -1,6 +1,6 @@
 # discord_rpc.py
 
-import json, os, socket, struct, threading, time, uuid
+import json, os, socket, struct, threading, time, uuid, requests
 from gi.repository import GLib, Gst
 
 from . import get_current_integration
@@ -71,6 +71,11 @@ class DiscordRPC:
                     self.worker_running = False
                     return
                 generation, client_id, activity = self.pending
+                if integration := get_current_integration():
+                    success, state, pending = self.player.gst.get_state(0)
+                    if state == Gst.State.PLAYING:
+                        if song_id := integration.loaded_models.get("currentSong").get_property("songId"):
+                            activity["assets"]["large_image"] = self._get_cover_art(song_id) or "logo"
                 self.pending = None
 
             with self.socket_lock:
@@ -97,6 +102,50 @@ class DiscordRPC:
             "nonce": uuid.uuid4().hex
         })
 
+    def _get_cover_art(self, song_id) -> str:
+        # Returns public URL for cover art or empty string
+
+        integration = get_current_integration()
+        if not song_id or not integration:
+            return ""
+
+        mbid = ""
+
+        if song_details := integration.getSongDetails(song_id):
+            mbid = song_details.get_property('musicBrainzId')
+
+        if not mbid:
+            if song_model := integration.loaded_models.get(song_id):
+                # Get MusicBrainz ID
+                headers = {
+                    "User-Agent": "Nocturne/1.0 ( https://jeffser.com/nocturne )"
+                }
+                search_url = "https://musicbrainz.org/ws/2/release"
+                artist_name = song_model.get_property("artist")
+                if artists := song_model.get_property("artists"):
+                    if len(artists) > 0:
+                        artist_name = artists[0].get('name') or artist_name
+                params = {
+                    "query": f'release:"{song_model.get_property("album")}" AND artist:"{artist_name}"',
+                    "fmt": "json"
+                }
+                try:
+                    response = requests.get(search_url, headers=headers, params=params)
+                    response.raise_for_status()
+                    data = response.json()
+                    if not data.get("releases"):
+                        return ""
+                    mbid = data.get("releases")[0].get("id")
+                except requests.exceptions.RequestException as e:
+                    return ""
+
+        if mbid:
+            caa_url = f"https://coverartarchive.org/release/{mbid}/front-500"
+            image_response = requests.get(caa_url, headers=headers, allow_redirects=True)
+            if image_response.status_code == 200:
+                return image_response.url or ""
+        return ""
+
     def _get_activity(self):
         integration = get_current_integration()
         if not integration:
@@ -111,7 +160,7 @@ class DiscordRPC:
         success, state, pending = self.player.gst.get_state(0)
         if current_song.get_property("buttonState") == "play" and pending != Gst.State.PLAYING:
             return {
-                "details": _("Browsing Nocturne"),
+                "details": _("Browsing"),
                 "type": 0,
                 "assets": {
                     "large_image": "logo",
@@ -167,12 +216,12 @@ class DiscordRPC:
         dirs = [
             os.environ.get("XDG_RUNTIME_DIR"),
             os.environ.get("TMPDIR"),
-            "/tmp",
+            "/tmp"
         ]
         return [
             os.path.join(directory, "discord-ipc-{}".format(index))
             for directory in dirs
-            if directory
+            if directory and os.path.isdir(directory)
             for index in range(10)
         ]
 

@@ -951,6 +951,7 @@ class Jellyfin(Base):
             albumId=song.get('AlbumId'),
             artist=song.get('Artists')[0] if song.get('Artists') else "",
             artistId=song.get('ArtistItems')[0].get('Id', '') if song.get('ArtistItems') else "",
+            musicBrainzId=song.get("ProviderIds", {}).get("MusicBrainzTrack") or "",
             track=song.get('IndexNumber', 0),
             year=song.get('ProductionYear', 0),
             size=song.get('MediaSources', [{}])[0].get('Size', 0),

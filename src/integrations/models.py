@@ -142,6 +142,7 @@ class SongDetails(GObject.Object):
     albumId = GObject.Property(type=str)
     artist = GObject.Property(type=str, nick=_("Display Artist"))
     artistId = GObject.Property(type=str)
+    musicBrainzId = GObject.Property(type=str, nick=_("MusicBrainz ID"))
     track = GObject.Property(type=int, nick=_("Track Number"))
     year = GObject.Property(type=int, nick=_("Year"))
     size = GObject.Property(type=int, nick=_("Size"))

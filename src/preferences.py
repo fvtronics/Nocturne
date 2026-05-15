@@ -1,10 +1,10 @@
 # preferences.py
 
-from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject, Gdk
+from gi.repository import Gtk, Adw, GLib, Gst, Gio, GObject, Gdk, Pango
 
 from .integrations import get_current_integration, secret
-from .constants import SIDEBAR_MENU, BITRATE_OPTIONS
-import threading
+from .constants import SIDEBAR_MENU, BITRATE_OPTIONS, IN_FLATPAK
+import threading, os
 
 @Gtk.Template(resource_path='/com/jeffser/Nocturne/preferences.ui')
 class NocturnePreferences(Adw.PreferencesDialog):
@@ -25,6 +25,7 @@ class NocturnePreferences(Adw.PreferencesDialog):
     instance_icon_el = Gtk.Template.Child()
     instance_el = Gtk.Template.Child()
     discord_rpc_el = Gtk.Template.Child()
+    discord_permissions_button_el = Gtk.Template.Child()
     discord_rpc_client_id_el = Gtk.Template.Child()
 
     # Customization
@@ -120,6 +121,12 @@ class NocturnePreferences(Adw.PreferencesDialog):
             "active",
             Gio.SettingsBindFlags.DEFAULT
         )
+
+        ### Check Flatpak permissions (Discord)
+        if IN_FLATPAK:
+            directory = os.environ.get("XDG_RUNTIME_DIR")
+            self.discord_permissions_button_el.get_parent().set_visible('discord-ipc-0' not in os.listdir(directory))
+
         settings.bind(
             "discord-rpc-client-id",
             self.discord_rpc_client_id_el,
@@ -354,3 +361,19 @@ class NocturnePreferences(Adw.PreferencesDialog):
     @Gtk.Template.Callback()
     def reset_discord_app_id(self, button):
         Gio.Settings(schema_id="com.jeffser.Nocturne").reset("discord-rpc-client-id")
+
+    @Gtk.Template.Callback()
+    def show_discord_flatpak_warning(self, button):
+        dialog = Adw.AlertDialog(
+            heading=_("Flatpak Sandbox Warning"),
+            body=_("To connect to Discord, an additional permission is required, once you run the following command, please restart Nocturne"),
+            extra_child=Gtk.Label(
+                label='flatpak override com.jeffser.Nocturne --filesystem=xdg-run/discord-ipc-0',
+                css_classes=['rounded-corner', 'osd', 'p10'],
+                selectable=True,
+                wrap=True,
+                wrap_mode=Pango.WrapMode.WORD
+            )
+        )
+        dialog.add_response('c', _("Close"))
+        dialog.choose(self.get_root(), None, None)

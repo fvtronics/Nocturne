@@ -98,7 +98,7 @@ overlay.album-button:hover image.card {
 .rounded-corner {
   border-top-left-radius: 9px;
   border-top-right-radius: 9px;
-  border-top-left-radius: 9px;
+  border-bottom-left-radius: 9px;
   border-bottom-right-radius: 9px;
 }
 

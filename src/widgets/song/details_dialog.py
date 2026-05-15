@@ -25,10 +25,11 @@ class SongDetailsDialog(Adw.Dialog):
             "bitRate": lambda bitRate: "{} kbps".format(bitRate),
             "bitDepth": lambda bitDepth: "{}-bit".format(bitDepth),
             "samplingRate": lambda samplingRate: "{} kHz".format(samplingRate / 1000),
+            "musicBrainzId": lambda mbid: mbid or _("Not Found")
         }
 
         property_order = [
-            "album", "artist", "artists", "year", "duration", "starred", "discNumber", "track",
+            "album", "artist", "artists", "musicBrainzId", "year", "duration", "starred", "discNumber", "track",
             "size", "contentType", "path", "suffix", "bitRate", "bitDepth", "samplingRate", "channelCount",
             "trackGain", "albumGain", "bpm", "genres"
         ]
@@ -74,5 +75,10 @@ class SongDetailsDialog(Adw.Dialog):
                         if model_id := song_details.get_property('artistId'):
                             row.set_action_name('app.show_artist')
                             row.set_action_target_value(GLib.Variant('s', model_id))
+                            row.set_activatable(True)
+                    elif prop.get_name() == 'musicBrainzId':
+                        if mbid := song_details.get_property('musicBrainzId'):
+                            row.set_action_name('')
+                            row_set_action_target_value(GLib.Variant('s', 'https://musicbrainz.org/recording/{}'.format(mbid)))
                             row.set_activatable(True)
                     self.listbox_el.append(row)
