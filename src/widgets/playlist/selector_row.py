@@ -34,8 +34,5 @@ class PlaylistSelectorRow(Adw.ActionRow):
         self.set_tooltip_text(_("Add songs to '{}'").format(name))
 
     def update_song_count(self, songCount:int):
-        if songCount == 1:
-            self.set_subtitle(_("1 Song"))
-        else:
-            self.set_subtitle(_("{} Songs").format(songCount))
+        self.set_subtitle(ngettext("{} Song", "{} Songs", songCount).format(songCount))
 

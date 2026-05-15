@@ -34,7 +34,7 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 if hasattr(locale, 'bindtextdomain'):
     locale.bindtextdomain('nocturne', localedir)
     locale.textdomain('nocturne')
-gettext.install('nocturne', localedir)
+gettext.install('nocturne', localedir, names=['ngettext'])
 
 if __name__ == '__main__':
     import gi

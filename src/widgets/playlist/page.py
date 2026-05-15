@@ -115,11 +115,7 @@ class PlaylistPage(Adw.NavigationPage):
             threading.Thread(target=self.load_song_rows, daemon=True).start()
 
     def update_song_count(self, songCount:int):
-        if songCount == 1:
-            self.song_count_el.set_label(_("1 Song"))
-        else:
-            self.song_count_el.set_label(_("{} Songs").format(songCount))
-
+        self.song_count_el.set_label(ngettext("{} Song", "{} Songs", songCount).format(songCount))
         self.song_count_el.set_visible(songCount)
 
     def update_duration(self, duration:int):

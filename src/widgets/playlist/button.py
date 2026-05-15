@@ -46,11 +46,7 @@ class PlaylistButton(Gtk.Box):
         self.set_name(name)
 
     def update_song_count(self, songCount:int):
-        if songCount == 1:
-            self.song_count_label_el.set_label(_("1 Song"))
-        else:
-            self.song_count_label_el.set_label(_("{} Songs").format(songCount))
-
+        self.song_count_label_el.set_label(ngettext("{} Song", "{} Songs", songCount).format(songCount))
         self.song_count_label_el.set_visible(songCount)
 
     @Gtk.Template.Callback()

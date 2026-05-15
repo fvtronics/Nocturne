@@ -44,10 +44,7 @@ class ArtistRow(Adw.ActionRow):
         self.set_name(name)
 
     def update_album_count(self, albumCount:int):
-        if albumCount == 1:
-            self.set_subtitle(_("1 Album"))
-        else:
-            self.set_subtitle(_("{} Albums").format(albumCount))
+        self.set_subtitle(ngettext("{} Album", "{} Albums", albumCount).format(albumCount))
 
     @Gtk.Template.Callback()
     def on_context_button_active(self, button, gparam):
