@@ -2,7 +2,7 @@
 
 import json, os, socket, struct, threading, time, uuid, requests, ipaddress
 from urllib.parse import urlparse
-from gi.repository import GLib, Gst
+from gi.repository import GLib, Gst, Gio
 
 from . import get_current_integration
 from ..constants import DISCORD_APP_ID
@@ -102,19 +102,20 @@ class DiscordRPC:
         if not song_id or not integration:
             return ""
 
-        # Check if getCoverArtUrl provides a public endpoint
-        if url_str := integration.getCoverArtUrl(song_id):
-            parsed_url = urlparse(url_str)
-            scheme = parsed_url.scheme.lower()
-            if scheme in ('http', 'https'):
-                hostname = parsed_url.hostname
-                is_domain = False
-                try:
-                    ipaddress.ip_address(hostname)
-                except ValueError:
-                    is_domain = True
-                if is_domain:
-                    return url_str
+        if Gio.Settings(schema_id="com.jeffser.Nocturne").get_value('discord-instance-art-share').unpack():
+            # Check if getCoverArtUrl provides a public endpoint
+            if url_str := integration.getCoverArtUrl(song_id):
+                parsed_url = urlparse(url_str)
+                scheme = parsed_url.scheme.lower()
+                if scheme in ('http', 'https'):
+                    hostname = parsed_url.hostname
+                    is_domain = False
+                    try:
+                        ipaddress.ip_address(hostname)
+                    except ValueError:
+                        is_domain = True
+                    if is_domain:
+                        return url_str
 
         mbid = ""
 

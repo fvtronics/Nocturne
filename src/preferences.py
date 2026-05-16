@@ -25,6 +25,7 @@ class NocturnePreferences(Adw.PreferencesDialog):
     instance_icon_el = Gtk.Template.Child()
     instance_el = Gtk.Template.Child()
     discord_rpc_el = Gtk.Template.Child()
+    discord_coverart_share_el = Gtk.Template.Child()
 
     # Customization
     ## Interface
@@ -116,6 +117,12 @@ class NocturnePreferences(Adw.PreferencesDialog):
         settings.bind(
             "discord-rpc-enabled",
             self.discord_rpc_el,
+            "active",
+            Gio.SettingsBindFlags.DEFAULT
+        )
+        settings.bind(
+            "discord-instance-art-share",
+            self.discord_coverart_share_el,
             "active",
             Gio.SettingsBindFlags.DEFAULT
         )

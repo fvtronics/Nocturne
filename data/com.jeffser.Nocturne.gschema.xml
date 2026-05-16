@@ -52,6 +52,9 @@
 	  <key name="discord-rpc-enabled" type="b">
 	    <default>false</default>
 	  </key>
+	  <key name="discord-instance-art-share" type="b">
+	    <default>false</default>
+	  </key>
 	  <key name="show-playlists-in-sidebar" type="b">
 	    <default>true</default>
 	  </key>
