@@ -365,7 +365,7 @@ class NocturnePreferences(Adw.PreferencesDialog):
                     heading=_("Flatpak Sandbox Warning"),
                     body=_("To connect to Discord, an additional permission is required, once you run the following command, please restart Nocturne"),
                     extra_child=Gtk.Label(
-                        label='flatpak override com.jeffser.Nocturne --filesystem=xdg-run/discord-ipc-0',
+                        label='sudo flatpak override com.jeffser.Nocturne --filesystem=xdg-run/discord-ipc-0',
                         css_classes=['rounded-corner', 'osd', 'p10'],
                         selectable=True,
                         wrap=True,
