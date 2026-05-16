@@ -11,7 +11,6 @@ finish-args:
   - '--socket=wayland'
   - '--socket=pulseaudio'
   - '--filesystem=xdg-music:ro'
-  - '--filesystem=xdg-run/discord-ipc-0'
 cleanup:
   - /include
   - /lib/pkgconfig
