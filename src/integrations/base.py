@@ -116,6 +116,8 @@ class Base(GObject.Object):
         return None
 
     def getCoverArtUrl(self, model_id:str='', big:bool=False) -> str:
+        # Returns URL that can be used to get coverArt directly by external services
+        # Returns empty string when a url is not available
         return ""
 
     def ping(self) -> bool:

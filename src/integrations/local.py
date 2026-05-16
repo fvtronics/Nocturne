@@ -161,6 +161,24 @@ class Local(Base):
                 pass
         return None
 
+    def getCoverArtUrl(self, model_id:str="", big:bool=False) -> str:
+        if model := self.loaded_models.get(model_id):
+            directory = os.path.join(self.getIntegrationDir(), 'covers')
+            file_name = '{} - {}.png'.format(model.get_property('title'), model.get_property('artist')).replace('/', '-')
+            path = os.path.join(directory, file_name)
+            if os.path.isfile(path):
+                return "file://{}".format(path)
+            try:
+                shutil.rmtree(directory, ignore_errors=True)
+                os.makedirs(directory, exist_ok=True)
+                paintable = self.getCoverArt(model_id, big)
+                paintable.save_to_png(path)
+                return "file://{}".format(path)
+            except Exception as e:
+                print(e)
+                pass
+        return ""
+
     def getAlbumList(self, list_type:str="recent", size:int=10, offset:int=0) -> list:
         album_list = []
         if list_type == "random":

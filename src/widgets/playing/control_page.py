@@ -2,7 +2,7 @@
 
 from gi.repository import Gtk, Adw, Gdk, GLib, GObject, Gst, Gio
 from ...integrations import get_current_integration
-from ...constants import MPRIS_COVER_PATH, get_display_time
+from ...constants import get_display_time
 import threading, random, io, os, glob
 from urllib.parse import urlparse
 from .player import Player
@@ -198,13 +198,9 @@ class PlayingControlPage(Adw.NavigationPage):
         integration = get_current_integration()
         song_id = integration.loaded_models.get('currentSong').get_property('songId')
         if model := integration.loaded_models.get(song_id):
-            mpris_path = os.path.join(MPRIS_COVER_PATH, "{}.png".format(song_id))
-            for old_file in glob.glob(f"{MPRIS_COVER_PATH}/*.png"):
-                os.remove(old_file)
             if paintable := integration.getCoverArt(song_id, big=True):
                 GLib.idle_add(self.cover_el.set_paintable, paintable)
                 GLib.idle_add(self.cover_el.set_visible, True)
-                paintable.save_to_png(mpris_path)
             else:
                 GLib.idle_add(self.cover_el.set_paintable, None)
                 GLib.idle_add(self.cover_el.set_visible, False)

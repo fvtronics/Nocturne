@@ -7,7 +7,6 @@ from mpris_server.events import EventAdapter
 from mpris_server.server import Server
 from mpris_server import Metadata, ValidMetadata, Track, Position, Volume, Rate, PlayState, DbusObj, MetadataObj, ActivePlaylist, PlaylistEntry, MprisInterface
 
-from ...constants import MPRIS_COVER_PATH
 from ...integrations import get_current_integration, models
 from ...integrations.discord_rpc import DiscordRPC
 from ..lyrics import LyricsDialog
@@ -66,10 +65,9 @@ class PlayerAdapter(MprisAdapter):
         if not song:
             return MetadataObj()
 
-        mpris_path = os.path.join(MPRIS_COVER_PATH, "{}.png".format(song.get_property('id')))
         return MetadataObj(
             album=song.get_property('album'),
-            art_url='file://{}'.format(mpris_path),
+            art_url=integration.getCoverArtUrl(song.get_property('id')),
             artists=[urlparse(song.get_property('streamUrl')).netloc.capitalize()] if song.get_property('isRadio') and song.get_property('streamUrl') else ([a.get('name') for a in song.get_property('artists')] or [song.get_property('artist')]),
             as_text=[song.get_property('title')],
             length=song.get_property('duration')*1000000,

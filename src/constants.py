@@ -37,8 +37,6 @@ if os.path.isdir(OLD_LOCAL_DATA_DIR) and not os.path.isdir(os.path.join(INTEGRAT
     os.rename(OLD_LOCAL_DATA_DIR, os.path.join(INTEGRATIONS_DIR, 'NocturneIntegrationLocal'))
 # ----------
 
-MPRIS_COVER_PATH = os.path.join(CACHE_DIR, 'cover')
-os.makedirs(MPRIS_COVER_PATH, exist_ok=True)
 DOWNLOAD_QUEUE_DIR = os.path.join(DATA_DIR, 'downloading')
 if os.path.isdir(DOWNLOAD_QUEUE_DIR):
     shutil.rmtree(DOWNLOAD_QUEUE_DIR)

@@ -1,6 +1,7 @@
 # discord_rpc.py
 
-import json, os, socket, struct, threading, time, uuid, requests
+import json, os, socket, struct, threading, time, uuid, requests, ipaddress
+from urllib.parse import urlparse
 from gi.repository import GLib, Gst
 
 from . import get_current_integration
@@ -108,6 +109,20 @@ class DiscordRPC:
         integration = get_current_integration()
         if not song_id or not integration:
             return ""
+
+        # Check if getCoverArtUrl provides a public endpoint
+        if url_str := integration.getCoverArtUrl(song_id):
+            parsed_url = urlparse(url_str)
+            scheme = parsed_url.scheme.lower()
+            if scheme in ('http', 'https'):
+                hostname = parsed_url.hostname
+                is_domain = False
+                try:
+                    ipaddress.ip_address(hostname)
+                except ValueError:
+                    is_domain = True
+                if is_domain:
+                    return url_str
 
         mbid = ""
 
