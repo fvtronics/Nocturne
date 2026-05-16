@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 from gi.repository import GLib, Gst
 
 from . import get_current_integration
+from ..constants import DISCORD_APP_ID
 
 
 class DiscordRPC:
@@ -13,7 +14,6 @@ class DiscordRPC:
     def __init__(self, player):
         self.player = player
         self.socket = None
-        self.client_id = ""
         self.state_lock = threading.Lock()
         self.socket_lock = threading.Lock()
         self.pending = None
@@ -36,29 +36,23 @@ class DiscordRPC:
                 except OSError:
                     pass
                 self.socket = None
-            self.client_id = ""
 
     def update(self):
         if not self.player.settings.get_value("discord-rpc-enabled").unpack():
             self.close()
             return
 
-        client_id = self.player.settings.get_value("discord-rpc-client-id").unpack().strip()
-        if not client_id:
-            self.close()
-            return
-
         with self.state_lock:
             if self.update_source_id:
                 GLib.source_remove(self.update_source_id)
-            self.update_source_id = GLib.timeout_add(500, self._queue_update, client_id)
+            self.update_source_id = GLib.timeout_add(500, self._queue_update)
 
-    def _queue_update(self, client_id):
+    def _queue_update(self):
         activity = self._get_activity()
         with self.state_lock:
             self.update_source_id = None
             self.generation += 1
-            self.pending = (self.generation, client_id, activity)
+            self.pending = (self.generation, activity)
             if self.worker_running:
                 return GLib.SOURCE_REMOVE
             self.worker_running = True
@@ -71,7 +65,7 @@ class DiscordRPC:
                 if not self.pending:
                     self.worker_running = False
                     return
-                generation, client_id, activity = self.pending
+                generation, activity = self.pending
                 if integration := get_current_integration():
                     success, state, pending = self.player.gst.get_state(0)
                     if state == Gst.State.PLAYING:
@@ -83,9 +77,7 @@ class DiscordRPC:
                 with self.state_lock:
                     if generation != self.generation:
                         continue
-                if self.client_id != client_id:
-                    self._disconnect()
-                if not self.socket and not self._connect(client_id):
+                if not self.socket and not self._connect():
                     continue
                 with self.state_lock:
                     if self.pending or generation != self.generation:
@@ -212,15 +204,14 @@ class DiscordRPC:
 
         return activity
 
-    def _connect(self, client_id):
+    def _connect(self):
         for path in self._get_socket_paths():
             try:
                 rpc_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
                 rpc_socket.settimeout(2)
                 rpc_socket.connect(path)
                 self.socket = rpc_socket
-                self.client_id = client_id
-                if self._send(0, {"v": 1, "client_id": client_id}):
+                if self._send(0, {"v": 1, "client_id": DISCORD_APP_ID}):
                     self._receive()
                     return True
             except OSError:
@@ -272,4 +263,3 @@ class DiscordRPC:
             except OSError:
                 pass
         self.socket = None
-        self.client_id = ""

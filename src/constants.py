@@ -3,6 +3,8 @@
 import os, subprocess, json, shutil
 from tinytag import TinyTag
 
+DISCORD_APP_ID = "1504946005764739092"
+
 IN_FLATPAK = bool(os.getenv("FLATPAK_ID"))
 IN_SNAP = bool(os.getenv("FLATPAK_ID"))
 

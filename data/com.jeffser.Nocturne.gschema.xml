@@ -52,9 +52,6 @@
 	  <key name="discord-rpc-enabled" type="b">
 	    <default>false</default>
 	  </key>
-	  <key name="discord-rpc-client-id" type="s">
-	    <default>'1504946005764739092'</default>
-	  </key>
 	  <key name="show-playlists-in-sidebar" type="b">
 	    <default>true</default>
 	  </key>
