@@ -32,36 +32,9 @@ template $NocturnePreferencesDialog: Adw.PreferencesDialog {
     Adw.PreferencesGroup session_group_el {
       title: _("Session");
 
-      Adw.ExpanderRow discord_rpc_el{
+      Adw.SwitchRow discord_rpc_el{
         title: _("Discord Rich Presence");
         subtitle: _("Share the currently playing song on Discord");
-        show-enable-switch: true;
-
-        Adw.EntryRow discord_rpc_client_id_el {
-          title: _("Discord Application ID");
-          [prefix]
-          Gtk.Button discord_permissions_button_el {
-            tooltip-text: _("Permissions Missing");
-            icon-name: "dialog-warning-symbolic";
-            clicked => $show_discord_flatpak_warning();
-            valign: center;
-            styles [
-              "circular",
-              "flat"
-            ]
-          }
-          [suffix]
-          Gtk.Button {
-            tooltip-text: _("Reset to Default");
-            icon-name: "update-symbolic";
-            clicked => $reset_discord_app_id();
-            valign: center;
-            styles [
-              "circular",
-              "flat"
-            ]
-          }
-        }
       }
 
       Adw.ActionRow {
